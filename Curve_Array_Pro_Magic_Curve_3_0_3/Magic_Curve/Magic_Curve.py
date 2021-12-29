@@ -3,36 +3,50 @@ import bmesh
 import mathutils
 import math
 
-def object_checker():
+class Checker():
+
+    def __object_checker(self):
+        
+        object = bpy.context.active_object
+        
+        if object == None:
+            
+            ShowMessageBox("Error","Select object", 'ERROR')
+            
+            return False        
+
+        if object.type != 'MESH':
+            
+            ShowMessageBox("Error","Object shoud be mesh", 'ERROR')
+            
+            return False   
+
+        return True
     
-    object = bpy.context.active_object
-     
-    if object == None:
+    def __mode_checker(self):
+            
+        mode = bpy.context.active_object.mode
         
-        ShowMessageBox("Error","Select object", 'ERROR')
+        if mode != 'EDIT':
+            
+            ShowMessageBox("Error","Go to Edit Mode", 'ERROR')
+            
+            return False
         
-        return False        
+        else:
+            
+            return True
 
-    if object.type != 'MESH':
+    def start_checker(self):
         
-        ShowMessageBox("Error","Object shoud be mesh", 'ERROR')
+        if self.__object_checker == True and self.__mode_checker == True:
+            
+            return True
         
-        return False   
-
-def mode_checker():
+        else:
+            
+            return False
         
-    mode = bpy.context.active_object.mode
-    
-    if mode != 'EDIT':
-        
-        ShowMessageBox("Error","Go to Edit Mode", 'ERROR')
-        
-        return False
-
-def vertices_select_checker():
-    
-    pass
-
 def Direction(vec_spline, vec_mesh):
     
     scalar  = vec_spline[0]*vec_mesh[0] + vec_spline[1]*vec_mesh[1] + vec_spline[2]*vec_mesh[2]
@@ -397,15 +411,9 @@ class MAGICCURVE_OT_mgcrv_main(bpy.types.Operator):
         active_object = bpy.context.active_object
         active_mesh = active_object.data
 
-        try:
 
-            bm = bmesh.from_edit_mesh(active_mesh)
+        bm = bmesh.from_edit_mesh(active_mesh)
         
-        except:
-            
-            ShowMessageBox("Error","Go to edit mode", 'ERROR')
-            
-            return {'CANCELLED'}
 
         try:
                 
