@@ -3,6 +3,16 @@ import bmesh
 import mathutils
 import math
 
+def context_checker():
+        
+    mode = bpy.context.active_object.mode
+    
+    if mode != 'EDIT':
+        
+        ShowMessageBox("Error","Go to Edit Mode", 'ERROR')
+        
+        return False
+
 def Direction(vec_spline, vec_mesh):
     
     scalar  = vec_spline[0]*vec_mesh[0] + vec_spline[1]*vec_mesh[1] + vec_spline[2]*vec_mesh[2]
@@ -453,18 +463,3 @@ class MAGICCURVE_PT_mgcrv_panel(bpy.types.Panel):
                     
         row = layout.row()
         row.operator('magiccurve.mgcrv_main', icon = 'TRACKING')
-
-def register():
-    bpy.utils.register_class(MAGICCURVE_PT_mgcrv_panel)
-    bpy.utils.register_class(MAGICCURVE_OT_mgcrv_main)
-    
-    #bpy.types.Scene.curve_array_propeties = bpy.props.PointerProperty(type=Properties)
-
-def unregister():
-    bpy.utils.unregister_class(MAGICCURVE_PT_mgcrv_panel)
-    bpy.utils.unregister_class(MAGICCURVE_OT_mgcrv_main)
-    
-    #del bpy.types.Scene.my_props
-    
-if __name__== "__main__" :
-    register()
