@@ -3,7 +3,23 @@ import bmesh
 import mathutils
 import math
 
-def context_checker():
+def object_checker():
+    
+    object = bpy.context.active_object
+     
+    if object == None:
+        
+        ShowMessageBox("Error","Select object", 'ERROR')
+        
+        return False        
+
+    if object.type != 'MESH':
+        
+        ShowMessageBox("Error","Object shoud be mesh", 'ERROR')
+        
+        return False   
+
+def mode_checker():
         
     mode = bpy.context.active_object.mode
     
@@ -12,6 +28,10 @@ def context_checker():
         ShowMessageBox("Error","Go to Edit Mode", 'ERROR')
         
         return False
+
+def vertices_select_checker():
+    
+    pass
 
 def Direction(vec_spline, vec_mesh):
     
