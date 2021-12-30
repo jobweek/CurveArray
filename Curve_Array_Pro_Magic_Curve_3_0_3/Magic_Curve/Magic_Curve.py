@@ -55,9 +55,25 @@ def active_vertex(bm):
         
         raise CancelError
   
-def selected_verices(active_mesh):
+def selected_edges(active_mesh):
     
-    pass  
+    selected_edges_list = []
+    
+    for i in active_mesh.edges:
+        
+        if i.select:
+            
+            selected_edges_list.append(i)   
+            
+    if len(selected_edges_list) < 1:
+        
+        ShowMessageBox("Error","Select two or more vertices", 'ERROR')
+        
+        raise CancelError
+    
+    else:
+    
+        return selected_edges_list
   
 def Direction(vec_spline, vec_mesh):
     
@@ -411,7 +427,7 @@ def ShowMessageBox(title, message, icon):
 
     bpy.context.window_manager.popup_menu(draw, title=title, icon=icon)
 
-def main():
+def manager_mgcrv():
 
     active_object = bpy.context.active_object
     active_mesh = active_object.data
@@ -424,6 +440,8 @@ def main():
 
     bpy.ops.object.editmode_toggle()
 
+    selected_edges_list = selected_edges(active_mesh)
+
 class MAGICCURVE_OT_mgcrv_main(bpy.types.Operator):
     '''Clear selected curve'''
     bl_label = "Curve from loop"
@@ -434,7 +452,7 @@ class MAGICCURVE_OT_mgcrv_main(bpy.types.Operator):
         
         try:
             
-            main()
+            manager_mgcrv()
         
         except CancelError:
             
@@ -442,7 +460,7 @@ class MAGICCURVE_OT_mgcrv_main(bpy.types.Operator):
 
         except Exception as e:
             
-            print(e)
+            ShowMessageBox("Unkown Error", "Please send me this report:", e, 'ERROR')
             
             return {'CANCELLED'}
 
