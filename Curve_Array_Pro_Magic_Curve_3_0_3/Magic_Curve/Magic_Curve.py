@@ -3,6 +3,9 @@ import bmesh
 import mathutils
 import math
 
+class CancelError(Exception):
+    """Базовый класс для других исключений"""
+    pass
 class Checker():
 
     def __object_checker(self):
@@ -13,15 +16,13 @@ class Checker():
             
             ShowMessageBox("Error","Select object", 'ERROR')
             
-            return False        
+            raise CancelError
 
         if object.type != 'MESH':
             
             ShowMessageBox("Error","Object shoud be mesh", 'ERROR')
             
-            return False   
-
-        return True
+            raise CancelError  
     
     def __mode_checker(self):
             
@@ -31,22 +32,23 @@ class Checker():
             
             ShowMessageBox("Error","Go to Edit Mode", 'ERROR')
             
-            return False
+            raise CancelError
         
-        else:
-            
-            return True
-
     def start_checker(self):
         
-        if self.__object_checker == True and self.__mode_checker == True:
+        self.__object_checker
+        self.__mode_checker
             
-            return True
-        
-        else:
-            
-            return False
-        
+ckecker = Checker()
+
+def active_vertex(active_mesh):
+    
+    pass
+  
+def selected_verices(active_mesh):
+    
+    pass  
+  
 def Direction(vec_spline, vec_mesh):
     
     scalar  = vec_spline[0]*vec_mesh[0] + vec_spline[1]*vec_mesh[1] + vec_spline[2]*vec_mesh[2]
@@ -399,6 +401,13 @@ def ShowMessageBox(title, message, icon):
 
     bpy.context.window_manager.popup_menu(draw, title=title, icon=icon)
 
+def main():
+
+    active_object = bpy.context.active_object
+    active_mesh = active_object.data
+
+    ckecker.start_checker
+
 class MAGICCURVE_OT_mgcrv_main(bpy.types.Operator):
     '''Clear selected curve'''
     bl_label = "Curve from loop"
@@ -407,9 +416,21 @@ class MAGICCURVE_OT_mgcrv_main(bpy.types.Operator):
         
     def execute(self, context):
         
-        active_scene = bpy.context.scene
-        active_object = bpy.context.active_object
-        active_mesh = active_object.data
+        try:
+            
+            main()
+        
+        except CancelError:
+            
+            return {'CANCELLED'}
+
+        except Exception as e:
+            
+            print(e)
+            
+            return {'CANCELLED'}
+
+
 
 
         bm = bmesh.from_edit_mesh(active_mesh)
