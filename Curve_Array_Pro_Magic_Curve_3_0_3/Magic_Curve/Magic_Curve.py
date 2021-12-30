@@ -479,6 +479,8 @@ def manager_mgcrv():
     bpy.ops.object.editmode_toggle()
 
     selected_edges_list = selected_edges(active_mesh)
+    
+    vertices_line_list = vertices_line(selected_edges_list, act_vert_index)
 
 class MAGICCURVE_OT_mgcrv_main(bpy.types.Operator):
     '''Clear selected curve'''
