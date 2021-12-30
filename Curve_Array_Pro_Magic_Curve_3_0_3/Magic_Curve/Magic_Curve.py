@@ -2,6 +2,7 @@ import bpy
 import bmesh
 import mathutils
 import math
+import copy
 
 class CancelError(Exception):
     """Базовый класс для других исключений"""
@@ -89,26 +90,21 @@ def vertices_line(selected_edges_list, act_vert_index):
                 
                 return i, i.vertices[0]
                 
-            else:
-                
-                ShowMessageBox("Error","Select only one loop, or a line segment from connected edges, without intersection, and activate start point at one end", 'ERROR')
-  
-                raise CancelError
+        ShowMessageBox("Error","Select only one loop, or a line segment from connected edges, without intersection, and activate start point at one end", 'ERROR')
+
+        raise CancelError
         
-    edges_list = selected_edges_list
+    edges_list = copy.copy(selected_edges_list)
     vertices_line_list = [act_vert_index]
-    i = 0
     searched_vertex = act_vert_index
     
-    while i < len(selected_edges_list):
+    for _ in selected_edges_list:
         
         edge, searched_vertex = vertex_search(edges_list, searched_vertex)
         
         vertices_line_list.append(searched_vertex)
         edges_list.remove(edge)
-        
-        i += 1
-    
+            
     if len(edges_list) != 0:
         
         ShowMessageBox("Error","Select only one loop, or a line segment from connected edges, without intersection, and activate start point at one end", 'ERROR')
