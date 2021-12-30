@@ -41,9 +41,19 @@ class Checker():
             
 ckecker = Checker()
 
-def active_vertex(active_mesh):
+def active_vertex(bm):
     
-    pass
+    try:
+        
+        act_vert_index = bm.select_history.active.index
+        
+        return act_vert_index
+
+    except:
+        
+        ShowMessageBox("Error","The active vertex must be selected", 'ERROR')
+        
+        raise CancelError
   
 def selected_verices(active_mesh):
     
@@ -408,6 +418,12 @@ def main():
 
     ckecker.start_checker
 
+    bm = bmesh.from_edit_mesh(active_mesh)
+    
+    act_vert_index = active_vertex(bm)
+
+    bpy.ops.object.editmode_toggle()
+
 class MAGICCURVE_OT_mgcrv_main(bpy.types.Operator):
     '''Clear selected curve'''
     bl_label = "Curve from loop"
@@ -430,23 +446,6 @@ class MAGICCURVE_OT_mgcrv_main(bpy.types.Operator):
             
             return {'CANCELLED'}
 
-
-
-
-        bm = bmesh.from_edit_mesh(active_mesh)
-        
-
-        try:
-                
-            act_vert_index = bm.select_history.active.index
-
-        except:
-            
-            ShowMessageBox("Error","Select at least one edge, and pick active point", 'ERROR')
-            
-            return {'CANCELLED'}
-        
-        bpy.ops.object.editmode_toggle()
         
         #get edges
         sel_ed = list(filter(lambda i: i.select, active_mesh.edges))    
