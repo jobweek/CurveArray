@@ -75,6 +75,48 @@ def selected_edges(active_mesh):
     
         return selected_edges_list
   
+def vertices_line(selected_edges_list, act_vert_index):
+    
+    def vertex_search(edges_list, searched_vertex):
+        
+        for i in edges_list:
+            
+            if i.vertices[0] == searched_vertex: 
+                
+                return i, i.vertices[1]
+            
+            elif i.vertices[1] == searched_vertex:
+                
+                return i, i.vertices[0]
+                
+            else:
+                
+                ShowMessageBox("Error","Select only one loop, or a line segment from connected edges, without intersection, and activate start point at one end", 'ERROR')
+  
+                raise CancelError
+        
+    edges_list = selected_edges_list
+    vertices_line_list = [act_vert_index]
+    i = 0
+    searched_vertex = act_vert_index
+    
+    while i < len(selected_edges_list):
+        
+        edge, searched_vertex = vertex_search(edges_list, searched_vertex)
+        
+        vertices_line_list.append(searched_vertex)
+        edges_list.remove(edge)
+        
+        i += 1
+    
+    if len(edges_list) != 0:
+        
+        ShowMessageBox("Error","Select only one loop, or a line segment from connected edges, without intersection, and activate start point at one end", 'ERROR')
+
+        raise CancelError
+    
+    return vertices_line_list
+    
 def Direction(vec_spline, vec_mesh):
     
     scalar  = vec_spline[0]*vec_mesh[0] + vec_spline[1]*vec_mesh[1] + vec_spline[2]*vec_mesh[2]
