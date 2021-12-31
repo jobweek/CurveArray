@@ -177,7 +177,7 @@ def create_extruded_curve(main_curve):
     extruded_curve = main_curve.copy()
     extruded_curve.data = main_curve.data.copy()
     extruded_curve.name = 'MgCrv_duplicate'
-    extruded_curve.data.extrude = 1
+    extruded_curve.data.extrude = 0.5
     bpy.context.scene.collection.objects.link(extruded_curve)
     
     return extruded_curve
@@ -194,6 +194,102 @@ def convert_curve_to_mesh(extruded_curve):
     
     return extruded_mesh
     
+def extruded_mesh_vector(extruded_mesh):
+    
+    extruded_mesh_vector_list = []
+    
+    i = 0
+    
+    while i < len(extruded_mesh_vector_list)/2:
+        
+        vector = mathutils.Vector((extruded_mesh.data.vertices[0 + i] - extruded_mesh.data.vertices[1 + i]))
+        
+        extruded_mesh_vector_list.append(vector)
+        
+        i += 1
+    
+    return extruded_mesh_vector_list
+    
+def active_mesh_vector(active_mesh, vertices_line_list):
+    
+    active_mesh_vector_list = []
+    
+    for i in vertices_line_list:
+        
+        vector = active_mesh.vertices[i].normal
+        
+        active_mesh_vector_list.append(vector)
+    
+    return active_mesh_vector_list
+    
+def angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list):
+    
+    def vector_direction(vec_extruded_mesh, vec_active_mesh):
+    
+        scalar  = vec_extruded_mesh[0]*vec_active_mesh[0] + vec_extruded_mesh[1]*vec_active_mesh[1] + vec_extruded_mesh[2]*vec_active_mesh[2]
+        
+        if scalar > 0:
+            
+            direction = True
+            
+        elif scalar < 0:
+            
+            direction = False
+            
+        else:
+        
+            direction = None
+            
+        return direction
+    
+    def angle_correction(angle, direction):
+        
+        if direction == True:
+                    
+            return angle
+                        
+        elif direction == False:
+            
+            return angle * (-1)
+                        
+        elif direction == None:
+            
+            return 0    
+            
+    angle_list = []
+    
+    i = 0
+    
+    while i < len(extruded_mesh_vector_list):
+        
+        vec_extruded_mesh = extruded_mesh_vector_list[i]
+        
+        vec_active_mesh = active_mesh_vector_list[i]
+        
+        angle = vec_extruded_mesh.angle(vec_active_mesh)
+        
+        direction = vector_direction(vec_extruded_mesh, vec_active_mesh)
+        
+        angle = angle_correction(angle, direction)
+        
+        angle_list.append(angle)
+        
+        i += 1
+    
+    return angle_list
+    
+def tilt_correction(angle_list, main_curve):
+    
+    i = 0
+    
+    spline = main_curve.data.spline[0]
+    
+    while i < len(angle_list):
+        
+        spline.bezier_points[i].tilt = angle_list[i]
+        
+        i += 1
+    
 def manager_mgcrv():
 
     active_object = bpy.context.active_object
@@ -204,18 +300,26 @@ def manager_mgcrv():
     bm = bmesh.from_edit_mesh(active_mesh)
     
     act_vert_index = active_vertex(bm)
-
+    
     bpy.ops.object.editmode_toggle()
 
     selected_edges_list = selected_edges(active_mesh)
     
     vertices_line_list = vertices_line(selected_edges_list, act_vert_index)
-    
+        
     main_curve = create_curve(vertices_line_list, active_object, active_mesh)
     
     extruded_curve = create_extruded_curve(main_curve)
     
     extruded_mesh = convert_curve_to_mesh(extruded_curve)
+    
+    extruded_mesh_vector_list = extruded_mesh_vector(extruded_mesh)
+    
+    active_mesh_vector_list = active_mesh_vector(active_mesh, vertices_line_list)
+    
+    angle_list = angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list)
+    
+    tilt_correction(angle_list, main_curve)
             
 def main():
     
