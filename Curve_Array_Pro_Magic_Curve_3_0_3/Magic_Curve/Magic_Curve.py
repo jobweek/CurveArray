@@ -144,13 +144,19 @@ def create_curve(vertices_line_list, active_object, active_mesh):
         spline.use_cyclic_u = True
     
     spline.points.add(len(vertices_line_list) - 1) 
-                
-    for i in vertices_line_list:
+    
+    i = 0
+               
+    while i < len(vertices_line_list):
         
-        spline.points[i].co[0] =  active_mesh.vertices[i].co[0]
-        spline.points[i].co[1] =  active_mesh.vertices[i].co[1]
-        spline.points[i].co[2] =  active_mesh.vertices[i].co[2]
+        mesh_vertex_index = vertices_line_list[i]
+        
+        spline.points[i].co[0] =  active_mesh.vertices[mesh_vertex_index].co[0]
+        spline.points[i].co[1] =  active_mesh.vertices[mesh_vertex_index].co[1]
+        spline.points[i].co[2] =  active_mesh.vertices[mesh_vertex_index].co[2]
         spline.points[i].co[3] =  0
+        
+        i += 1
         
     crv_obj = bpy.data.objects.new('MgCrv_curve', crv_mesh)
         
