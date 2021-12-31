@@ -172,6 +172,28 @@ def create_curve(vertices_line_list, active_object, active_mesh):
     
     return crv_obj
     
+def create_extruded_curve(main_curve):
+    
+    extruded_curve = main_curve.copy()
+    extruded_curve.data = main_curve.data.copy()
+    extruded_curve.name = 'MgCrv_duplicate'
+    extruded_curve.data.extrude = 1
+    bpy.context.scene.collection.objects.link(extruded_curve)
+    
+    return extruded_curve
+
+def convert_curve_to_mesh(extruded_curve):
+    
+    bpy.ops.object.select_all(action='DESELECT')
+    extruded_curve.select_set(True)
+    bpy.context.view_layer.objects.active =  extruded_curve
+    
+    bpy.ops.object.convert(target='MESH')
+    
+    extruded_mesh = bpy.context.active_object
+    
+    return extruded_mesh
+    
 def manager_mgcrv():
 
     active_object = bpy.context.active_object
@@ -189,8 +211,12 @@ def manager_mgcrv():
     
     vertices_line_list = vertices_line(selected_edges_list, act_vert_index)
     
-    curve = create_curve(vertices_line_list, active_object, active_mesh)
-        
+    main_curve = create_curve(vertices_line_list, active_object, active_mesh)
+    
+    extruded_curve = create_extruded_curve(main_curve)
+    
+    extruded_mesh = convert_curve_to_mesh(extruded_curve)
+            
 def main():
     
     try:
