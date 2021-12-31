@@ -123,7 +123,7 @@ def vertices_line(selected_edges_list, act_vert_index):
 def create_curve(vertices_line_list, active_object, active_mesh):
     
     def cyclic_check(vertices_line_list):
-        print(vertices_line_list[0], vertices_line_list[-1])
+        
         if vertices_line_list[0] == vertices_line_list[-1]:
             
             vertices_line_list.pop(-1)
@@ -144,20 +144,14 @@ def create_curve(vertices_line_list, active_object, active_mesh):
         spline.use_cyclic_u = True
     
     spline.points.add(len(vertices_line_list) - 1) 
-            
-    i = 0
-    
-    while i < len(vertices_line_list):
+                
+    for i in vertices_line_list:
         
-        mesh_vertex_index = vertices_line_list[i]
-        
-        spline.points[i].co[0] =  active_mesh.vertices[mesh_vertex_index].co[0]
-        spline.points[i].co[1] =  active_mesh.vertices[mesh_vertex_index].co[1]
-        spline.points[i].co[2] =  active_mesh.vertices[mesh_vertex_index].co[2]
+        spline.points[i].co[0] =  active_mesh.vertices[i].co[0]
+        spline.points[i].co[1] =  active_mesh.vertices[i].co[1]
+        spline.points[i].co[2] =  active_mesh.vertices[i].co[2]
         spline.points[i].co[3] =  0
-    
-        i += 1
-    
+        
     crv_obj = bpy.data.objects.new('MgCrv_curve', crv_mesh)
         
     crv_obj.location = active_object.location
