@@ -203,7 +203,7 @@ def extruded_mesh_vector(extruded_mesh, vetices_count):
     
     while i < vetices_count:
         
-        vector = mathutils.Vector((extruded_mesh.data.vertices[0 + i].co[0] - extruded_mesh.data.vertices[1 + i].co[0], extruded_mesh.data.vertices[0 + i].co[1] - extruded_mesh.data.vertices[1 + i].co[1], extruded_mesh.data.vertices[0 + i].co[2] - extruded_mesh.data.vertices[1 + i].co[2]))
+        vector = mathutils.Vector((extruded_mesh.data.vertices[1 + i].co[0] - extruded_mesh.data.vertices[0 + i].co[0], extruded_mesh.data.vertices[1 + i].co[1] - extruded_mesh.data.vertices[0 + i].co[1], extruded_mesh.data.vertices[1 + i].co[2] - extruded_mesh.data.vertices[0 + i].co[2]))
         
         extruded_mesh_vector_list.append(vector)
         
@@ -222,21 +222,45 @@ def active_mesh_vector(active_mesh, vertices_line_list):
         active_mesh_vector_list.append(vector)
     
     return active_mesh_vector_list
+
+def direction_vector(vertices_line_list, active_mesh):
     
-def angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list):
+    direction_vetor_list = []
+    
+    i = 0
+    
+    while i < len(vertices_line_list) - 1:
+        
+        first_vertex_index = vertices_line_list[i]
+        second_vertex_index = vertices_line_list[i + 1]
+            
+        first_vertex = active_mesh.vertices[first_vertex_index]
+        second_vertex = active_mesh.vertices[second_vertex_index]
+            
+        direction_vetor = mathutils.Vector((second_vertex.co[0] -  first_vertex.co[0], second_vertex.co[1] -  first_vertex.co[1], second_vertex.co[2] -  first_vertex.co[2]))
+            
+        direction_vetor_list.append(direction_vetor)
+        
+        i += 1
+    
+    direction_vetor_list.append(direction_vetor)
+    
+    return direction_vetor_list 
+    
+def angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list, direction_vetor_list):
     print('extruded_mesh_vector_list', extruded_mesh_vector_list)
     print('active_mesh_vector_list', active_mesh_vector_list)
-    def vector_direction(vec_extruded_mesh, vec_active_mesh):
-    
-        scalar  = vec_extruded_mesh[0]*vec_active_mesh[0] + vec_extruded_mesh[1]*vec_active_mesh[1] + vec_extruded_mesh[2]*vec_active_mesh[2]
+    def vector_direction(vec_direction, vec_active_mesh, vec_extruded_mesh):
+            
+        pseudoscalar  = vec_direction[0]*vec_active_mesh[1] - vec_direction[1]*vec_active_mesh[0]
         
-        if scalar > 0:
-            
-            direction = True
-            
-        elif scalar < 0:
+        if pseudoscalar > 0:
             
             direction = False
+            
+        elif pseudoscalar < 0:
+            
+            direction = True
             
         else:
         
@@ -268,9 +292,11 @@ def angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list):
         
         vec_active_mesh = active_mesh_vector_list[i]
         
-        angle = math.degrees(vec_extruded_mesh.angle(vec_active_mesh))
+        vec_direction = direction_vetor_list[i]
         
-        direction = vector_direction(vec_extruded_mesh, vec_active_mesh)
+        angle = vec_extruded_mesh.angle(vec_active_mesh)
+        
+        direction = vector_direction(vec_direction, vec_active_mesh, vec_extruded_mesh)
         
         angle = angle_correction(angle, direction)
         
@@ -319,7 +345,9 @@ def manager_mgcrv():
     
     active_mesh_vector_list = active_mesh_vector(active_mesh, vertices_line_list)
     
-    angle_list = angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list)
+    direction_vetor_list = direction_vector(vertices_line_list, active_mesh)
+    
+    angle_list = angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list, direction_vetor_list)
     
     tilt_correction(angle_list, main_curve)
     
