@@ -2,6 +2,7 @@ import bpy
 import bmesh
 import mathutils
 import copy
+import math
 
 class CancelError(Exception):
 
@@ -194,19 +195,19 @@ def convert_curve_to_mesh(extruded_curve):
     
     return extruded_mesh
     
-def extruded_mesh_vector(extruded_mesh):
+def extruded_mesh_vector(extruded_mesh, vetices_count):
     
     extruded_mesh_vector_list = []
     
     i = 0
     
-    while i < len(extruded_mesh_vector_list)/2:
+    while i < vetices_count:
         
-        vector = mathutils.Vector((extruded_mesh.data.vertices[0 + i] - extruded_mesh.data.vertices[1 + i]))
+        vector = mathutils.Vector((extruded_mesh.data.vertices[0 + i].co[0] - extruded_mesh.data.vertices[1 + i].co[0], extruded_mesh.data.vertices[0 + i].co[1] - extruded_mesh.data.vertices[1 + i].co[1], extruded_mesh.data.vertices[0 + i].co[2] - extruded_mesh.data.vertices[1 + i].co[2]))
         
         extruded_mesh_vector_list.append(vector)
         
-        i += 1
+        i += 2
     
     return extruded_mesh_vector_list
     
@@ -223,7 +224,8 @@ def active_mesh_vector(active_mesh, vertices_line_list):
     return active_mesh_vector_list
     
 def angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list):
-    
+    print('extruded_mesh_vector_list', extruded_mesh_vector_list)
+    print('active_mesh_vector_list', active_mesh_vector_list)
     def vector_direction(vec_extruded_mesh, vec_active_mesh):
     
         scalar  = vec_extruded_mesh[0]*vec_active_mesh[0] + vec_extruded_mesh[1]*vec_active_mesh[1] + vec_extruded_mesh[2]*vec_active_mesh[2]
@@ -252,7 +254,7 @@ def angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list):
             
             return angle * (-1)
                         
-        elif direction == None:
+        else:
             
             return 0    
             
@@ -266,7 +268,7 @@ def angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list):
         
         vec_active_mesh = active_mesh_vector_list[i]
         
-        angle = vec_extruded_mesh.angle(vec_active_mesh)
+        angle = math.degrees(vec_extruded_mesh.angle(vec_active_mesh))
         
         direction = vector_direction(vec_extruded_mesh, vec_active_mesh)
         
@@ -275,14 +277,14 @@ def angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list):
         angle_list.append(angle)
         
         i += 1
-    
+    print('angle_list', angle_list)
     return angle_list
     
 def tilt_correction(angle_list, main_curve):
     
     i = 0
     
-    spline = main_curve.data.spline[0]
+    spline = main_curve.data.splines[0]
     
     while i < len(angle_list):
         
@@ -313,13 +315,19 @@ def manager_mgcrv():
     
     extruded_mesh = convert_curve_to_mesh(extruded_curve)
     
-    extruded_mesh_vector_list = extruded_mesh_vector(extruded_mesh)
+    extruded_mesh_vector_list = extruded_mesh_vector(extruded_mesh, len(vertices_line_list)*2)
     
     active_mesh_vector_list = active_mesh_vector(active_mesh, vertices_line_list)
     
     angle_list = angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list)
     
     tilt_correction(angle_list, main_curve)
+    
+    bpy.data.objects.remove(extruded_mesh, do_unlink=True)
+    
+    bpy.ops.object.select_all(action='DESELECT') 
+    main_curve.select_set(True)
+    bpy.context.view_layer.objects.active = main_curve
             
 def main():
     
