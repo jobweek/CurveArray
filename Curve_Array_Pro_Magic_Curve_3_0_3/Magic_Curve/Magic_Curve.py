@@ -137,7 +137,7 @@ def create_curve(vertices_line_list, active_object, active_mesh):
     
     crv_mesh = bpy.data.curves.new('MgCrv_curve', 'CURVE')
     crv_mesh.dimensions = '3D'
-    crv_mesh.twist_mode = 'Z_UP'        
+    crv_mesh.twist_mode = 'MINIMUM'        
     spline = crv_mesh.splines.new(type='POLY')
     
     if cyclic_check(vertices_line_list) == True:
@@ -239,48 +239,33 @@ def direction_vector(vertices_line_list, active_mesh):
             
         direction_vetor = mathutils.Vector((second_vertex.co[0] -  first_vertex.co[0], second_vertex.co[1] -  first_vertex.co[1], second_vertex.co[2] -  first_vertex.co[2]))
             
-        direction_vetor_list.append(direction_vetor)
+        direction_vetor_list.append(direction_vetor.normalized())
         
         i += 1
     
-    direction_vetor_list.append(direction_vetor)
+    direction_vetor_list.append(direction_vetor.normalized())
     
     return direction_vetor_list 
     
 def angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list, direction_vetor_list):
-    print('extruded_mesh_vector_list', extruded_mesh_vector_list)
-    print('active_mesh_vector_list', active_mesh_vector_list)
-    def vector_direction(vec_direction, vec_active_mesh, vec_extruded_mesh):
-            
-        pseudoscalar  = vec_direction[0]*vec_active_mesh[1] - vec_direction[1]*vec_active_mesh[0]
-        
-        if pseudoscalar > 0:
-            
-            direction = False
-            
-        elif pseudoscalar < 0:
-            
-            direction = True
-            
-        else:
-        
-            direction = None
-            
-        return direction
     
-    def angle_correction(angle, direction):
+    def angle_correction(angle, cross_vector, vec_active_mesh):
         
-        if direction == True:
-                    
+        direction_angle = cross_vector.angle(vec_active_mesh)
+        
+        print('direction_angle', direction_angle)
+        
+        if direction_angle < math.pi/2:
+            
             return angle
-                        
-        elif direction == False:
+        
+        elif direction_angle > math.pi/2:
             
             return angle * (-1)
-                        
+        
         else:
             
-            return 0    
+            return angle
             
     angle_list = []
     
@@ -294,12 +279,26 @@ def angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list, dir
         
         vec_direction = direction_vetor_list[i]
         
-        angle = vec_extruded_mesh.angle(vec_active_mesh)
+        projection = vec_active_mesh.project(vec_direction)
+        correct_vec_active_mesh = vec_active_mesh - projection
         
-        direction = vector_direction(vec_direction, vec_active_mesh, vec_extruded_mesh)
+        projection = vec_extruded_mesh.project(vec_direction)
+        correct_vec_extruded_mesh = vec_extruded_mesh - projection
+                
+        angle = correct_vec_extruded_mesh.angle(correct_vec_active_mesh)
         
-        angle = angle_correction(angle, direction)
+        cross_vector = vec_direction.cross(correct_vec_extruded_mesh)
         
+        print('VERTEX:', i)
+        print('vec_extruded_mesh', vec_extruded_mesh)
+        print('vec_active_mesh', vec_active_mesh)
+        print('vec_direction', vec_direction)
+        print('correct_vec_active_mesh', correct_vec_active_mesh)
+        print('correct_vec_extruded_mesh', correct_vec_extruded_mesh)
+        print('cross_vector', cross_vector)
+                
+        angle = angle_correction(angle, cross_vector, vec_active_mesh)
+                
         angle_list.append(angle)
         
         i += 1
@@ -351,7 +350,7 @@ def manager_mgcrv():
     
     tilt_correction(angle_list, main_curve)
     
-    bpy.data.objects.remove(extruded_mesh, do_unlink=True)
+    #bpy.data.objects.remove(extruded_mesh, do_unlink=True)
     
     bpy.ops.object.select_all(action='DESELECT') 
     main_curve.select_set(True)
