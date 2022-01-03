@@ -3,6 +3,7 @@ import bmesh
 import mathutils
 import copy
 import math
+import collections
 
 class CancelError(Exception):
 
@@ -49,6 +50,22 @@ class Checker():
         self.__mode_checker
             
 ckecker = Checker()
+
+class Cyclic_Curve():
+    
+    def __init__(self):
+    
+        self.cyclic = None
+        
+    def get(self):
+                
+        return self.cyclic
+    
+    def set(self, input):
+        
+        self.cyclic = input
+
+cyclic_curve = Cyclic_Curve()
 
 def active_vertex(bm):
     
@@ -129,6 +146,8 @@ def create_curve(vertices_line_list, active_object, active_mesh):
             
             vertices_line_list.pop(-1)
             
+            cyclic_curve.set(True)
+            
             return True
         
         else:
@@ -178,6 +197,7 @@ def create_extruded_curve(main_curve):
     extruded_curve = main_curve.copy()
     extruded_curve.data = main_curve.data.copy()
     extruded_curve.name = 'MgCrv_duplicate'
+    extruded_curve.data.name = 'MgCrv_duplicate'
     extruded_curve.data.extrude = 0.5
     bpy.context.scene.collection.objects.link(extruded_curve)
     
@@ -197,18 +217,41 @@ def convert_curve_to_mesh(extruded_curve):
     
 def extruded_mesh_vector(extruded_mesh, vetices_count):
     
-    extruded_mesh_vector_list = []
+    def extruded_mesh_vertices(extruded_mesh, vetices_count):
     
-    i = 0
-    
-    while i < vetices_count:
+        extruded_mesh_vertices_list = []
         
-        vector = mathutils.Vector((extruded_mesh.data.vertices[1 + i].co[0] - extruded_mesh.data.vertices[0 + i].co[0], extruded_mesh.data.vertices[1 + i].co[1] - extruded_mesh.data.vertices[0 + i].co[1], extruded_mesh.data.vertices[1 + i].co[2] - extruded_mesh.data.vertices[0 + i].co[2]))
+        i = 0
+
+        while i < vetices_count:
+            
+            points = [extruded_mesh.data.vertices[0 + i], extruded_mesh.data.vertices[1 + i]]
+            
+            extruded_mesh_vertices_list.append(points)
+            
+            i += 2
+
+        if cyclic_curve.get() == True:
+            
+            deque_list = collections.deque(extruded_mesh_vertices_list)         
+            deque_list.extend([deque_list.popleft()])
+            
+            extruded_mesh_vertices_list = list(deque_list)
+
+        return extruded_mesh_vertices_list
+    
+    extruded_mesh_vertices_list = extruded_mesh_vertices(extruded_mesh, vetices_count)
+    extruded_mesh_vector_list = []
+
+    for i in extruded_mesh_vertices_list:
+
+        firts = i[0]
+        second = i[1]
+        
+        vector = mathutils.Vector((second.co[0] - firts.co[0], second.co[1] - firts.co[1], second.co[2] - firts.co[2]))
         
         extruded_mesh_vector_list.append(vector)
-        
-        i += 2
-    
+            
     return extruded_mesh_vector_list
     
 def active_mesh_vector(active_mesh, vertices_line_list):
@@ -252,9 +295,7 @@ def angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list, dir
     def angle_correction(angle, cross_vector, vec_active_mesh):
         
         direction_angle = cross_vector.angle(vec_active_mesh)
-        
-        print('direction_angle', direction_angle)
-        
+                
         if direction_angle < math.pi/2:
             
             return angle
@@ -279,6 +320,11 @@ def angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list, dir
         
         vec_direction = direction_vetor_list[i]
         
+        print('VERTEX:', i)
+        print('vec_extruded_mesh', vec_extruded_mesh)
+        print('vec_active_mesh', vec_active_mesh)
+        print('vec_direction', vec_direction)
+        
         projection = vec_active_mesh.project(vec_direction)
         correct_vec_active_mesh = vec_active_mesh - projection
         
@@ -289,10 +335,6 @@ def angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list, dir
         
         cross_vector = vec_direction.cross(correct_vec_extruded_mesh)
         
-        print('VERTEX:', i)
-        print('vec_extruded_mesh', vec_extruded_mesh)
-        print('vec_active_mesh', vec_active_mesh)
-        print('vec_direction', vec_direction)
         print('correct_vec_active_mesh', correct_vec_active_mesh)
         print('correct_vec_extruded_mesh', correct_vec_extruded_mesh)
         print('cross_vector', cross_vector)
@@ -323,7 +365,7 @@ def manager_mgcrv():
     active_mesh = active_object.data
 
     ckecker.start_checker
-
+        
     bm = bmesh.from_edit_mesh(active_mesh)
     
     act_vert_index = active_vertex(bm)
@@ -333,15 +375,15 @@ def manager_mgcrv():
     selected_edges_list = selected_edges(active_mesh)
     
     vertices_line_list = vertices_line(selected_edges_list, act_vert_index)
-        
+            
     main_curve = create_curve(vertices_line_list, active_object, active_mesh)
-    
+        
     extruded_curve = create_extruded_curve(main_curve)
     
     extruded_mesh = convert_curve_to_mesh(extruded_curve)
     
     extruded_mesh_vector_list = extruded_mesh_vector(extruded_mesh, len(vertices_line_list)*2)
-    
+
     active_mesh_vector_list = active_mesh_vector(active_mesh, vertices_line_list)
     
     direction_vetor_list = direction_vector(vertices_line_list, active_mesh)
@@ -350,7 +392,7 @@ def manager_mgcrv():
     
     tilt_correction(angle_list, main_curve)
     
-    #bpy.data.objects.remove(extruded_mesh, do_unlink=True)
+    bpy.data.objects.remove(extruded_mesh, do_unlink=True)
     
     bpy.ops.object.select_all(action='DESELECT') 
     main_curve.select_set(True)
