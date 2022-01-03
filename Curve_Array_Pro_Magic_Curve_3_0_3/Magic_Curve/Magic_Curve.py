@@ -3,7 +3,6 @@ import bmesh
 import mathutils
 import copy
 import math
-import collections
 
 class CancelError(Exception):
 
@@ -145,21 +144,22 @@ def create_curve(vertices_line_list, active_object, active_mesh):
         if vertices_line_list[0] == vertices_line_list[-1]:
             
             vertices_line_list.pop(-1)
+             
+            vertices_line_list.extend([vertices_line_list.pop(0)])
             
             cyclic_curve.set(True)
-            
-            return True
-        
+                    
         else:
             
-            return False
+            cyclic_curve.set(False)
     
+    cyclic_check(vertices_line_list)
     crv_mesh = bpy.data.curves.new('MgCrv_curve', 'CURVE')
     crv_mesh.dimensions = '3D'
     crv_mesh.twist_mode = 'MINIMUM'        
     spline = crv_mesh.splines.new(type='POLY')
     
-    if cyclic_check(vertices_line_list) == True:
+    if cyclic_curve.get() == True:
         
         spline.use_cyclic_u = True
     
@@ -230,14 +230,11 @@ def extruded_mesh_vector(extruded_mesh, vetices_count):
             extruded_mesh_vertices_list.append(points)
             
             i += 2
-
+            
         if cyclic_curve.get() == True:
+               
+            extruded_mesh_vertices_list.extend([extruded_mesh_vertices_list.pop(0)])
             
-            deque_list = collections.deque(extruded_mesh_vertices_list)         
-            deque_list.extend([deque_list.popleft()])
-            
-            extruded_mesh_vertices_list = list(deque_list)
-
         return extruded_mesh_vertices_list
     
     extruded_mesh_vertices_list = extruded_mesh_vertices(extruded_mesh, vetices_count)
@@ -319,12 +316,7 @@ def angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list, dir
         vec_active_mesh = active_mesh_vector_list[i]
         
         vec_direction = direction_vetor_list[i]
-        
-        print('VERTEX:', i)
-        print('vec_extruded_mesh', vec_extruded_mesh)
-        print('vec_active_mesh', vec_active_mesh)
-        print('vec_direction', vec_direction)
-        
+                                
         projection = vec_active_mesh.project(vec_direction)
         correct_vec_active_mesh = vec_active_mesh - projection
         
@@ -332,19 +324,15 @@ def angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list, dir
         correct_vec_extruded_mesh = vec_extruded_mesh - projection
                 
         angle = correct_vec_extruded_mesh.angle(correct_vec_active_mesh)
-        
+                
         cross_vector = vec_direction.cross(correct_vec_extruded_mesh)
-        
-        print('correct_vec_active_mesh', correct_vec_active_mesh)
-        print('correct_vec_extruded_mesh', correct_vec_extruded_mesh)
-        print('cross_vector', cross_vector)
-                
+                        
         angle = angle_correction(angle, cross_vector, vec_active_mesh)
-                
+
         angle_list.append(angle)
         
         i += 1
-    print('angle_list', angle_list)
+
     return angle_list
     
 def tilt_correction(angle_list, main_curve):
