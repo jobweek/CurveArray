@@ -1,142 +1,11 @@
 import bpy
 import bmesh
 import mathutils
-import copy
 import math
+from .Errors import CancelError, ShowMessageBox
+from .Classes import ckecker, cyclic_curve
+from First_Step import first_step
 
-class CancelError(Exception):
-
-    pass
-
-def ShowMessageBox(title, message, icon):
-
-    def draw(self, context):
-        self.layout.label(text = message)
-
-    bpy.context.window_manager.popup_menu(draw, title=title, icon=icon)
-
-class Checker():
-
-    def __object_checker(self):
-        
-        object = bpy.context.active_object
-        
-        if object == None:
-            
-            ShowMessageBox("Error","Select object", 'ERROR')
-            
-            raise CancelError
-
-        if object.type != 'MESH':
-            
-            ShowMessageBox("Error","Object shoud be mesh", 'ERROR')
-            
-            raise CancelError  
-    
-    def __mode_checker(self):
-            
-        mode = bpy.context.active_object.mode
-        
-        if mode != 'EDIT':
-            
-            ShowMessageBox("Error","Go to Edit Mode", 'ERROR')
-            
-            raise CancelError
-        
-    def start_checker(self):
-        
-        self.__object_checker
-        self.__mode_checker
-            
-ckecker = Checker()
-
-class Cyclic_Curve():
-    
-    def __init__(self):
-    
-        self.cyclic = None
-        
-    def get(self):
-                
-        return self.cyclic
-    
-    def set(self, input):
-        
-        self.cyclic = input
-
-cyclic_curve = Cyclic_Curve()
-
-def active_vertex(bm):
-    
-    try:
-        
-        act_vert_index = bm.select_history.active.index
-        
-        return act_vert_index
-
-    except:
-        
-        ShowMessageBox("Error","The active vertex must be selected", 'ERROR')
-        
-        raise CancelError
-  
-def selected_edges(active_mesh):
-    
-    selected_edges_list = []
-    
-    for i in active_mesh.edges:
-        
-        if i.select:
-            
-            selected_edges_list.append(i)   
-            
-    if len(selected_edges_list) < 1:
-        
-        ShowMessageBox("Error","Select two or more vertices", 'ERROR')
-        
-        raise CancelError
-    
-    else:
-    
-        return selected_edges_list
-  
-def vertices_line(selected_edges_list, act_vert_index):
-    
-    def vertex_search(edges_list, searched_vertex):
-        
-        for i in edges_list:
-            
-            if i.vertices[0] == searched_vertex: 
-                
-                return i, i.vertices[1]
-            
-            elif i.vertices[1] == searched_vertex:
-                
-                return i, i.vertices[0]
-                
-        ShowMessageBox("Error","Select only one loop, or a line segment from connected edges, without intersection, and activate start point at one end", 'ERROR')
-
-        raise CancelError
-        
-    edges_list = copy.copy(selected_edges_list)
-    vertices_line_list = [act_vert_index]
-    searched_vertex = act_vert_index
-    
-    for _ in selected_edges_list:
-        
-        edge, searched_vertex = vertex_search(edges_list, searched_vertex)
-        
-        vertices_line_list.append(searched_vertex)
-        edges_list.remove(edge)
-            
-    if len(edges_list) != 0:
-        
-        ShowMessageBox("Error","Select only one loop, or a line segment from connected edges, without intersection, and activate start point at one end", 'ERROR')
-
-        raise CancelError
-    
-    return vertices_line_list
-    
 def create_curve(vertices_line_list, active_object, active_mesh):
     
     def cyclic_check(vertices_line_list):
@@ -347,22 +216,9 @@ def tilt_correction(angle_list, main_curve):
         
         i += 1
     
-def manager_mgcrv():
-
-    active_object = bpy.context.active_object
-    active_mesh = active_object.data
-
-    ckecker.start_checker
-        
-    bm = bmesh.from_edit_mesh(active_mesh)
+def manager_smooth_curve():
     
-    act_vert_index = active_vertex(bm)
-    
-    bpy.ops.object.editmode_toggle()
-
-    selected_edges_list = selected_edges(active_mesh)
-    
-    vertices_line_list = vertices_line(selected_edges_list, act_vert_index)
+    active_object, active_mesh, vertices_line_list = first_step()
             
     main_curve = create_curve(vertices_line_list, active_object, active_mesh)
         
@@ -385,12 +241,17 @@ def manager_mgcrv():
     bpy.ops.object.select_all(action='DESELECT') 
     main_curve.select_set(True)
     bpy.context.view_layer.objects.active = main_curve
+        
+def manager_strong_curve():
+    
+    active_object, active_mesh, vertices_line_list = first_step()
             
 def main():
     
     try:
         
-        manager_mgcrv()
+        manager_smooth_curve()
+        #manager_strong_curve()
     
     except CancelError:
         
