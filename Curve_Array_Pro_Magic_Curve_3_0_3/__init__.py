@@ -18,13 +18,10 @@ Created by JobWeek
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-
-
-
 bl_info = {
     "name":"CurveArrayPro + MagicCurve",
     "author":"JobWeek",
-    "version":(3, 0, 2),
+    "version":(4, 0, 0),
     "blender":(3, 0, 0),
     "location":"View3d > Tool",
     "warning":"",
