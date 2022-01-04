@@ -63,10 +63,8 @@ from .props.curve_array_props import (
     Main_Props
 )
 
-from .magic_curve_3_0 import (
-    MAGICCURVE_PT_mgcrv_panel,
-    MAGICCURVE_OT_mgcrv_main
-)
+from .Magic_Curve.Magic_Curve_Ops import MAGICCURVE_OT_mgcrv_ops
+from .Magic_Curve.Magic_Curve_Panel import MAGICCURVE_PT_mgcrv_panel
 
 classes = (
     Main_Props,
@@ -89,7 +87,7 @@ classes = (
     CRVARRPRO_PT_MainPanel,
     CRVARRPRO_OT_MakeIt,
     MAGICCURVE_PT_mgcrv_panel,
-    MAGICCURVE_OT_mgcrv_main,
+    MAGICCURVE_OT_mgcrv_ops,
     CRVARRPRO_PT_ButtonPanel,
     CRVARRPRO_OT_Delete_Last_Array,
     CRVARRPRO_OT_Reset_Settings,

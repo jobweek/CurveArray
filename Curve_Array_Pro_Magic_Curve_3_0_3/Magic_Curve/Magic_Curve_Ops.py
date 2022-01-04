@@ -4,7 +4,7 @@ import mathutils
 import math
 from .Errors import CancelError, ShowMessageBox
 from .Classes import ckecker, cyclic_curve
-from First_Step import first_step
+from .First_Step import first_step
 
 def create_curve(vertices_line_list, active_object, active_mesh):
     
@@ -245,22 +245,39 @@ def manager_smooth_curve():
 def manager_strong_curve():
     
     active_object, active_mesh, vertices_line_list = first_step()
+             
+class MAGICCURVE_OT_mgcrv_ops(bpy.types.Operator):
+    '''Clear selected curve'''
+    bl_label = "Curve from loop"
+    bl_idname = 'magiccurve.mgcrv_ops'
+    bl_options = {'REGISTER', 'UNDO'}
+        
+    curve_type : bpy.props.BoolProperty(
+        name = "curve_type",
+        description="Type of algoritm",
+        default = False
+        )
+        
+    def execute(self,context):
+ 
+        try:
             
-def main():
-    
-    try:
+            if self.curve_type == False:
+            
+                manager_smooth_curve()
+            
+            else:
+                
+                manager_strong_curve()
         
-        manager_smooth_curve()
-        #manager_strong_curve()
-    
-    except CancelError:
-        
-        return {'CANCELLED'}
+        except CancelError:
+            
+            return {'CANCELLED'}
 
-    # except Exception as e:
-        
-    #     ShowMessageBox("Unkown Error", "Please send me this report:", e, 'ERROR')
-        
-    #     return {'CANCELLED'}
-
-main()
+        # except Exception as e:
+            
+        #     ShowMessageBox("Unkown Error", "Please send me this report:", e, 'ERROR')
+            
+        #     return {'CANCELLED'}       
+ 
+        return {'FINISHED'}
