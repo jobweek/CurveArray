@@ -3,7 +3,7 @@ import bmesh
 import mathutils
 import copy
 from .Errors import CancelError, ShowMessageBox
-from .Classes import ckecker, cyclic_curve
+from .Classes import checker, cyclic_curve
 
 def active_vertex(bm):
     
@@ -81,7 +81,7 @@ def first_step():
     active_object = bpy.context.active_object
     active_mesh = active_object.data
 
-    ckecker.start_checker
+    checker.start_checker()
         
     bm = bmesh.from_edit_mesh(active_mesh)
     

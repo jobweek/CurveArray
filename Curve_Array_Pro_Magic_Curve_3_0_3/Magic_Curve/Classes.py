@@ -5,15 +5,21 @@ class Checker():
 
     def __object_checker(self):
         
-        object = bpy.context.active_object
+        objects = bpy.context.selected_objects
         
-        if object == None:
+        if len(objects) == 0:
             
             ShowMessageBox("Error","Select object", 'ERROR')
             
             raise CancelError
+        
+        elif len(objects) > 1:
 
-        if object.type != 'MESH':
+            ShowMessageBox("Error","Select only one object", 'ERROR')
+            
+            raise CancelError
+
+        if objects[0].type != 'MESH':
             
             ShowMessageBox("Error","Object shoud be mesh", 'ERROR')
             
@@ -31,11 +37,11 @@ class Checker():
         
     def start_checker(self):
         
-        self.__object_checker
-        self.__mode_checker
+        self.__object_checker()
+        self.__mode_checker()
+        
+checker = Checker()
             
-ckecker = Checker()
-
 class Cyclic_Curve():
     
     def __init__(self):

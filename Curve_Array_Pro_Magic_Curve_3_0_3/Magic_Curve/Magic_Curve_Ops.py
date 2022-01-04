@@ -3,7 +3,7 @@ import bmesh
 import mathutils
 import math
 from .Errors import CancelError, ShowMessageBox
-from .Classes import ckecker, cyclic_curve
+from .Classes import checker, cyclic_curve
 from .First_Step import first_step
 
 def create_curve(vertices_line_list, active_object, active_mesh):
@@ -217,7 +217,7 @@ def tilt_correction(angle_list, main_curve):
         i += 1
     
 def manager_smooth_curve():
-    
+        
     active_object, active_mesh, vertices_line_list = first_step()
             
     main_curve = create_curve(vertices_line_list, active_object, active_mesh)
@@ -253,7 +253,7 @@ class MAGICCURVE_OT_mgcrv_ops(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
         
     curve_type : bpy.props.BoolProperty(
-        name = "curve_type",
+        name = "Strong Curve",
         description="Type of algoritm",
         default = False
         )
