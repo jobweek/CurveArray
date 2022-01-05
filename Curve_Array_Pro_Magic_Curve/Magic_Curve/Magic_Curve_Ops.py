@@ -79,10 +79,10 @@ class MAGICCURVE_OT_mgcrv_ops(bpy.types.Operator):
             
             return {'CANCELLED'}
 
-        # except Exception as e:
+        except Exception as e:
             
-        #     ShowMessageBox("Unkown Error", "Please send me this report:", e, 'ERROR')
+            ShowMessageBox("Unkown Error", "Please send me this report:", e, 'ERROR')
             
-        #     return {'CANCELLED'}       
+            return {'CANCELLED'}       
  
         
