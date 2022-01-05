@@ -14,12 +14,13 @@ from .Smooth_Curve import (
     angle_between_vector as Smooth_angle_between_vector,
     tilt_correction as Smooth_tilt_correction
 )
- 
-import Smooth_Curve
+from .Strong_Curve import (
+    create_curve as Strong_create_curve, 
+)
  
 def manager_smooth_curve():
         
-    active_object, active_mesh, vertices_line_list = first_step()
+    vertices_line_list, active_object, active_mesh = first_step()
             
     main_curve = Smooth_create_curve(vertices_line_list, active_object, active_mesh)
         
@@ -45,7 +46,10 @@ def manager_smooth_curve():
         
 def manager_strong_curve():
     
-    active_object, active_mesh, vertices_line_list = first_step()
+    vertices_line_list, active_object, active_mesh  = first_step()
+    
+    main_curve = Strong_create_curve(vertices_line_list, active_object, active_mesh)
+    
              
 class MAGICCURVE_OT_mgcrv_ops(bpy.types.Operator):
     '''Clear selected curve'''

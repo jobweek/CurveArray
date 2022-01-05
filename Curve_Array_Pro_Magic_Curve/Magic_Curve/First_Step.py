@@ -93,4 +93,4 @@ def first_step():
     
     vertices_line_list = vertices_line(selected_edges_list, act_vert_index)
         
-    return active_object, active_mesh, vertices_line_list
+    return vertices_line_list, active_object, active_mesh
