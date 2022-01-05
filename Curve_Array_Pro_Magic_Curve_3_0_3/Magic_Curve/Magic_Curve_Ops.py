@@ -3,11 +3,30 @@ import bmesh
 import mathutils
 import math
 from .Errors import CancelError, ShowMessageBox
-from .Classes import checker, cyclic_curve
 from .First_Step import first_step
 
 def create_curve(vertices_line_list, active_object, active_mesh):
     
+    class Main_Curve:
+        
+        def set_curve(self, curve):
+            
+            self.curve = curve
+        
+        def get_curve(self):
+            
+            return self.curve
+        
+        def set_cyclic(self, cyclic):
+            
+            self.cyclic = cyclic
+            
+        def get_cyclic(self):
+            
+            return self.cyclic
+                
+    main_curve = Main_Curve()
+                
     def cyclic_check(vertices_line_list):
         
         if vertices_line_list[0] == vertices_line_list[-1]:
@@ -16,11 +35,11 @@ def create_curve(vertices_line_list, active_object, active_mesh):
              
             vertices_line_list.extend([vertices_line_list.pop(0)])
             
-            cyclic_curve.set(True)
+            main_curve.set_cyclic(True)
                     
         else:
             
-            cyclic_curve.set(False)
+            main_curve.set_cyclic(False)
     
     cyclic_check(vertices_line_list)
     crv_mesh = bpy.data.curves.new('MgCrv_curve', 'CURVE')
@@ -28,7 +47,7 @@ def create_curve(vertices_line_list, active_object, active_mesh):
     crv_mesh.twist_mode = 'MINIMUM'        
     spline = crv_mesh.splines.new(type='POLY')
     
-    if cyclic_curve.get() == True:
+    if main_curve.get_cyclic() == True:
         
         spline.use_cyclic_u = True
     
@@ -59,12 +78,14 @@ def create_curve(vertices_line_list, active_object, active_mesh):
     
     spline.type = 'BEZIER'
     
-    return crv_obj
+    main_curve.set_curve(crv_obj)
+    
+    return main_curve
     
 def create_extruded_curve(main_curve):
-    
-    extruded_curve = main_curve.copy()
-    extruded_curve.data = main_curve.data.copy()
+        
+    extruded_curve = main_curve.get_curve().copy()
+    extruded_curve.data = main_curve.get_curve().data.copy()
     extruded_curve.name = 'MgCrv_duplicate'
     extruded_curve.data.name = 'MgCrv_duplicate'
     extruded_curve.data.extrude = 0.5
@@ -84,7 +105,7 @@ def convert_curve_to_mesh(extruded_curve):
     
     return extruded_mesh
     
-def extruded_mesh_vector(extruded_mesh, vetices_count):
+def extruded_mesh_vector(extruded_mesh, vetices_count, main_curve):
     
     def extruded_mesh_vertices(extruded_mesh, vetices_count):
     
@@ -100,7 +121,7 @@ def extruded_mesh_vector(extruded_mesh, vetices_count):
             
             i += 2
             
-        if cyclic_curve.get() == True:
+        if main_curve.get_cyclic() == True:
                
             extruded_mesh_vertices_list.extend([extruded_mesh_vertices_list.pop(0)])
             
@@ -208,7 +229,7 @@ def tilt_correction(angle_list, main_curve):
     
     i = 0
     
-    spline = main_curve.data.splines[0]
+    spline = main_curve.get_curve().data.splines[0]
     
     while i < len(angle_list):
         
@@ -226,7 +247,7 @@ def manager_smooth_curve():
     
     extruded_mesh = convert_curve_to_mesh(extruded_curve)
     
-    extruded_mesh_vector_list = extruded_mesh_vector(extruded_mesh, len(vertices_line_list)*2)
+    extruded_mesh_vector_list = extruded_mesh_vector(extruded_mesh, len(vertices_line_list)*2, main_curve)
 
     active_mesh_vector_list = active_mesh_vector(active_mesh, vertices_line_list)
     
@@ -239,8 +260,8 @@ def manager_smooth_curve():
     bpy.data.objects.remove(extruded_mesh, do_unlink=True)
     
     bpy.ops.object.select_all(action='DESELECT') 
-    main_curve.select_set(True)
-    bpy.context.view_layer.objects.active = main_curve
+    main_curve.get_curve().select_set(True)
+    bpy.context.view_layer.objects.active = main_curve.get_curve()
         
 def manager_strong_curve():
     
