@@ -84,8 +84,8 @@ def create_extruded_curve(main_curve):
         
     extruded_curve = main_curve.get_curve().copy()
     extruded_curve.data = main_curve.get_curve().data.copy()
-    extruded_curve.name = 'MgCrv_duplicate'
-    extruded_curve.data.name = 'MgCrv_duplicate'
+    extruded_curve.name = 'MgCrv_duplicate_smooth'
+    extruded_curve.data.name = 'MgCrv_duplicate_smooth'
     extruded_curve.data.extrude = 0.5
     bpy.context.scene.collection.objects.link(extruded_curve)
     

@@ -16,6 +16,7 @@ from .Smooth_Curve import (
 )
 from .Strong_Curve import (
     create_curve as Strong_create_curve, 
+    create_extruded_curve as Strong_create_extruded_curve,
 )
  
 def manager_smooth_curve():
@@ -49,6 +50,8 @@ def manager_strong_curve():
     vertices_line_list, active_object, active_mesh  = first_step()
     
     main_curve = Strong_create_curve(vertices_line_list, active_object, active_mesh)
+    
+    extruded_curve = Strong_create_extruded_curve(main_curve)
     
              
 class MAGICCURVE_OT_mgcrv_ops(bpy.types.Operator):
