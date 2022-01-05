@@ -69,7 +69,9 @@ def create_curve(vertices_line_list, active_object, active_mesh):
   
     bpy.context.scene.collection.objects.link(crv_obj)
     
-    spline.type = 'BEZIER'
+    for spline in crv_mesh.splines:
+    
+        spline.type = 'BEZIER'
     
     main_curve.set_curve(crv_obj)
     
