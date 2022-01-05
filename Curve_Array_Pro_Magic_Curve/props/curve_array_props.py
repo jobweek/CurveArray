@@ -4,7 +4,7 @@ rng = 20
 
 def update_func(self, context):
 
-    from Curve_Array_Pro_Magic_Curve_3_0_3.engine.functions import (
+    from Curve_Array_Pro_Magic_Curve.engine.functions import (
     object_list
     )
 
@@ -12,7 +12,7 @@ def update_func(self, context):
 
 def update_transform(self, context):
 
-    from Curve_Array_Pro_Magic_Curve_3_0_3.engine.functions import (
+    from Curve_Array_Pro_Magic_Curve.engine.functions import (
     transform_editor
     )
 

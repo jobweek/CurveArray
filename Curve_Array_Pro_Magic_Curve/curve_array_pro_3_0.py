@@ -1,14 +1,3 @@
-bl_info = {
-    "name":"Curve Array Pro",
-    "author":"JobWeek",
-    "version":(3, 0, 2),
-    "blender":(3, 0, 0),
-    "location":"View3d > Tool",
-    "warning":"",
-    "wiki_url":"https://jobweek.bit.ai/docs/view/JZbQGc7JokXJuaS2",
-    "category":"3D View"
-}
-
 import bpy
 import bmesh
 import mathutils
