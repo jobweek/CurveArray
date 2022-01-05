@@ -14,6 +14,7 @@ from .Strong_Curve import (
     create_curve as Strong_create_curve,
     extruded_mesh_vector as Strong_extruded_mesh_vector,
     angle_between_vector as Strong_angle_between_vector,
+    tilt_correction as Strong_tilt_correction
 )
  
 def manager_smooth_curve():
@@ -43,6 +44,8 @@ def manager_strong_curve():
     extruded_mesh_vector_list = Strong_extruded_mesh_vector(extruded_mesh, len(vertices_line_list) - 1)
     
     angle_list = Strong_angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list, direction_vetor_list)
+    
+    Strong_tilt_correction(angle_list, main_curve)
     
     final_step(extruded_mesh, main_curve)
                  

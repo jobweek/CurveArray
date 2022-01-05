@@ -127,34 +127,55 @@ def angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list, dir
             
             return angle
             
+    def corrcet_vec(vec, vec_direction):
+            
+        projection = vec.project(vec_direction)
+        correct_vec = vec - projection    
+        
+        return correct_vec
+        
     angle_list = []
     
     i = 0
     
-    while i < len(extruded_mesh_vector_list) - 1:
+    while i < len(extruded_mesh_vector_list):
         
         vec_extruded_mesh = extruded_mesh_vector_list[i]
-        vec_active_mesh = active_mesh_vector_list[i]
+        vec_active_mesh_first = active_mesh_vector_list[i]
+        vec_active_mesh_second = active_mesh_vector_list[i + 1]
         vec_direction = direction_vetor_list[i]
                
-        print('vec_extruded_mesh', vec_extruded_mesh)
-        print('vec_active_mesh', vec_active_mesh)
-        print('vec_direction', vec_direction)
-                                
-        projection = vec_active_mesh.project(vec_direction)
-        correct_vec_active_mesh = vec_active_mesh - projection
+        correct_vec_active_mesh_first = corrcet_vec(vec_active_mesh_first, vec_direction)
+        correct_vec_active_mesh_second = corrcet_vec(vec_active_mesh_second, vec_direction)
         
-        projection = vec_extruded_mesh.project(vec_direction)
-        correct_vec_extruded_mesh = vec_extruded_mesh - projection
+        correct_vec_extruded_mesh = corrcet_vec(vec_extruded_mesh, vec_direction)
                 
-        angle = correct_vec_extruded_mesh.angle(correct_vec_active_mesh)
+        angle_first = correct_vec_extruded_mesh.angle(correct_vec_active_mesh_first)
+        angle_second = correct_vec_extruded_mesh.angle(correct_vec_active_mesh_second)
                 
         cross_vector = vec_direction.cross(correct_vec_extruded_mesh)
                         
-        angle = angle_correction(angle, cross_vector, vec_active_mesh)
+        angle_first = angle_correction(angle_first, cross_vector, vec_active_mesh_first)
+        angle_second = angle_correction(angle_second, cross_vector, vec_active_mesh_second)
 
-        angle_list.append(angle)
+        angle_list.append([angle_first, angle_second])
         
         i += 1
 
     return angle_list
+
+def tilt_correction(angle_list, main_curve):
+    
+    i = 0
+    
+    while i < len(main_curve.get_curve().data.splines):
+    
+        spline = main_curve.get_curve().data.splines[i]
+        
+        angle_spine_list = angle_list[i]
+        
+        spline.bezier_points[0].tilt = angle_spine_list[0]
+        
+        spline.bezier_points[1].tilt = angle_spine_list[1]
+        
+        i += 1
