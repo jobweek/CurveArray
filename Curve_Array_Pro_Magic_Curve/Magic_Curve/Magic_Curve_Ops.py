@@ -5,35 +5,37 @@ import math
 from .Errors import CancelError, ShowMessageBox
 from .First_Step import first_step
 from .Smooth_Curve import (
-    create_curve, 
-    create_extruded_curve,
-    convert_extuded_curve_to_mesh,
-    extruded_mesh_vector,
-    active_mesh_vector,
-    direction_vector,
-    angle_between_vector,
-    tilt_correction
+    create_curve as Smooth_create_curve, 
+    create_extruded_curve as Smooth_create_extruded_curve,
+    convert_extuded_curve_to_mesh as Smooth_convert_extuded_curve_to_mesh,
+    extruded_mesh_vector as Smooth_extruded_mesh_vector,
+    active_mesh_vector as Smooth_active_mesh_vector,
+    direction_vector as Smooth_direction_vector,
+    angle_between_vector as Smooth_angle_between_vector,
+    tilt_correction as Smooth_tilt_correction
 )
+ 
+import Smooth_Curve
  
 def manager_smooth_curve():
         
     active_object, active_mesh, vertices_line_list = first_step()
             
-    main_curve = create_curve(vertices_line_list, active_object, active_mesh)
+    main_curve = Smooth_create_curve(vertices_line_list, active_object, active_mesh)
         
-    extruded_curve = create_extruded_curve(main_curve)
+    extruded_curve = Smooth_create_extruded_curve(main_curve)
     
-    extruded_mesh = convert_extuded_curve_to_mesh(extruded_curve)
+    extruded_mesh = Smooth_convert_extuded_curve_to_mesh(extruded_curve)
     
-    extruded_mesh_vector_list = extruded_mesh_vector(extruded_mesh, len(vertices_line_list)*2, main_curve)
+    extruded_mesh_vector_list = Smooth_extruded_mesh_vector(extruded_mesh, len(vertices_line_list)*2, main_curve)
 
-    active_mesh_vector_list = active_mesh_vector(active_mesh, vertices_line_list)
+    active_mesh_vector_list = Smooth_active_mesh_vector(active_mesh, vertices_line_list)
     
-    direction_vetor_list = direction_vector(vertices_line_list, active_mesh)
+    direction_vetor_list = Smooth_direction_vector(vertices_line_list, active_mesh)
     
-    angle_list = angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list, direction_vetor_list)
+    angle_list = Smooth_angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list, direction_vetor_list)
     
-    tilt_correction(angle_list, main_curve)
+    Smooth_tilt_correction(angle_list, main_curve)
     
     bpy.data.objects.remove(extruded_mesh, do_unlink=True)
     
