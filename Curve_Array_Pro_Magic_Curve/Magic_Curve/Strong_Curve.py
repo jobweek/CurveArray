@@ -45,7 +45,7 @@ def create_curve(vertices_line_list, active_object, active_mesh):
         mesh_vertex_index_first = vertices_line_list[i]
         mesh_vertex_index_second = vertices_line_list[i + 1]
         
-        spline = crv_mesh.splines[i // 2]
+        spline = crv_mesh.splines[i]
         
         spline.points[0].co[0] =  active_mesh.vertices[mesh_vertex_index_first].co[0]
         spline.points[0].co[1] =  active_mesh.vertices[mesh_vertex_index_first].co[1]
