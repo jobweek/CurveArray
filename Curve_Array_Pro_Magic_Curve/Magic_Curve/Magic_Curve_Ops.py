@@ -3,11 +3,9 @@ import bmesh
 import mathutils
 import math
 from .Errors import CancelError, ShowMessageBox
-from .First_Step import first_step
+from .General_Functions import first_step, second_step
 from .Smooth_Curve import (
     create_curve as Smooth_create_curve, 
-    create_extruded_curve as Smooth_create_extruded_curve,
-    convert_extuded_curve_to_mesh as Smooth_convert_extuded_curve_to_mesh,
     extruded_mesh_vector as Smooth_extruded_mesh_vector,
     active_mesh_vector as Smooth_active_mesh_vector,
     direction_vector as Smooth_direction_vector,
@@ -15,8 +13,7 @@ from .Smooth_Curve import (
     tilt_correction as Smooth_tilt_correction
 )
 from .Strong_Curve import (
-    create_curve as Strong_create_curve, 
-    create_extruded_curve as Strong_create_extruded_curve,
+    create_curve as Strong_create_curve
 )
  
 def manager_smooth_curve():
@@ -25,9 +22,7 @@ def manager_smooth_curve():
             
     main_curve = Smooth_create_curve(vertices_line_list, active_object, active_mesh)
         
-    extruded_curve = Smooth_create_extruded_curve(main_curve)
-    
-    extruded_mesh = Smooth_convert_extuded_curve_to_mesh(extruded_curve)
+    extruded_mesh = second_step(main_curve)
     
     extruded_mesh_vector_list = Smooth_extruded_mesh_vector(extruded_mesh, len(vertices_line_list)*2, main_curve)
 
@@ -51,9 +46,8 @@ def manager_strong_curve():
     
     main_curve = Strong_create_curve(vertices_line_list, active_object, active_mesh)
     
-    extruded_curve = Strong_create_extruded_curve(main_curve)
-    
-             
+    extruded_mesh = second_step(main_curve)
+                 
 class MAGICCURVE_OT_mgcrv_ops(bpy.types.Operator):
     '''Clear selected curve'''
     bl_label = "Curve from loop"

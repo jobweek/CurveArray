@@ -79,30 +79,7 @@ def create_curve(vertices_line_list, active_object, active_mesh):
     main_curve.set_curve(crv_obj)
     
     return main_curve
-    
-def create_extruded_curve(main_curve):
         
-    extruded_curve = main_curve.get_curve().copy()
-    extruded_curve.data = main_curve.get_curve().data.copy()
-    extruded_curve.name = 'MgCrv_duplicate_smooth'
-    extruded_curve.data.name = 'MgCrv_duplicate_smooth'
-    extruded_curve.data.extrude = 0.5
-    bpy.context.scene.collection.objects.link(extruded_curve)
-    
-    return extruded_curve
-
-def convert_extuded_curve_to_mesh(extruded_curve):
-    
-    bpy.ops.object.select_all(action='DESELECT')
-    extruded_curve.select_set(True)
-    bpy.context.view_layer.objects.active =  extruded_curve
-    
-    bpy.ops.object.convert(target='MESH')
-    
-    extruded_mesh = bpy.context.active_object
-    
-    return extruded_mesh
-    
 def extruded_mesh_vector(extruded_mesh, vetices_count, main_curve):
     
     def extruded_mesh_vertices(extruded_mesh, vetices_count):
