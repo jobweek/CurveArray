@@ -87,13 +87,13 @@ def extruded_mesh_vector(extruded_mesh, vetices_count, main_curve):
 
         while i < vetices_count:
             
-            points_first = [extruded_mesh.data.vertices[0 + i], extruded_mesh.data.vertices[1 + i]]
+            points_first = [extruded_mesh.data.vertices[0 + i*4], extruded_mesh.data.vertices[1 + i*4]]
             
-            points_second = [extruded_mesh.data.vertices[2 + i], extruded_mesh.data.vertices[4 + i]]
+            points_second = [extruded_mesh.data.vertices[2 + i*4], extruded_mesh.data.vertices[4 + i*4]]
             
             extruded_mesh_vertices_list.append([points_first, points_second])
             
-            i += 4
+            i += 1
                         
         return extruded_mesh_vertices_list
     
