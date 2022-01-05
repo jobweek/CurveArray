@@ -77,7 +77,7 @@ def create_curve(vertices_line_list, active_object, active_mesh):
     
     return main_curve
 
-def extruded_mesh_vector(extruded_mesh, vetices_count, main_curve):
+def extruded_mesh_vector(extruded_mesh, vetices_count):
     
     def extruded_mesh_vertices(extruded_mesh, vetices_count):
     
@@ -87,11 +87,9 @@ def extruded_mesh_vector(extruded_mesh, vetices_count, main_curve):
 
         while i < vetices_count:
             
-            points_first = [extruded_mesh.data.vertices[0 + i*4], extruded_mesh.data.vertices[1 + i*4]]
+            points = [extruded_mesh.data.vertices[0 + i*4], extruded_mesh.data.vertices[1 + i*4]]
             
-            points_second = [extruded_mesh.data.vertices[2 + i*4], extruded_mesh.data.vertices[3 + i*4]]
-            
-            extruded_mesh_vertices_list.append([points_first, points_second])
+            extruded_mesh_vertices_list.append(points)
             
             i += 1
                         
@@ -102,17 +100,61 @@ def extruded_mesh_vector(extruded_mesh, vetices_count, main_curve):
 
     for i in extruded_mesh_vertices_list:
 
-        vector_group = []
-
-        for m in i:
-
-            firts = m[0]
-            second = m[1]
-            
-            vector = mathutils.Vector((second.co[0] - firts.co[0], second.co[1] - firts.co[1], second.co[2] - firts.co[2]))
-            
-            vector_group.append(vector)
+        firts_point = i[0]
+        second_point = i[1]
         
-        extruded_mesh_vector_list.append(vector_group)
+        vector = mathutils.Vector((second_point.co[0] - firts_point.co[0], second_point.co[1] - firts_point.co[1], second_point.co[2] - firts_point.co[2]))
+            
+        extruded_mesh_vector_list.append(vector)
             
     return extruded_mesh_vector_list
+
+def angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list, direction_vetor_list):
+    
+    def angle_correction(angle, cross_vector, vec_active_mesh):
+        
+        direction_angle = cross_vector.angle(vec_active_mesh)
+                
+        if direction_angle < math.pi/2:
+            
+            return angle
+        
+        elif direction_angle > math.pi/2:
+            
+            return angle * (-1)
+        
+        else:
+            
+            return angle
+            
+    angle_list = []
+    
+    i = 0
+    
+    while i < len(extruded_mesh_vector_list) - 1:
+        
+        vec_extruded_mesh = extruded_mesh_vector_list[i]
+        vec_active_mesh = active_mesh_vector_list[i]
+        vec_direction = direction_vetor_list[i]
+               
+        print('vec_extruded_mesh', vec_extruded_mesh)
+        print('vec_active_mesh', vec_active_mesh)
+        print('vec_direction', vec_direction)
+                                
+        projection = vec_active_mesh.project(vec_direction)
+        correct_vec_active_mesh = vec_active_mesh - projection
+        
+        projection = vec_extruded_mesh.project(vec_direction)
+        correct_vec_extruded_mesh = vec_extruded_mesh - projection
+                
+        angle = correct_vec_extruded_mesh.angle(correct_vec_active_mesh)
+                
+        cross_vector = vec_direction.cross(correct_vec_extruded_mesh)
+                        
+        angle = angle_correction(angle, cross_vector, vec_active_mesh)
+
+        angle_list.append(angle)
+        
+        i += 1
+
+    return angle_list

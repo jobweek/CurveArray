@@ -107,10 +107,10 @@ def extruded_mesh_vector(extruded_mesh, vetices_count, main_curve):
 
     for i in extruded_mesh_vertices_list:
 
-        firts = i[0]
-        second = i[1]
+        firts_point = i[0]
+        second_point = i[1]
         
-        vector = mathutils.Vector((second.co[0] - firts.co[0], second.co[1] - firts.co[1], second.co[2] - firts.co[2]))
+        vector = mathutils.Vector((second_point.co[0] - firts_point.co[0], second_point.co[1] - firts_point.co[1], second_point.co[2] - firts_point.co[2]))
         
         extruded_mesh_vector_list.append(vector)
             

@@ -39,7 +39,7 @@ def manager_strong_curve():
     
     extruded_mesh = second_step(main_curve)
     
-    extruded_mesh_vector_list = Strong_extruded_mesh_vector(extruded_mesh, len(vertices_line_list) - 1, main_curve)
+    extruded_mesh_vector_list = Strong_extruded_mesh_vector(extruded_mesh, len(vertices_line_list) - 1)
     
     
     
