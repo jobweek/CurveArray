@@ -4,7 +4,7 @@ import mathutils
 import math
 from .Errors import CancelError, ShowMessageBox
 from .First_Step import first_step
-from Smooth_Curve import (
+from .Smooth_Curve import (
     create_curve, 
     create_extruded_curve,
     convert_extuded_curve_to_mesh,
