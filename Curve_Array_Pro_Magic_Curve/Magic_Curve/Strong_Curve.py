@@ -26,10 +26,8 @@ def create_curve(vertices_line_list, active_object, active_mesh):
     main_curve = Main_Curve()
                     
     def create_spline(crv_mesh, vertices_line_list):
-        
-        spline_count = len(vertices_line_list)/2
-        
-        for _ in range(spline_count):
+                
+        for _ in range(len(vertices_line_list)-1):
             
             spline = crv_mesh.splines.new(type='POLY')
             
