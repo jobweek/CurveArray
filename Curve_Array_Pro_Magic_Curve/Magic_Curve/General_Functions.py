@@ -111,6 +111,30 @@ def active_mesh_vector(bm, vertices_line_list):
         
     return active_mesh_vector_list
 
+def direction_vector(bm, vertices_line_list):
+    
+    direction_vetor_list = []
+    
+    i = 0
+    
+    while i < len(vertices_line_list) - 1:
+        
+        first_vertex_index = vertices_line_list[i]
+        second_vertex_index = vertices_line_list[i + 1]
+            
+        first_vertex = bm.verts[first_vertex_index]
+        second_vertex = bm.verts[second_vertex_index]
+            
+        direction_vetor = mathutils.Vector((second_vertex.co[0] -  first_vertex.co[0], second_vertex.co[1] -  first_vertex.co[1], second_vertex.co[2] -  first_vertex.co[2]))
+            
+        direction_vetor_list.append(direction_vetor.normalized())
+        
+        i += 1
+    
+    direction_vetor_list.append(direction_vetor.normalized())
+    
+    return direction_vetor_list 
+
 def first_step():
     
     active_object = bpy.context.active_object
@@ -128,9 +152,11 @@ def first_step():
     
     active_mesh_vector_list = active_mesh_vector(bm, vertices_line_list)
     
+    direction_vetor_list = direction_vector(bm, vertices_line_list)
+    
     bpy.ops.object.editmode_toggle()
         
-    return vertices_line_list, active_mesh_vector_list, active_object, active_mesh
+    return vertices_line_list, active_mesh_vector_list, direction_vetor_list, active_object, active_mesh
 
 def second_step(main_curve):
     
@@ -139,3 +165,11 @@ def second_step(main_curve):
     extruded_mesh = convert_extuded_curve_to_mesh(extruded_curve)
     
     return extruded_mesh
+
+def final_step(extruded_mesh, main_curve):
+    
+    bpy.data.objects.remove(extruded_mesh, do_unlink=True)
+    
+    bpy.ops.object.select_all(action='DESELECT') 
+    main_curve.get_curve().select_set(True)
+    bpy.context.view_layer.objects.active = main_curve.get_curve()

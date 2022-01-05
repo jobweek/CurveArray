@@ -115,31 +115,7 @@ def extruded_mesh_vector(extruded_mesh, vetices_count, main_curve):
         extruded_mesh_vector_list.append(vector)
             
     return extruded_mesh_vector_list
-    
-def direction_vector(vertices_line_list, active_mesh):
-    
-    direction_vetor_list = []
-    
-    i = 0
-    
-    while i < len(vertices_line_list) - 1:
         
-        first_vertex_index = vertices_line_list[i]
-        second_vertex_index = vertices_line_list[i + 1]
-            
-        first_vertex = active_mesh.vertices[first_vertex_index]
-        second_vertex = active_mesh.vertices[second_vertex_index]
-            
-        direction_vetor = mathutils.Vector((second_vertex.co[0] -  first_vertex.co[0], second_vertex.co[1] -  first_vertex.co[1], second_vertex.co[2] -  first_vertex.co[2]))
-            
-        direction_vetor_list.append(direction_vetor.normalized())
-        
-        i += 1
-    
-    direction_vetor_list.append(direction_vetor.normalized())
-    
-    return direction_vetor_list 
-    
 def angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list, direction_vetor_list):
     
     def angle_correction(angle, cross_vector, vec_active_mesh):
