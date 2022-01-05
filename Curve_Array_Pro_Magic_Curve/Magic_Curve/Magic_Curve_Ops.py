@@ -1,6 +1,6 @@
-import bpy
-import bmesh
-import mathutils
+import bpy # type: ignore
+import bmesh # type: ignore
+import mathutils # type: ignore
 import math
 from .Errors import CancelError, ShowMessageBox
 from .General_Functions import first_step, second_step

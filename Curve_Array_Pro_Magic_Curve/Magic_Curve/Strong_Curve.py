@@ -1,6 +1,6 @@
-import bpy
-import bmesh
-import mathutils
+import bpy # type: ignore
+import bmesh # type: ignore
+import mathutils # type: ignore
 import math
 
 def create_curve(vertices_line_list, active_object, active_mesh):
