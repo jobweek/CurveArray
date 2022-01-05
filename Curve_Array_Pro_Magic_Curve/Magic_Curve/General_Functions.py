@@ -19,11 +19,11 @@ def active_vertex(bm):
         
         raise CancelError
 
-def selected_edges(active_mesh):
+def selected_edges(bm):
     
     selected_edges_list = []
     
-    for i in active_mesh.edges:
+    for i in bm.edges:
         
         if i.select:
             
@@ -45,13 +45,13 @@ def vertices_line(selected_edges_list, act_vert_index):
         
         for i in edges_list:
             
-            if i.vertices[0] == searched_vertex: 
+            if i.verts[0].index == searched_vertex: 
                 
-                return i, i.vertices[1]
+                return i, i.verts[1].index 
             
-            elif i.vertices[1] == searched_vertex:
+            elif i.verts[1].index == searched_vertex:
                 
-                return i, i.vertices[0]
+                return i, i.verts[0].index 
                 
         ShowMessageBox("Error","Select only one loop, or a line segment from connected edges, without intersection, and activate start point at one end", 'ERROR')
 
@@ -99,6 +99,18 @@ def convert_extuded_curve_to_mesh(extruded_curve):
     
     return extruded_mesh
 
+def active_mesh_vector(bm, vertices_line_list):
+    
+    active_mesh_vector_list = []
+    
+    for i in vertices_line_list:
+        
+        vertex = bm.verts[i].normal
+        
+        active_mesh_vector_list.append(vertex)
+        
+    return active_mesh_vector_list
+
 def first_step():
     
     active_object = bpy.context.active_object
@@ -110,13 +122,15 @@ def first_step():
     
     act_vert_index = active_vertex(bm)
     
-    bpy.ops.object.editmode_toggle()
+    selected_edges_list = selected_edges(bm)
 
-    selected_edges_list = selected_edges(active_mesh)
-    
     vertices_line_list = vertices_line(selected_edges_list, act_vert_index)
+    
+    active_mesh_vector_list = active_mesh_vector(bm, vertices_line_list)
+    
+    bpy.ops.object.editmode_toggle()
         
-    return vertices_line_list, active_object, active_mesh
+    return vertices_line_list, active_mesh_vector_list, active_object, active_mesh
 
 def second_step(main_curve):
     

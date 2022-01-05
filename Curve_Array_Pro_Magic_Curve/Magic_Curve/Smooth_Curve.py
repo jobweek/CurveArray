@@ -116,18 +116,6 @@ def extruded_mesh_vector(extruded_mesh, vetices_count, main_curve):
             
     return extruded_mesh_vector_list
     
-def active_mesh_vector(active_mesh, vertices_line_list):
-    
-    active_mesh_vector_list = []
-    
-    for i in vertices_line_list:
-        
-        vector = active_mesh.vertices[i].normal
-        
-        active_mesh_vector_list.append(vector)
-    
-    return active_mesh_vector_list
-
 def direction_vector(vertices_line_list, active_mesh):
     
     direction_vetor_list = []

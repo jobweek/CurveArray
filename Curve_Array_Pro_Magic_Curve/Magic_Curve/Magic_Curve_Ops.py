@@ -7,7 +7,6 @@ from .General_Functions import first_step, second_step
 from .Smooth_Curve import (
     create_curve as Smooth_create_curve, 
     extruded_mesh_vector as Smooth_extruded_mesh_vector,
-    active_mesh_vector as Smooth_active_mesh_vector,
     direction_vector as Smooth_direction_vector,
     angle_between_vector as Smooth_angle_between_vector,
     tilt_correction as Smooth_tilt_correction
@@ -19,15 +18,13 @@ from .Strong_Curve import (
  
 def manager_smooth_curve():
         
-    vertices_line_list, active_object, active_mesh = first_step()
+    vertices_line_list, active_mesh_vector_list, active_object, active_mesh = first_step()
             
     main_curve = Smooth_create_curve(vertices_line_list, active_object, active_mesh)
         
     extruded_mesh = second_step(main_curve)
     
     extruded_mesh_vector_list = Smooth_extruded_mesh_vector(extruded_mesh, len(vertices_line_list)*2, main_curve)
-
-    active_mesh_vector_list = Smooth_active_mesh_vector(active_mesh, vertices_line_list)
     
     direction_vetor_list = Smooth_direction_vector(vertices_line_list, active_mesh)
     
@@ -43,15 +40,13 @@ def manager_smooth_curve():
         
 def manager_strong_curve():
     
-    vertices_line_list, active_object, active_mesh  = first_step()
+    vertices_line_list, active_mesh_vector_list, active_object, active_mesh  = first_step()
     
     main_curve = Strong_create_curve(vertices_line_list, active_object, active_mesh)
     
     extruded_mesh = second_step(main_curve)
     
     extruded_mesh_vector_list = Strong_extruded_mesh_vector(extruded_mesh, len(vertices_line_list) - 1, main_curve)
-    
-    print(extruded_mesh_vector_list)
                  
 class MAGICCURVE_OT_mgcrv_ops(bpy.types.Operator):
     '''Clear selected curve'''
