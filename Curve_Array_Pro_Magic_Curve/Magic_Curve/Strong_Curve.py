@@ -31,7 +31,7 @@ def create_curve(vertices_line_list, active_object, active_mesh):
             
             spline = crv_mesh.splines.new(type='POLY')
             
-            spline.points.add(2) 
+            spline.points.add(1) 
     
     crv_mesh = bpy.data.curves.new('MgCrv_curve', 'CURVE')
     crv_mesh.dimensions = '3D'
