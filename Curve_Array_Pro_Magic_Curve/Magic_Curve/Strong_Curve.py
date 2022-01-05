@@ -33,7 +33,7 @@ def create_curve(vertices_line_list, active_object, active_mesh):
             
             spline.points.add(1) 
     
-    crv_mesh = bpy.data.curves.new('MgCrv_curve', 'CURVE')
+    crv_mesh = bpy.data.curves.new('MgCrv_curve_strong', 'CURVE')
     crv_mesh.dimensions = '3D'
     crv_mesh.twist_mode = 'MINIMUM'        
     create_spline(crv_mesh, vertices_line_list)
@@ -59,7 +59,7 @@ def create_curve(vertices_line_list, active_object, active_mesh):
         
         i += 1
         
-    crv_obj = bpy.data.objects.new('MgCrv_curve', crv_mesh)
+    crv_obj = bpy.data.objects.new('MgCrv_curve_strong', crv_mesh)
         
     crv_obj.location = active_object.location
         

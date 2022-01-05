@@ -40,7 +40,7 @@ def create_curve(vertices_line_list, active_object, active_mesh):
             main_curve.set_cyclic(False)
     
     cyclic_check(vertices_line_list)
-    crv_mesh = bpy.data.curves.new('MgCrv_curve', 'CURVE')
+    crv_mesh = bpy.data.curves.new('MgCrv_curve_smooth', 'CURVE')
     crv_mesh.dimensions = '3D'
     crv_mesh.twist_mode = 'MINIMUM'        
     spline = crv_mesh.splines.new(type='POLY')
@@ -64,7 +64,7 @@ def create_curve(vertices_line_list, active_object, active_mesh):
         
         i += 1
         
-    crv_obj = bpy.data.objects.new('MgCrv_curve', crv_mesh)
+    crv_obj = bpy.data.objects.new('MgCrv_curve_smooth', crv_mesh)
         
     crv_obj.location = active_object.location
         
