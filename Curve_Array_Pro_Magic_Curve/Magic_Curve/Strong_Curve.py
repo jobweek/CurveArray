@@ -76,14 +76,3 @@ def create_curve(vertices_line_list, active_object, active_mesh):
     main_curve.set_curve(crv_obj)
     
     return main_curve
-
-def create_extruded_curve(main_curve):
-        
-    extruded_curve = main_curve.get_curve().copy()
-    extruded_curve.data = main_curve.get_curve().data.copy()
-    extruded_curve.name = 'MgCrv_duplicate_strong'
-    extruded_curve.data.name = 'MgCrv_duplicate_strong'
-    extruded_curve.data.extrude = 0.5
-    bpy.context.scene.collection.objects.link(extruded_curve)
-    
-    return extruded_curve
