@@ -1,7 +1,5 @@
 import bpy # type: ignore
-import bmesh # type: ignore
-import mathutils # type: ignore
-import math
+import copy
 from .Errors import CancelError, ShowMessageBox
 from .General_Functions import first_step, second_step, final_step
 from .Smooth_Curve import (
@@ -26,6 +24,7 @@ def manager_smooth_curve():
     extruded_mesh = second_step(main_curve)
     
     extruded_mesh_vector_list = Smooth_extruded_mesh_vector(extruded_mesh, len(vertices_line_list)*2, main_curve)
+    extruded_mesh_vector_list = copy.deepcopy(extruded_mesh_vector_list)
         
     angle_list = Smooth_angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list, direction_vetor_list)
     
@@ -42,6 +41,7 @@ def manager_strong_curve():
     extruded_mesh = second_step(main_curve)
     
     extruded_mesh_vector_list = Strong_extruded_mesh_vector(extruded_mesh, len(vertices_line_list) - 1)
+    extruded_mesh_vector_list = copy.deepcopy(extruded_mesh_vector_list)
     
     angle_list = Strong_angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list, direction_vetor_list)
     
@@ -79,10 +79,10 @@ class MAGICCURVE_OT_mgcrv_ops(bpy.types.Operator):
             
             return {'CANCELLED'}
 
-        # except Exception as e:
+        except Exception as e:
             
-        #     ShowMessageBox("Unkown Error", "Please send me this report:", e, 'ERROR')
+            ShowMessageBox("Unkown Error, Please send me this report:", e, 'ERROR')
             
-        #     return {'CANCELLED'}       
+            return {'CANCELLED'}       
  
         

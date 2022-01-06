@@ -151,9 +151,11 @@ def first_step():
     vertices_line_list = vertices_line(selected_edges_list, act_vert_index)
     
     active_mesh_vector_list = active_mesh_vector(bm, vertices_line_list)
+    active_mesh_vector_list = copy.deepcopy(active_mesh_vector_list)
     
     direction_vetor_list = direction_vector(bm, vertices_line_list)
-    
+    direction_vetor_list = copy.deepcopy(direction_vetor_list)
+        
     bpy.ops.object.editmode_toggle()
         
     return vertices_line_list, active_mesh_vector_list, direction_vetor_list, active_object, active_mesh
