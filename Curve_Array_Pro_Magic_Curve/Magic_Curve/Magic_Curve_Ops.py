@@ -16,7 +16,7 @@ from .Strong_Curve import (
     angle_between_vector as Strong_angle_between_vector,
     tilt_correction as Strong_tilt_correction
 )
- 
+
 def manager_smooth_curve():
         
     vertices_line_list, active_mesh_vector_list, direction_vetor_list, active_object, active_mesh = first_step()
@@ -32,7 +32,7 @@ def manager_smooth_curve():
     Smooth_tilt_correction(angle_list, main_curve)
     
     final_step(extruded_mesh, main_curve)
-        
+
 def manager_strong_curve():
     
     vertices_line_list, active_mesh_vector_list, direction_vetor_list, active_object, active_mesh  = first_step()
@@ -79,10 +79,10 @@ class MAGICCURVE_OT_mgcrv_ops(bpy.types.Operator):
             
             return {'CANCELLED'}
 
-        except Exception as e:
+        # except Exception as e:
             
-            ShowMessageBox("Unkown Error", "Please send me this report:", e, 'ERROR')
+        #     ShowMessageBox("Unkown Error", "Please send me this report:", e, 'ERROR')
             
-            return {'CANCELLED'}       
+        #     return {'CANCELLED'}       
  
         

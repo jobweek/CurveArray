@@ -143,7 +143,7 @@ def first_step():
     checker.start_checker()
         
     bm = bmesh.from_edit_mesh(active_mesh)
-    
+        
     act_vert_index = active_vertex(bm)
     
     selected_edges_list = selected_edges(bm)
