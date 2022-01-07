@@ -147,8 +147,11 @@ def first_step():
         
     act_vert_index = active_vertex(bm)
     
+    t_start = time.perf_counter()
     selected_edges_list = selected_edges(bm)
-
+    t_end = time.perf_counter()
+    print(t_end - t_start)
+    
     vertices_line_list = vertices_line(selected_edges_list, act_vert_index)
     
     active_mesh_vector_list = active_mesh_vector(bm, vertices_line_list)
