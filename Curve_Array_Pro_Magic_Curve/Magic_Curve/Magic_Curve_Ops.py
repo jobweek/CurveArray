@@ -18,18 +18,17 @@ from .Strong_Curve import (
 
 def manager_smooth_curve():
         
-    vertices_line_list, active_mesh_vector_list, direction_vetor_list, active_object, active_mesh = first_step()
+    vertices_line_dict, active_mesh_vector_dict, direction_vetor_dict, active_object, active_mesh = first_step()
             
-    main_curve = Smooth_create_curve(vertices_line_list, active_object, active_mesh)
+    main_curve = Smooth_create_curve(vertices_line_dict, active_object, active_mesh)
         
     extruded_mesh = second_step(main_curve)
     
-    extruded_mesh_vector_list = Smooth_extruded_mesh_vector(extruded_mesh, len(vertices_line_list)*2, main_curve)
-    extruded_mesh_vector_list = copy.deepcopy(extruded_mesh_vector_list)
+    extruded_mesh_vector_dict = Smooth_extruded_mesh_vector(extruded_mesh, len(vertices_line_dict)*2, main_curve)
         
-    angle_list = Smooth_angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list, direction_vetor_list)
+    angle_dict = Smooth_angle_between_vector(extruded_mesh_vector_dict, active_mesh_vector_dict, direction_vetor_dict)
     
-    Smooth_tilt_correction(angle_list, main_curve)
+    Smooth_tilt_correction(angle_dict, main_curve)
     
     final_step(extruded_mesh, main_curve)
 
