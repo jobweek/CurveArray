@@ -1,0 +1,3 @@
+[console_scripts]
+mprof = mprof:main
+

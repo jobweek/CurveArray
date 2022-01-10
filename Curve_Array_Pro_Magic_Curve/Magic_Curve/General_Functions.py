@@ -2,8 +2,10 @@ import bpy # type: ignore
 import bmesh # type: ignore
 import mathutils # type: ignore
 import copy
+import numpy as np 
 from .Errors import CancelError, ShowMessageBox
 from .Classes import checker, cyclic_curve
+from ..Python_Modules.Memory_Profiler.memory_profiler import profile
 
 def active_vertex(bm):
     
@@ -19,20 +21,21 @@ def active_vertex(bm):
         
         raise CancelError
 
+@profile
 def selected_edges(bm):
     
-    selected_edges_dict = {}
+    selected = np.frompyfunc(lambda a: a.select, 1, 1)
     
-    iterator = 0
-    
-    for i in bm.edges:
+    sel_set = selected(bm.edges).astype(bool)
         
-        if i.select:
-            
-            iterator += 1
-            selected_edges_dict[iterator] = i
-                        
-    if len(selected_edges_dict) < 1:
+    selected_edges_array = np.array(bm.edges)
+    
+    selected_edges_array = selected_edges_array[sel_set]
+    
+    print(selected_edges_array)
+    print(selected_edges_array[0])
+                                
+    if len(selected_edges_array) < 1:
         
         ShowMessageBox("Error","Select two or more vertices", 'ERROR')
         
@@ -40,7 +43,7 @@ def selected_edges(bm):
     
     else:
     
-        return selected_edges_dict
+        return selected_edges_array
 
 def vertices_line(selected_edges_dict, act_vert_index):
     

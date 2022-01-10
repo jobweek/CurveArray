@@ -1,0 +1,12 @@
+..\..\..\bin\mprof-script.py
+..\..\..\bin\mprof.exe
+..\__pycache__\memory_profiler.cpython-39.pyc
+..\__pycache__\mprof.cpython-39.pyc
+..\memory_profiler.py
+..\mprof.py
+PKG-INFO
+SOURCES.txt
+dependency_links.txt
+entry_points.txt
+requires.txt
+top_level.txt
