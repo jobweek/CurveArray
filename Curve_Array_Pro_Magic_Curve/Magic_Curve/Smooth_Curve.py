@@ -2,6 +2,7 @@ import bpy # type: ignore
 import bmesh # type: ignore
 import mathutils # type: ignore
 import math
+import numpy as np 
 
 def dict_index_correction(dict):
     
@@ -17,132 +18,79 @@ def dict_index_correction(dict):
        
     return correct_dict
 
-def create_curve(vertices_line_dict, active_object, active_mesh):
+def create_curve(vert_co_array, active_object):
     
-    class Main_Curve:
-        
-        def set_curve(self, curve):
-            
-            self.curve = curve
-        
-        def get_curve(self):
-            
-            return self.curve
-        
-        def set_cyclic(self, cyclic):
-            
-            self.cyclic = cyclic
-            
-        def get_cyclic(self):
-            
-            return self.cyclic
-                
-    main_curve = Main_Curve()
-                               
-    def cyclic_check(vertices_line_dict):
-        
-        last_element = len(vertices_line_dict) - 1
-        
-        if vertices_line_dict[0] == vertices_line_dict[last_element]:
-            
-            last_index = vertices_line_dict.popitem()[0]
-             
-            vertices_line_dict[last_index] = vertices_line_dict.pop(0)
-                        
-            main_curve.set_cyclic(True)
-            
-            return dict_index_correction(vertices_line_dict)
-                    
-        else:
-            
-            main_curve.set_cyclic(False)
-    
-            return vertices_line_dict
-
-    vertices_line_dict = cyclic_check(vertices_line_dict)
     crv_mesh = bpy.data.curves.new('MgCrv_curve_smooth', 'CURVE')
     crv_mesh.dimensions = '3D'
     crv_mesh.twist_mode = 'MINIMUM'        
     spline = crv_mesh.splines.new(type='POLY')
+        
+    spline.points.add(len(vert_co_array) - 1) 
     
-    if main_curve.get_cyclic() == True:
-        
-        spline.use_cyclic_u = True
+    iterator = 0
     
-    spline.points.add(len(vertices_line_dict) - 1) 
-    
-    i = 0
-               
-    while i < len(vertices_line_dict):
+    for i in vert_co_array:
+ 
+        spline.points[iterator].co[0] =  i[0]
+        spline.points[iterator].co[1] =  i[1]
+        spline.points[iterator].co[2] =  i[2]
+        spline.points[iterator].co[3] =  0
         
-        mesh_vertex_index = vertices_line_dict[i]
+        iterator += 1
+                
+    main_curve = bpy.data.objects.new('MgCrv_curve_smooth', crv_mesh)
         
-        spline.points[i].co[0] =  active_mesh.vertices[mesh_vertex_index].co[0]
-        spline.points[i].co[1] =  active_mesh.vertices[mesh_vertex_index].co[1]
-        spline.points[i].co[2] =  active_mesh.vertices[mesh_vertex_index].co[2]
-        spline.points[i].co[3] =  0
+    main_curve.location = active_object.location
         
-        i += 1
+    main_curve.rotation_euler = active_object.rotation_euler
         
-    crv_obj = bpy.data.objects.new('MgCrv_curve_smooth', crv_mesh)
-        
-    crv_obj.location = active_object.location
-        
-    crv_obj.rotation_euler = active_object.rotation_euler
-        
-    crv_obj.scale = active_object.scale
+    main_curve.scale = active_object.scale
   
-    bpy.context.scene.collection.objects.link(crv_obj)
+    bpy.context.scene.collection.objects.link(main_curve)
     
     spline.type = 'BEZIER'
-    
-    main_curve.set_curve(crv_obj)
-    
+        
     return main_curve
         
-def extruded_mesh_vector(extruded_mesh, vetices_count, main_curve):
+def extruded_mesh_vector(extruded_mesh, verts_count):
+        
+    def extruded_mesh_verts(extruded_mesh, verts_count):
     
-    def extruded_mesh_vertices(extruded_mesh, vetices_count):
-    
-        extruded_mesh_vertices_dict = {}
+        extruded_mesh_verts_array = np.empty(int(verts_count/2), dtype=object)
         
         i = 0
         iterator = 0
 
-        while i < vetices_count:
+        while i < verts_count:
             
             points = [extruded_mesh.data.vertices[0 + i], extruded_mesh.data.vertices[1 + i]]
             
-            extruded_mesh_vertices_dict[iterator] = points
-            
-            last_index = i
+            extruded_mesh_verts_array[iterator] = points
             
             iterator += 1
             i += 2
             
-        if main_curve.get_cyclic() == True:
-               
-            extruded_mesh_vertices_dict[last_index] = extruded_mesh_vertices_dict.pop(0)
-            
-            extruded_mesh_vertices_dict = dict_index_correction(extruded_mesh_vertices_dict)
-            
-        return extruded_mesh_vertices_dict
+        return extruded_mesh_verts_array
     
-    extruded_mesh_vertices_dict = extruded_mesh_vertices(extruded_mesh, vetices_count)
-    extruded_mesh_vector_dict = {}
+    extruded_mesh_verts_array = extruded_mesh_verts(extruded_mesh, verts_count)
+    extruded_mesh_vector_array = np.empty(len(extruded_mesh_verts_array), dtype=object)
 
-    for i in extruded_mesh_vertices_dict:
+    iterator = 0
 
-        firts_point = extruded_mesh_vertices_dict[i][0]
-        second_point = extruded_mesh_vertices_dict[i][1]
+    for i in extruded_mesh_verts_array:
+
+        firts_point = i[0]
+        second_point = i[1]
         
         vector = mathutils.Vector((second_point.co[0] - firts_point.co[0], second_point.co[1] - firts_point.co[1], second_point.co[2] - firts_point.co[2]))
         
-        extruded_mesh_vector_dict[i] = vector
-            
-    return extruded_mesh_vector_dict
+        extruded_mesh_vector_array[iterator] = vector
         
-def angle_between_vector(extruded_mesh_vector_dict, active_mesh_vector_dict, direction_vetor_dict):
+        iterator += 1
+            
+    return extruded_mesh_vector_array
+        
+def angle_between_vector(extruded_mesh_vector_array, active_mesh_vector_array, direction_vetor_array):
     
     def angle_correction(angle, cross_vector, vec_active_mesh):
         
@@ -160,17 +108,17 @@ def angle_between_vector(extruded_mesh_vector_dict, active_mesh_vector_dict, dir
             
             return angle
             
-    angle_dict = {}
+    angle_array = np.empty(len(extruded_mesh_vector_array), dtype=object)
     
     i = 0
     
-    while i < len(extruded_mesh_vector_dict):
+    while i < len(extruded_mesh_vector_array):
         
-        vec_extruded_mesh = extruded_mesh_vector_dict[i]
+        vec_extruded_mesh = extruded_mesh_vector_array[i]
         
-        vec_active_mesh = active_mesh_vector_dict[i]
+        vec_active_mesh = active_mesh_vector_array[i]
         
-        vec_direction = direction_vetor_dict[i]
+        vec_direction = direction_vetor_array[i]
                                 
         projection = vec_active_mesh.project(vec_direction)
         correct_vec_active_mesh = vec_active_mesh - projection
@@ -184,21 +132,23 @@ def angle_between_vector(extruded_mesh_vector_dict, active_mesh_vector_dict, dir
                         
         angle = angle_correction(angle, cross_vector, vec_active_mesh)
 
-        angle_dict[i] = angle
+        angle_array[i] = angle
         
         i += 1
 
-    return angle_dict
+    return angle_array
     
-def tilt_correction(angle_dict, main_curve):
+def tilt_correction(angle_array, main_curve):
+
+    spline = main_curve.data.splines[0]
     
-    i = 0
+    iterator = 0
     
-    spline = main_curve.get_curve().data.splines[0]
-    
-    while i < len(angle_dict):
+    for i in angle_array:
+            
+        spline.bezier_points[iterator].tilt = i
         
-        spline.bezier_points[i].tilt = angle_dict[i]
+        iterator += 1
         
-        i += 1
+
    

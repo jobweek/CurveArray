@@ -1,4 +1,4 @@
-import bpy
+import bpy # type: ignore
 from .Errors import CancelError, ShowMessageBox
 
 class Checker():
@@ -41,19 +41,3 @@ class Checker():
         self.__mode_checker()
         
 checker = Checker()
-            
-class Cyclic_Curve():
-    
-    def __init__(self):
-    
-        self.cyclic = None
-        
-    def get(self):
-                
-        return self.cyclic
-    
-    def set(self, input):
-        
-        self.cyclic = input
-
-cyclic_curve = Cyclic_Curve()

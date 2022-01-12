@@ -4,16 +4,16 @@ import mathutils # type: ignore
 import copy
 import numpy as np 
 from .Errors import CancelError, ShowMessageBox
-from .Classes import checker, cyclic_curve
+from .Classes import checker
 from ..Python_Modules.Memory_Profiler.memory_profiler import profile
-
+            
 def active_vertex(bm):
     
     try:
         
-        act_vert_index = bm.select_history.active.index
+        act_vert = bm.select_history.active
         
-        return act_vert_index
+        return act_vert
 
     except:
         
@@ -21,21 +21,17 @@ def active_vertex(bm):
         
         raise CancelError
 
-@profile
-def selected_edges(bm):
+def selected_verts(bm):
     
     selected = np.frompyfunc(lambda a: a.select, 1, 1)
     
-    sel_set = selected(bm.edges).astype(bool)
+    sel_set = selected(bm.verts).astype(bool)
         
-    selected_edges_array = np.array(bm.edges)
+    verts_array = np.array(bm.verts)
     
-    selected_edges_array = selected_edges_array[sel_set]
-    
-    print(selected_edges_array)
-    print(selected_edges_array[0])
-                                
-    if len(selected_edges_array) < 1:
+    selected_verts_array = verts_array[sel_set]
+                                    
+    if len(selected_verts_array) < 1:
         
         ShowMessageBox("Error","Select two or more vertices", 'ERROR')
         
@@ -43,53 +39,90 @@ def selected_edges(bm):
     
     else:
     
-        return selected_edges_array
-
-def vertices_line(selected_edges_dict, act_vert_index):
-    
-    def vertex_search(edges_dict, searched_vertex):
+        return selected_verts_array
+            
+def verts_sequence(selected_verts_array, act_vert):
+                
+    def selected_linked_edges(searched_vertex):        
         
-        for i in edges_dict:
+        linked_edges = searched_vertex.link_edges
+        
+        selected_linked_edges_buffer = []
+        
+        for edge in linked_edges:
             
-            if edges_dict[i].verts[0].index == searched_vertex: 
+            if edge.select == True:
                 
-                return i, edges_dict[i].verts[1].index 
-            
-            elif edges_dict[i].verts[1].index == searched_vertex:
-                
-                return i, edges_dict[i].verts[0].index 
+                selected_linked_edges_buffer.append(edge)
+        
+        return selected_linked_edges_buffer
+                                                                          
+    vert_sequence_array = np.empty(len(selected_verts_array), dtype=object)
+    
+    vert_sequence_array[0] = act_vert
+        
+    selected_linked_edges_buffer = selected_linked_edges(act_vert)
+                    
+    if len(selected_linked_edges_buffer) < 1 or len(selected_linked_edges_buffer) > 2:
                 
         ShowMessageBox("Error","Select only one loop, or a line segment from connected edges, without intersection, and activate start point at one end", 'ERROR')
-
-        raise CancelError
         
-    edges_dict = copy.copy(selected_edges_dict)
-    vertices_line_dict = {0:act_vert_index}
-    searched_vertex = act_vert_index
-
-    iterator = 1
-
-    for _ in selected_edges_dict:
-        
-        edge_index, searched_vertex = vertex_search(edges_dict, searched_vertex)
-        
-        vertices_line_dict[iterator] = searched_vertex
-        edges_dict.pop(edge_index)
-        
-        iterator += 1
-            
-    if len(edges_dict) != 0:
-        
-        ShowMessageBox("Error","Select only one loop, or a line segment from connected edges, without intersection, and activate start point at one end", 'ERROR')
-
         raise CancelError
     
-    return vertices_line_dict
+    linked_edge = selected_linked_edges_buffer[0]
+    
+    searched_vertex = linked_edge.other_vert(act_vert)
+                                  
+    i = 1
+        
+    while i < len(selected_verts_array) - 1:
+                
+        vert_sequence_array[i] = searched_vertex
+                                
+        selected_linked_edges_buffer = selected_linked_edges(searched_vertex)
+        
+        if len(selected_linked_edges_buffer) != 2:
+            
+            ShowMessageBox("Error","Select only one loop, or a line segment from connected edges, without intersection, and activate start point at one end", 'ERROR')
+            
+            raise CancelError
+        
+        if selected_linked_edges_buffer[0] != linked_edge:
+            
+            linked_edge = selected_linked_edges_buffer[0]
+            
+        else:
+            
+            linked_edge = selected_linked_edges_buffer[1]
+    
+        searched_vertex = linked_edge.other_vert(searched_vertex)
+                
+        i += 1
+    
+    vert_sequence_array[i] = searched_vertex
+      
+    selected_linked_edges_buffer = selected_linked_edges(searched_vertex)
+                    
+    if len(selected_linked_edges_buffer) == 2:
+        
+        if selected_linked_edges_buffer[0] != linked_edge:
+            
+            linked_edge = selected_linked_edges_buffer[0]
+            
+        else:
+            
+            linked_edge = selected_linked_edges_buffer[1]
+        
+        searched_vertex = linked_edge.other_vert(searched_vertex)
+                            
+        vert_sequence_array = np.append(vert_sequence_array, searched_vertex)
+                        
+    return vert_sequence_array
 
 def create_extruded_curve(main_curve):
         
-    extruded_curve = main_curve.get_curve().copy()
-    extruded_curve.data = main_curve.get_curve().data.copy()
+    extruded_curve = main_curve.copy()
+    extruded_curve.data = main_curve.data.copy()
     extruded_curve.name = 'MgCrv_duplicate'
     extruded_curve.data.name = 'MgCrv_duplicate'
     extruded_curve.data.extrude = 0.5
@@ -109,45 +142,50 @@ def convert_extuded_curve_to_mesh(extruded_curve):
     
     return extruded_mesh
 
-def active_mesh_vector(bm, vertices_line_dict):
+def active_mesh_vector(vert_sequence_array):
     
-    active_mesh_vector_dict = {}
+    active_mesh_vector_array = np.empty(len(vert_sequence_array), dtype=object)
     
     iterator = 0
     
-    for i in vertices_line_dict:
+    for i in vert_sequence_array:
         
-        vertex = copy.deepcopy(bm.verts[vertices_line_dict[i]].normal)
+        vertex = copy.deepcopy(i.normal)
         
-        active_mesh_vector_dict[iterator] = vertex
+        active_mesh_vector_array[iterator] = vertex
         
         iterator += 1
         
-    return active_mesh_vector_dict
+    return active_mesh_vector_array
 
-def direction_vector(bm, vertices_line_dict):
+def direction_vector(vert_sequence_array):
     
-    direction_vetor_dict = {}
+    direction_vetor_array = np.empty(len(vert_sequence_array), dtype=object)
     
     i = 0
     
-    while i < len(vertices_line_dict) - 1:
+    while i < len(vert_sequence_array) - 1:
         
-        first_vertex_index = vertices_line_dict[i]
-        second_vertex_index = vertices_line_dict[i + 1]
-            
-        first_vertex = bm.verts[first_vertex_index]
-        second_vertex = bm.verts[second_vertex_index]
+        first_vertex = vert_sequence_array[i]
+        second_vertex = vert_sequence_array[i + 1]
             
         direction_vetor = mathutils.Vector((second_vertex.co[0] -  first_vertex.co[0], second_vertex.co[1] -  first_vertex.co[1], second_vertex.co[2] -  first_vertex.co[2]))
             
-        direction_vetor_dict[i] = direction_vetor.normalized()
+        direction_vetor_array[i] = direction_vetor.normalized()
         
         i += 1
     
-    direction_vetor_dict[i] = direction_vetor.normalized()
+    direction_vetor_array[i] = direction_vetor.normalized()
     
-    return direction_vetor_dict 
+    return direction_vetor_array 
+
+def vert_co(vert_sequence_array):
+    
+    vert_co_array = np.frompyfunc(lambda a: copy.deepcopy(a.co), 1, 1)
+    
+    vert_co_array = vert_co_array(vert_sequence_array)
+    
+    return vert_co_array
 
 def first_step():
     
@@ -157,19 +195,22 @@ def first_step():
     checker.start_checker()
         
     bm = bmesh.from_edit_mesh(active_mesh)
+            
+    act_vert = active_vertex(bm)
         
-    act_vert_index = active_vertex(bm)
-        
-    selected_edges_dict = selected_edges(bm)
-    vertices_line_dict = vertices_line(selected_edges_dict, act_vert_index)
+    selected_verts_array = selected_verts(bm)
+                
+    vert_sequence_array = verts_sequence(selected_verts_array, act_vert)
     
-    active_mesh_vector_dict = active_mesh_vector(bm, vertices_line_dict)
+    active_mesh_vector_array = active_mesh_vector(vert_sequence_array)
     
-    direction_vetor_dict = direction_vector(bm, vertices_line_dict)
+    direction_vetor_array = direction_vector(vert_sequence_array)
+    
+    vert_co_array = vert_co(vert_sequence_array)
         
     bpy.ops.object.editmode_toggle()
         
-    return vertices_line_dict, active_mesh_vector_dict, direction_vetor_dict, active_object, active_mesh
+    return vert_co_array, active_mesh_vector_array, direction_vetor_array, active_object, active_mesh
 
 def second_step(main_curve):
     
@@ -184,5 +225,5 @@ def final_step(extruded_mesh, main_curve):
     bpy.data.objects.remove(extruded_mesh, do_unlink=True)
     
     bpy.ops.object.select_all(action='DESELECT') 
-    main_curve.get_curve().select_set(True)
-    bpy.context.view_layer.objects.active = main_curve.get_curve()
+    main_curve.select_set(True)
+    bpy.context.view_layer.objects.active = main_curve

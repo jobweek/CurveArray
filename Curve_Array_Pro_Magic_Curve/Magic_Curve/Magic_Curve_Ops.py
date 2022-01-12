@@ -18,17 +18,17 @@ from .Strong_Curve import (
 
 def manager_smooth_curve():
         
-    vertices_line_dict, active_mesh_vector_dict, direction_vetor_dict, active_object, active_mesh = first_step()
+    vert_co_array, active_mesh_vector_array, direction_vetor_array, active_object, active_mesh = first_step()
             
-    main_curve = Smooth_create_curve(vertices_line_dict, active_object, active_mesh)
+    main_curve = Smooth_create_curve(vert_co_array, active_object)
         
     extruded_mesh = second_step(main_curve)
-    
-    extruded_mesh_vector_dict = Smooth_extruded_mesh_vector(extruded_mesh, len(vertices_line_dict)*2, main_curve)
         
-    angle_dict = Smooth_angle_between_vector(extruded_mesh_vector_dict, active_mesh_vector_dict, direction_vetor_dict)
+    extruded_mesh_vector_array = Smooth_extruded_mesh_vector(extruded_mesh, len(vert_co_array)*2)
+        
+    angle_array = Smooth_angle_between_vector(extruded_mesh_vector_array, active_mesh_vector_array, direction_vetor_array)
     
-    Smooth_tilt_correction(angle_dict, main_curve)
+    Smooth_tilt_correction(angle_array, main_curve)
     
     final_step(extruded_mesh, main_curve)
 
@@ -79,10 +79,10 @@ class MAGICCURVE_OT_mgcrv_ops(bpy.types.Operator):
             
             return {'CANCELLED'}
 
-        except Exception as e:
+        # except Exception as e:
             
-            ShowMessageBox("Unkown Error, Please send me this report:", e, 'ERROR')
+        #     ShowMessageBox("Unkown Error, Please send me this report:", e, 'ERROR')
             
-            return {'CANCELLED'}       
+        #     return {'CANCELLED'}       
  
         
