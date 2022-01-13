@@ -68,7 +68,7 @@ class MAGICCURVE_OT_mgcrv_ops(bpy.types.Operator):
             if self.curve_type == False:
             
                 manager_smooth_curve()
-            
+
             else:
                 
                 manager_strong_curve()

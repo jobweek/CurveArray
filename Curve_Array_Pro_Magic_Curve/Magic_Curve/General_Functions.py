@@ -5,7 +5,6 @@ import copy
 import numpy as np 
 from .Errors import CancelError, ShowMessageBox
 from .Classes import checker
-from ..Python_Modules.Memory_Profiler.memory_profiler import profile
        
 class Curve_Data:
     
@@ -61,7 +60,7 @@ def selected_verts(bm):
     else:
     
         return selected_verts_array
-            
+         
 def verts_sequence(selected_verts_array, act_vert, curve_data):
                 
     def selected_linked_edges(searched_vertex):        
