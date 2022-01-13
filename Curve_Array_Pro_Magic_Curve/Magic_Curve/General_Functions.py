@@ -5,7 +5,7 @@ import copy
 import numpy as np 
 from .Errors import CancelError, ShowMessageBox
 from .Classes import checker
-       
+
 class Curve_Data:
     
     __curve = None
@@ -44,13 +44,13 @@ def active_vertex(bm):
 def selected_verts(bm):
     
     selected = np.frompyfunc(lambda a: a.select, 1, 1)
-    
+
     sel_set = selected(bm.verts).astype(bool)
         
     verts_array = np.array(bm.verts)
     
     selected_verts_array = verts_array[sel_set]
-                                    
+                                                     
     if len(selected_verts_array) < 1:
         
         ShowMessageBox("Error","Select two or more vertices", 'ERROR')
