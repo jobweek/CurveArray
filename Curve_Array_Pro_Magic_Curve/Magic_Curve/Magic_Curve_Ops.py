@@ -16,6 +16,19 @@ from .Strong_Curve import (
     tilt_correction as Strong_tilt_correction
 )
 
+import importlib
+import sys
+
+path = 'W:\Users\79253\AppData\Roaming\Python\Python39\site-packages\memory_profiler.py'
+name = 'memory_profiler'
+
+spec = importlib.util.spec_from_file_location(name, path)
+module = importlib.util.module_from_spec(spec)
+sys.modules[spec.name] = module 
+spec.loader.exec_module(module)
+
+from memory_profiler import profile
+
 def manager_smooth_curve():
         
     vert_co_array, active_mesh_vector_array, direction_vetor_array, active_object , curve_data = first_step()
