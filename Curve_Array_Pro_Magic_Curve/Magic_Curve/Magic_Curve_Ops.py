@@ -18,19 +18,19 @@ from .Strong_Curve import (
 
 def manager_smooth_curve():
         
-    vert_co_array, active_mesh_vector_array, direction_vetor_array, active_object, active_mesh = first_step()
+    vert_co_array, active_mesh_vector_array, direction_vetor_array, active_object , curve_data = first_step()
             
-    main_curve = Smooth_create_curve(vert_co_array, active_object)
+    curve_data = Smooth_create_curve(vert_co_array, active_object, curve_data)
         
-    extruded_mesh = second_step(main_curve)
+    extruded_mesh = second_step(curve_data)
         
     extruded_mesh_vector_array = Smooth_extruded_mesh_vector(extruded_mesh, len(vert_co_array)*2)
         
     angle_array = Smooth_angle_between_vector(extruded_mesh_vector_array, active_mesh_vector_array, direction_vetor_array)
     
-    Smooth_tilt_correction(angle_array, main_curve)
+    Smooth_tilt_correction(angle_array, curve_data)
     
-    final_step(extruded_mesh, main_curve)
+    final_step(extruded_mesh, curve_data)
 
 def manager_strong_curve():
     

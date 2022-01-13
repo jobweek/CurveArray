@@ -6,6 +6,27 @@ import numpy as np
 from .Errors import CancelError, ShowMessageBox
 from .Classes import checker
 from ..Python_Modules.Memory_Profiler.memory_profiler import profile
+       
+class Curve_Data:
+    
+    __curve = None
+    __cyclic = None
+    
+    def set_curve(self, curve):
+        
+        self.__curve = curve
+        
+    def get_curve(self):
+        
+        return self.__curve
+            
+    def set_cyclic(self, cyclic):
+        
+        self.__cyclic = cyclic
+        
+    def get_cyclic(self):
+        
+        return self.__cyclic
             
 def active_vertex(bm):
     
@@ -41,7 +62,7 @@ def selected_verts(bm):
     
         return selected_verts_array
             
-def verts_sequence(selected_verts_array, act_vert):
+def verts_sequence(selected_verts_array, act_vert, curve_data):
                 
     def selected_linked_edges(searched_vertex):        
         
@@ -105,17 +126,11 @@ def verts_sequence(selected_verts_array, act_vert):
                     
     if len(selected_linked_edges_buffer) == 2:
         
-        if selected_linked_edges_buffer[0] != linked_edge:
-            
-            linked_edge = selected_linked_edges_buffer[0]
-            
-        else:
-            
-            linked_edge = selected_linked_edges_buffer[1]
+        curve_data.set_cyclic(True)
         
-        searched_vertex = linked_edge.other_vert(searched_vertex)
-                            
-        vert_sequence_array = np.append(vert_sequence_array, searched_vertex)
+    else:
+        
+        curve_data.set_cyclic(False)
                         
     return vert_sequence_array
 
@@ -193,6 +208,7 @@ def first_step():
     active_mesh = active_object.data
 
     checker.start_checker()
+    curve_data = Curve_Data()
         
     bm = bmesh.from_edit_mesh(active_mesh)
             
@@ -200,7 +216,7 @@ def first_step():
         
     selected_verts_array = selected_verts(bm)
                 
-    vert_sequence_array = verts_sequence(selected_verts_array, act_vert)
+    vert_sequence_array = verts_sequence(selected_verts_array, act_vert, curve_data)
     
     active_mesh_vector_array = active_mesh_vector(vert_sequence_array)
     
@@ -210,17 +226,19 @@ def first_step():
         
     bpy.ops.object.editmode_toggle()
         
-    return vert_co_array, active_mesh_vector_array, direction_vetor_array, active_object, active_mesh
+    return vert_co_array, active_mesh_vector_array, direction_vetor_array, active_object, curve_data
 
-def second_step(main_curve):
+def second_step(curve_data):
     
-    extruded_curve = create_extruded_curve(main_curve)
+    extruded_curve = create_extruded_curve(curve_data.get_curve())
     
     extruded_mesh = convert_extuded_curve_to_mesh(extruded_curve)
     
     return extruded_mesh
 
-def final_step(extruded_mesh, main_curve):
+def final_step(extruded_mesh, curve_data):
+    
+    main_curve = curve_data.get_curve()
     
     bpy.data.objects.remove(extruded_mesh, do_unlink=True)
     

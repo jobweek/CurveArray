@@ -18,7 +18,7 @@ def dict_index_correction(dict):
        
     return correct_dict
 
-def create_curve(vert_co_array, active_object):
+def create_curve(vert_co_array, active_object, curve_data):
     
     crv_mesh = bpy.data.curves.new('MgCrv_curve_smooth', 'CURVE')
     crv_mesh.dimensions = '3D'
@@ -26,6 +26,10 @@ def create_curve(vert_co_array, active_object):
     spline = crv_mesh.splines.new(type='POLY')
         
     spline.points.add(len(vert_co_array) - 1) 
+    
+    if curve_data.get_cyclic() == True:
+        
+        spline.use_cyclic_u = True
     
     iterator = 0
     
@@ -50,7 +54,9 @@ def create_curve(vert_co_array, active_object):
     
     spline.type = 'BEZIER'
         
-    return main_curve
+    curve_data.set_curve(main_curve)
+        
+    return curve_data
         
 def extruded_mesh_vector(extruded_mesh, verts_count):
         
@@ -138,7 +144,9 @@ def angle_between_vector(extruded_mesh_vector_array, active_mesh_vector_array, d
 
     return angle_array
     
-def tilt_correction(angle_array, main_curve):
+def tilt_correction(angle_array, curve_data):
+
+    main_curve = curve_data.get_curve()
 
     spline = main_curve.data.splines[0]
     
