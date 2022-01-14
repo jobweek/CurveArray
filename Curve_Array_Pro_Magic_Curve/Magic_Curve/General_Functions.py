@@ -61,7 +61,7 @@ def selected_verts(bm):
     
         return selected_verts_array
          
-def verts_sequence(selected_verts_array, act_vert, curve_data):
+def verts_sequence(verts_count, act_vert, curve_data):
                 
     def selected_linked_edges(searched_vertex):        
         
@@ -77,7 +77,7 @@ def verts_sequence(selected_verts_array, act_vert, curve_data):
         
         return selected_linked_edges_buffer
                                                                           
-    vert_sequence_array = np.empty(len(selected_verts_array), dtype=object)
+    vert_sequence_array = np.empty(verts_count, dtype=object)
     
     vert_sequence_array[0] = act_vert
         
@@ -95,7 +95,7 @@ def verts_sequence(selected_verts_array, act_vert, curve_data):
                                   
     i = 1
         
-    while i < len(selected_verts_array) - 1:
+    while i < verts_count - 1:
                 
         vert_sequence_array[i] = searched_vertex
                                 
@@ -212,10 +212,8 @@ def first_step():
     bm = bmesh.from_edit_mesh(active_mesh)
             
     act_vert = active_vertex(bm)
-        
-    selected_verts_array = selected_verts(bm)
-                
-    vert_sequence_array = verts_sequence(selected_verts_array, act_vert, curve_data)
+                        
+    vert_sequence_array = verts_sequence(active_mesh.total_vert_sel, act_vert, curve_data)
     
     active_mesh_vector_array = active_mesh_vector(vert_sequence_array)
     
