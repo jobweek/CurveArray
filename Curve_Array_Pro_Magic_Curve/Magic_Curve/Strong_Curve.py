@@ -4,6 +4,14 @@ import mathutils # type: ignore
 import math
 import numpy as np 
 
+def cyclic_correction(vert_co_array, curve_data):
+    
+    if curve_data.get_cyclic() == True:
+        
+        vert_co_array = np.append(vert_co_array, vert_co_array[0])
+    
+    return vert_co_array
+
 def create_curve(vert_co_array, active_object, curve_data):
                         
     def create_spline(crv_mesh, vert_co_array):
