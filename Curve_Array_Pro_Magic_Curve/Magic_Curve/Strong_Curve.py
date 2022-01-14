@@ -2,32 +2,13 @@ import bpy # type: ignore
 import bmesh # type: ignore
 import mathutils # type: ignore
 import math
+import numpy as np 
 
-def create_curve(vertices_line_list, active_object, active_mesh):
-    
-    class Main_Curve:
-        
-        def set_curve(self, curve):
-            
-            self.curve = curve
-        
-        def get_curve(self):
-            
-            return self.curve
-        
-        def set_cyclic(self, cyclic):
-            
-            self.cyclic = cyclic
-            
-        def get_cyclic(self):
-            
-            return self.cyclic
+def create_curve(vert_co_array, active_object, curve_data):
+                        
+    def create_spline(crv_mesh, vert_co_array):
                 
-    main_curve = Main_Curve()
-                    
-    def create_spline(crv_mesh, vertices_line_list):
-                
-        for _ in range(len(vertices_line_list)-1):
+        for _ in range(len(vert_co_array)-1):
             
             spline = crv_mesh.splines.new(type='POLY')
             
@@ -36,25 +17,25 @@ def create_curve(vertices_line_list, active_object, active_mesh):
     crv_mesh = bpy.data.curves.new('MgCrv_curve_strong', 'CURVE')
     crv_mesh.dimensions = '3D'
     crv_mesh.twist_mode = 'MINIMUM'        
-    create_spline(crv_mesh, vertices_line_list)
+    create_spline(crv_mesh, vert_co_array)
         
     i = 0
                
-    while i < len(vertices_line_list) - 1:
+    while i < len(vert_co_array) - 1:
         
-        mesh_vertex_index_first = vertices_line_list[i]
-        mesh_vertex_index_second = vertices_line_list[i + 1]
+        mesh_vertex_first_co = vert_co_array[i]
+        mesh_vertex_second_co = vert_co_array[i + 1]
         
         spline = crv_mesh.splines[i]
         
-        spline.points[0].co[0] =  active_mesh.vertices[mesh_vertex_index_first].co[0]
-        spline.points[0].co[1] =  active_mesh.vertices[mesh_vertex_index_first].co[1]
-        spline.points[0].co[2] =  active_mesh.vertices[mesh_vertex_index_first].co[2]
+        spline.points[0].co[0] =  mesh_vertex_first_co[0]
+        spline.points[0].co[1] =  mesh_vertex_first_co[1]
+        spline.points[0].co[2] =  mesh_vertex_first_co[2]
         spline.points[0].co[3] =  0
         
-        spline.points[1].co[0] =  active_mesh.vertices[mesh_vertex_index_second].co[0]
-        spline.points[1].co[1] =  active_mesh.vertices[mesh_vertex_index_second].co[1]
-        spline.points[1].co[2] =  active_mesh.vertices[mesh_vertex_index_second].co[2]
+        spline.points[1].co[0] =  mesh_vertex_second_co[0]
+        spline.points[1].co[1] =  mesh_vertex_second_co[1]
+        spline.points[1].co[2] =  mesh_vertex_second_co[2]
         spline.points[1].co[3] =  0
         
         i += 1
@@ -73,43 +54,30 @@ def create_curve(vertices_line_list, active_object, active_mesh):
     
         spline.type = 'BEZIER'
     
-    main_curve.set_curve(crv_obj)
+    curve_data.set_curve(crv_obj)
     
-    return main_curve
+    return curve_data
 
 def extruded_mesh_vector(extruded_mesh, vetices_count):
     
-    def extruded_mesh_vertices(extruded_mesh, vetices_count):
+    extruded_mesh_vector_array = np.empty(vetices_count, dtype=object)
     
-        extruded_mesh_vertices_list = []
+    i = 0
+
+    while i < vetices_count:
         
-        i = 0
+        firts_point = extruded_mesh.data.vertices[0 + i*4]
+        second_point = extruded_mesh.data.vertices[1 + i*4]
 
-        while i < vetices_count:
-            
-            points = [extruded_mesh.data.vertices[0 + i*4], extruded_mesh.data.vertices[1 + i*4]]
-            
-            extruded_mesh_vertices_list.append(points)
-            
-            i += 1
-                        
-        return extruded_mesh_vertices_list
-    
-    extruded_mesh_vertices_list = extruded_mesh_vertices(extruded_mesh, vetices_count)
-    extruded_mesh_vector_list = []
-
-    for i in extruded_mesh_vertices_list:
-
-        firts_point = i[0]
-        second_point = i[1]
-        
         vector = mathutils.Vector((second_point.co[0] - firts_point.co[0], second_point.co[1] - firts_point.co[1], second_point.co[2] - firts_point.co[2]))
-            
-        extruded_mesh_vector_list.append(vector)
-            
-    return extruded_mesh_vector_list
+        
+        extruded_mesh_vector_array[i] = vector
+        
+        i += 1
+                        
+    return extruded_mesh_vector_array
 
-def angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list, direction_vetor_list):
+def angle_between_vector(extruded_mesh_vector_array, active_mesh_vector_array, direction_vetor_array):
     
     def angle_correction(angle, cross_vector, vec_active_mesh):
         
@@ -134,16 +102,16 @@ def angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list, dir
         
         return correct_vec
         
-    angle_list = []
+    angle_array = np.empty(len(extruded_mesh_vector_array), dtype=object)
     
     i = 0
     
-    while i < len(extruded_mesh_vector_list):
+    while i < len(extruded_mesh_vector_array):
         
-        vec_extruded_mesh = extruded_mesh_vector_list[i]
-        vec_active_mesh_first = active_mesh_vector_list[i]
-        vec_active_mesh_second = active_mesh_vector_list[i + 1]
-        vec_direction = direction_vetor_list[i]
+        vec_extruded_mesh = extruded_mesh_vector_array[i]
+        vec_active_mesh_first = active_mesh_vector_array[i]
+        vec_active_mesh_second = active_mesh_vector_array[i + 1]
+        vec_direction = direction_vetor_array[i]
                
         correct_vec_active_mesh_first = corrcet_vec(vec_active_mesh_first, vec_direction)
         correct_vec_active_mesh_second = corrcet_vec(vec_active_mesh_second, vec_direction)
@@ -158,21 +126,21 @@ def angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list, dir
         angle_first = angle_correction(angle_first, cross_vector, vec_active_mesh_first)
         angle_second = angle_correction(angle_second, cross_vector, vec_active_mesh_second)
 
-        angle_list.append([angle_first, angle_second])
+        angle_array[i] = [angle_first, angle_second]
         
         i += 1
 
-    return angle_list
+    return angle_array
 
-def tilt_correction(angle_list, main_curve):
+def tilt_correction(angle_array, curve_data):
     
     i = 0
     
-    while i < len(main_curve.get_curve().data.splines):
+    while i < len(curve_data.get_curve().data.splines):
     
-        spline = main_curve.get_curve().data.splines[i]
+        spline = curve_data.get_curve().data.splines[i]
         
-        angle_spine_list = angle_list[i]
+        angle_spine_list = angle_array[i]
         
         spline.bezier_points[0].tilt = angle_spine_list[0]
         

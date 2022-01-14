@@ -33,20 +33,19 @@ def manager_smooth_curve():
 
 def manager_strong_curve():
     
-    vertices_line_list, active_mesh_vector_list, direction_vetor_list, active_object, active_mesh  = first_step()
+    vert_co_array, active_mesh_vector_array, direction_vetor_array, active_object , curve_data = first_step()
     
-    main_curve = Strong_create_curve(vertices_line_list, active_object, active_mesh)
+    curve_data = Strong_create_curve(vert_co_array, active_object, curve_data)
     
-    extruded_mesh = second_step(main_curve)
+    extruded_mesh = second_step(curve_data)
     
-    extruded_mesh_vector_list = Strong_extruded_mesh_vector(extruded_mesh, len(vertices_line_list) - 1)
-    extruded_mesh_vector_list = copy.deepcopy(extruded_mesh_vector_list)
+    extruded_mesh_vector_array = Strong_extruded_mesh_vector(extruded_mesh, len(vert_co_array) - 1)
     
-    angle_list = Strong_angle_between_vector(extruded_mesh_vector_list, active_mesh_vector_list, direction_vetor_list)
+    angle_array = Strong_angle_between_vector(extruded_mesh_vector_array, active_mesh_vector_array, direction_vetor_array)
     
-    Strong_tilt_correction(angle_list, main_curve)
+    Strong_tilt_correction(angle_array, curve_data)
     
-    final_step(extruded_mesh, main_curve)
+    final_step(extruded_mesh, curve_data)
                  
 class MAGICCURVE_OT_mgcrv_ops(bpy.types.Operator):
     '''Clear selected curve'''

@@ -59,43 +59,26 @@ def create_curve(vert_co_array, active_object, curve_data):
     return curve_data
         
 def extruded_mesh_vector(extruded_mesh, verts_count):
-        
-    def extruded_mesh_verts(extruded_mesh, verts_count):
+            
+    extruded_mesh_vector_array = np.empty(int(verts_count/2), dtype=object)
     
-        extruded_mesh_verts_array = np.empty(int(verts_count/2), dtype=object)
-        
-        i = 0
-        iterator = 0
-
-        while i < verts_count:
-            
-            points = [extruded_mesh.data.vertices[0 + i], extruded_mesh.data.vertices[1 + i]]
-            
-            extruded_mesh_verts_array[iterator] = points
-            
-            iterator += 1
-            i += 2
-            
-        return extruded_mesh_verts_array
-    
-    extruded_mesh_verts_array = extruded_mesh_verts(extruded_mesh, verts_count)
-    extruded_mesh_vector_array = np.empty(len(extruded_mesh_verts_array), dtype=object)
-
+    i = 0
     iterator = 0
 
-    for i in extruded_mesh_verts_array:
-
-        firts_point = i[0]
-        second_point = i[1]
+    while i < verts_count:
+        
+        firts_point = extruded_mesh.data.vertices[0 + i] 
+        second_point = extruded_mesh.data.vertices[1 + i]
         
         vector = mathutils.Vector((second_point.co[0] - firts_point.co[0], second_point.co[1] - firts_point.co[1], second_point.co[2] - firts_point.co[2]))
         
         extruded_mesh_vector_array[iterator] = vector
         
         iterator += 1
-            
-    return extruded_mesh_vector_array
+        i += 2
         
+    return extruded_mesh_vector_array
+            
 def angle_between_vector(extruded_mesh_vector_array, active_mesh_vector_array, direction_vetor_array):
     
     def angle_correction(angle, cross_vector, vec_active_mesh):
