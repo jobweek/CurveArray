@@ -1,6 +1,5 @@
 import bpy # type: ignore
 import copy
-import time
 from .Errors import CancelError, ShowMessageBox
 from .General_Functions import first_step, second_step, final_step
 from .Smooth_Curve import (

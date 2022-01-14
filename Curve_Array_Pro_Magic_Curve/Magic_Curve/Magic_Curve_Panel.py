@@ -1,4 +1,4 @@
-import bpy
+import bpy # type: ignore
 
 class MAGICCURVE_PT_mgcrv_panel(bpy.types.Panel):
     bl_label = "Magic Curve"
