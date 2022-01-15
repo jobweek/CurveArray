@@ -7,16 +7,12 @@ import numpy as np
 def cyclic_correction(vert_co_array, curve_data):
     
     if curve_data.get_cyclic() == True:
-        
-        print(len(vert_co_array))
-        
+                
         arr = np.empty(1, dtype=object)
         
         arr[0] = vert_co_array[0]
                 
         vert_co_array = np.append(vert_co_array, arr, axis = 0)
-        
-        print(vert_co_array)
     
     return vert_co_array
 
