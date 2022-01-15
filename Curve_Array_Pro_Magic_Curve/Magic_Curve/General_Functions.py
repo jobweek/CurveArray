@@ -156,9 +156,15 @@ def convert_extuded_curve_to_mesh(extruded_curve):
     
     return extruded_mesh
 
-def active_mesh_vector(vert_sequence_array):
+def active_mesh_vector(vert_sequence_array, curve_data):
     
-    active_mesh_vector_array = np.empty(len(vert_sequence_array), dtype=object)
+    if curve_data.get_cyclic() == False:
+            
+        active_mesh_vector_array = np.empty(len(vert_sequence_array), dtype=object)
+        
+    else:
+    
+        active_mesh_vector_array = np.empty(len(vert_sequence_array) + 1, dtype=object)
     
     iterator = 0
     
@@ -169,6 +175,10 @@ def active_mesh_vector(vert_sequence_array):
         active_mesh_vector_array[iterator] = vertex
         
         iterator += 1
+        
+    if curve_data.get_cyclic() == True:
+            
+        active_mesh_vector_array[iterator] = copy.deepcopy(vert_sequence_array[0].normal)
         
     return active_mesh_vector_array
 
@@ -215,7 +225,7 @@ def first_step():
                         
     vert_sequence_array = verts_sequence(active_mesh.total_vert_sel, act_vert, curve_data)
     
-    active_mesh_vector_array = active_mesh_vector(vert_sequence_array)
+    active_mesh_vector_array = active_mesh_vector(vert_sequence_array, curve_data)
     
     direction_vetor_array = direction_vector(vert_sequence_array)
     

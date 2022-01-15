@@ -38,7 +38,7 @@ def create_curve(vert_co_array, active_object, curve_data):
     i = 0
                
     while i < len(vert_co_array) - 1:
-        
+ 
         mesh_vertex_first_co = vert_co_array[i]
         mesh_vertex_second_co = vert_co_array[i + 1]
         
@@ -82,8 +82,8 @@ def extruded_mesh_vector(extruded_mesh, vetices_count):
 
     while i < vetices_count:
         
-        firts_point = extruded_mesh.data.vertices[0 + i*4]
-        second_point = extruded_mesh.data.vertices[1 + i*4]
+        firts_point = extruded_mesh.data.vertices[0 + i*2]
+        second_point = extruded_mesh.data.vertices[1 + i*2]
 
         vector = mathutils.Vector((second_point.co[0] - firts_point.co[0], second_point.co[1] - firts_point.co[1], second_point.co[2] - firts_point.co[2]))
         
