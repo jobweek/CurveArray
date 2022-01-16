@@ -70,27 +70,29 @@ def create_curve(vert_co_array, active_object, curve_data):
     
     return curve_data
 
-def extruded_mesh_vector(extruded_mesh, vetices_count):
+def extruded_mesh_vector(extruded_mesh, vector_count):
     
-    extruded_mesh_vector_array = np.empty(vetices_count, dtype=object)
+    extruded_mesh_vector_array = np.empty(vector_count, dtype=object)
     
     i = 0
 
-    while i < vetices_count:
+    while i < vector_count:
         
-        firts_point = extruded_mesh.data.vertices[0 + i*2]
-        second_point = extruded_mesh.data.vertices[1 + i*2]
+        firts_point = extruded_mesh.data.vertices[0 + i*4]
+        second_point = extruded_mesh.data.vertices[1 + i*4]
 
         vector = mathutils.Vector((second_point.co[0] - firts_point.co[0], second_point.co[1] - firts_point.co[1], second_point.co[2] - firts_point.co[2]))
         
         extruded_mesh_vector_array[i] = vector
-        
+
         i += 1
                         
     return extruded_mesh_vector_array
 
 def angle_between_vector(extruded_mesh_vector_array, active_mesh_vector_array, direction_vetor_array):
-    
+    print('extruded_mesh_vector_array', extruded_mesh_vector_array)
+    print('active_mesh_vector_array', active_mesh_vector_array)
+    print('direction_vetor_array', direction_vetor_array)
     def angle_correction(angle, cross_vector, vec_active_mesh):
         
         direction_angle = cross_vector.angle(vec_active_mesh)

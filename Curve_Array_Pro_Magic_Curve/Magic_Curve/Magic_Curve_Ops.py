@@ -42,7 +42,8 @@ def manager_strong_curve():
     
     extruded_mesh = second_step(curve_data)
     
-    extruded_mesh_vector_array = Strong_extruded_mesh_vector(extruded_mesh, len(vert_co_array) - 1)
+    vector_count = (len(vert_co_array) - 1)
+    extruded_mesh_vector_array = Strong_extruded_mesh_vector(extruded_mesh, vector_count)
     
     angle_array = Strong_angle_between_vector(extruded_mesh_vector_array, active_mesh_vector_array, direction_vetor_array)
     
@@ -80,10 +81,10 @@ class MAGICCURVE_OT_mgcrv_ops(bpy.types.Operator):
             
             return {'CANCELLED'}
 
-        except Exception as err:
+        # except Exception as err:
             
-            ShowMessageBox("Unkown Error, Please send me this report:", repr(err), 'ERROR')
+        #     ShowMessageBox("Unkown Error, Please send me this report:", repr(err), 'ERROR')
             
-            return {'CANCELLED'}       
+        #     return {'CANCELLED'}       
  
         
