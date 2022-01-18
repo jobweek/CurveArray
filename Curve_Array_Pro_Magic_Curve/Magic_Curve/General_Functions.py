@@ -33,6 +33,12 @@ def active_vertex(bm):
         
         act_vert = bm.select_history.active
         
+        if act_vert == None:
+            
+            ShowMessageBox("Error","The active vertex must be selected", 'ERROR')
+        
+            raise CancelError
+        
         return act_vert
 
     except:
