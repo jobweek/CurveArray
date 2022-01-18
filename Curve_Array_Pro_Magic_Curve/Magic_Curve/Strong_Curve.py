@@ -24,7 +24,7 @@ def create_curve(vert_co_array, active_object, curve_data):
             
             spline = crv_mesh.splines.new(type='POLY')
             
-            spline.points.add(1) 
+            spline.points.add(1)        
     
     crv_mesh = bpy.data.curves.new('MgCrv_curve_strong', 'CURVE')
     crv_mesh.dimensions = '3D'
@@ -44,12 +44,12 @@ def create_curve(vert_co_array, active_object, curve_data):
         spline.points[0].co[1] =  mesh_vertex_first_co[1]
         spline.points[0].co[2] =  mesh_vertex_first_co[2]
         spline.points[0].co[3] =  0
-        
+                
         spline.points[1].co[0] =  mesh_vertex_second_co[0]
         spline.points[1].co[1] =  mesh_vertex_second_co[1]
         spline.points[1].co[2] =  mesh_vertex_second_co[2]
         spline.points[1].co[3] =  0
-        
+                
         i += 1
         
     crv_obj = bpy.data.objects.new('MgCrv_curve_strong', crv_mesh)
@@ -66,6 +66,12 @@ def create_curve(vert_co_array, active_object, curve_data):
     
         spline.type = 'BEZIER'
     
+        spline.bezier_points[0].handle_left_type = 'FREE'
+        spline.bezier_points[0].handle_right_type = 'FREE'
+        
+        spline.bezier_points[1].handle_left_type = 'FREE'
+        spline.bezier_points[1].handle_right_type = 'FREE'
+            
     curve_data.set_curve(crv_obj)
     
     return curve_data
@@ -108,7 +114,7 @@ def angle_between_vector(extruded_mesh_vector_array, active_mesh_vector_array, d
         else:
             
             return angle
-            
+                                      
     def corrcet_vec(vec, vec_direction):
             
         projection = vec.project(vec_direction)
@@ -136,9 +142,19 @@ def angle_between_vector(extruded_mesh_vector_array, active_mesh_vector_array, d
         angle_second = correct_vec_extruded_mesh.angle(correct_vec_active_mesh_second)
                 
         cross_vector = vec_direction.cross(correct_vec_extruded_mesh)
-                        
+        print('cross_vector', cross_vector)            
         angle_first = angle_correction(angle_first, cross_vector, vec_active_mesh_first)
         angle_second = angle_correction(angle_second, cross_vector, vec_active_mesh_second)
+        
+        if math.fabs(angle_first - angle_second) > math.pi:
+            
+            if angle_second < 0:
+            
+                angle_second = (math.pi*2 - math.fabs(angle_second))
+                
+            else: 
+
+                angle_second = (math.pi*2 - math.fabs(angle_second)) * (-1)
 
         angle_array[i] = [angle_first, angle_second]
         
@@ -159,5 +175,5 @@ def tilt_correction(angle_array, curve_data):
         spline.bezier_points[0].tilt = angle_spine_list[0]
         
         spline.bezier_points[1].tilt = angle_spine_list[1]
-        
+                
         i += 1

@@ -46,7 +46,7 @@ def manager_strong_curve():
     extruded_mesh_vector_array = Strong_extruded_mesh_vector(extruded_mesh, vector_count)
     
     angle_array = Strong_angle_between_vector(extruded_mesh_vector_array, active_mesh_vector_array, direction_vetor_array)
-    
+        
     Strong_tilt_correction(angle_array, curve_data)
     
     final_step(extruded_mesh, curve_data)
