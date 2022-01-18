@@ -96,9 +96,7 @@ def extruded_mesh_vector(extruded_mesh, vector_count):
     return extruded_mesh_vector_array
 
 def angle_between_vector(extruded_mesh_vector_array, active_mesh_vector_array, direction_vetor_array):
-    print('extruded_mesh_vector_array', extruded_mesh_vector_array)
-    print('active_mesh_vector_array', active_mesh_vector_array)
-    print('direction_vetor_array', direction_vetor_array)
+
     def angle_correction(angle, cross_vector, vec_active_mesh):
         
         direction_angle = cross_vector.angle(vec_active_mesh)
@@ -142,7 +140,7 @@ def angle_between_vector(extruded_mesh_vector_array, active_mesh_vector_array, d
         angle_second = correct_vec_extruded_mesh.angle(correct_vec_active_mesh_second)
                 
         cross_vector = vec_direction.cross(correct_vec_extruded_mesh)
-        print('cross_vector', cross_vector)            
+
         angle_first = angle_correction(angle_first, cross_vector, vec_active_mesh_first)
         angle_second = angle_correction(angle_second, cross_vector, vec_active_mesh_second)
         
