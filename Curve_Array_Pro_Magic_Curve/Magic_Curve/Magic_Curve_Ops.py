@@ -13,7 +13,8 @@ from .Strong_Curve import (
     extruded_mesh_vector as Strong_extruded_mesh_vector,
     angle_between_vector as Strong_angle_between_vector,
     cyclic_correction as Strong_cyclic_correction,
-    tilt_correction as Strong_tilt_correction
+    tilt_correction as Strong_tilt_correction,
+    curve_correction as Strong_curve_correction
 )
 
 def manager_smooth_curve():
@@ -41,6 +42,8 @@ def manager_strong_curve():
     curve_data = Strong_create_curve(vert_co_array, active_object, curve_data)
     
     extruded_mesh = second_step(curve_data)
+    
+    curve_data = Strong_curve_correction(curve_data)
     
     vector_count = (len(vert_co_array) - 1)
     extruded_mesh_vector_array = Strong_extruded_mesh_vector(extruded_mesh, vector_count)

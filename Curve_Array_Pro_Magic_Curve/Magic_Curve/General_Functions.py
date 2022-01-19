@@ -32,7 +32,7 @@ def active_vertex(bm):
     try:
         
         act_vert = bm.select_history.active
-        
+                
         if act_vert == None:
             
             ShowMessageBox("Error","The active vertex must be selected", 'ERROR')

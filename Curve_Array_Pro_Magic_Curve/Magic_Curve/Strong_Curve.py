@@ -62,16 +62,6 @@ def create_curve(vert_co_array, active_object, curve_data):
   
     bpy.context.scene.collection.objects.link(crv_obj)
     
-    for spline in crv_mesh.splines:
-    
-        spline.type = 'BEZIER'
-    
-        spline.bezier_points[0].handle_left_type = 'FREE'
-        spline.bezier_points[0].handle_right_type = 'FREE'
-        
-        spline.bezier_points[1].handle_left_type = 'FREE'
-        spline.bezier_points[1].handle_right_type = 'FREE'
-            
     curve_data.set_curve(crv_obj)
     
     return curve_data
@@ -94,6 +84,22 @@ def extruded_mesh_vector(extruded_mesh, vector_count):
         i += 1
                         
     return extruded_mesh_vector_array
+
+def curve_correction(curve_data):
+    
+    main_curve = curve_data.get_curve()
+
+    for spline in main_curve.data.splines:
+
+        spline.type = 'BEZIER'
+
+        spline.bezier_points[0].handle_left_type = 'FREE'
+        spline.bezier_points[0].handle_right_type = 'FREE'
+        
+        spline.bezier_points[1].handle_left_type = 'FREE'
+        spline.bezier_points[1].handle_right_type = 'FREE'
+        
+    return curve_data
 
 def angle_between_vector(extruded_mesh_vector_array, active_mesh_vector_array, direction_vetor_array):
 
@@ -130,7 +136,7 @@ def angle_between_vector(extruded_mesh_vector_array, active_mesh_vector_array, d
         vec_active_mesh_first = active_mesh_vector_array[i]
         vec_active_mesh_second = active_mesh_vector_array[i + 1]
         vec_direction = direction_vetor_array[i]
-               
+        
         correct_vec_active_mesh_first = corrcet_vec(vec_active_mesh_first, vec_direction)
         correct_vec_active_mesh_second = corrcet_vec(vec_active_mesh_second, vec_direction)
         
@@ -156,6 +162,20 @@ def angle_between_vector(extruded_mesh_vector_array, active_mesh_vector_array, d
 
         angle_array[i] = [angle_first, angle_second]
         
+        if i == 30:
+            
+            print('vec_extruded_mesh', vec_extruded_mesh)
+            print('vec_active_mesh_first', vec_active_mesh_first)
+            print('vec_active_mesh_second', vec_active_mesh_second)
+            print('vec_direction', vec_direction)
+            print('correct_vec_active_mesh_first', correct_vec_active_mesh_first)
+            print('correct_vec_active_mesh_second', correct_vec_active_mesh_second)
+            print('correct_vec_extruded_mesh', correct_vec_extruded_mesh)
+            print('vec_direction', vec_direction)
+            print('cross_vector', cross_vector)
+            print('angle_first', angle_first)
+            print('angle_second', angle_second)
+
         i += 1
 
     return angle_array
