@@ -162,20 +162,6 @@ def angle_between_vector(extruded_mesh_vector_array, active_mesh_vector_array, d
 
         angle_array[i] = [angle_first, angle_second]
         
-        if i == 30:
-            
-            print('vec_extruded_mesh', vec_extruded_mesh)
-            print('vec_active_mesh_first', vec_active_mesh_first)
-            print('vec_active_mesh_second', vec_active_mesh_second)
-            print('vec_direction', vec_direction)
-            print('correct_vec_active_mesh_first', correct_vec_active_mesh_first)
-            print('correct_vec_active_mesh_second', correct_vec_active_mesh_second)
-            print('correct_vec_extruded_mesh', correct_vec_extruded_mesh)
-            print('vec_direction', vec_direction)
-            print('cross_vector', cross_vector)
-            print('angle_first', angle_first)
-            print('angle_second', angle_second)
-
         i += 1
 
     return angle_array
