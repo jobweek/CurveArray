@@ -25,7 +25,8 @@ def manager_smooth_curve():
         
     extruded_mesh = second_step(curve_data)
         
-    extruded_mesh_vector_array = Smooth_extruded_mesh_vector(extruded_mesh, len(vert_co_array)*2)
+    verts_count = len(vert_co_array)*2
+    extruded_mesh_vector_array = Smooth_extruded_mesh_vector(extruded_mesh, verts_count, curve_data)
         
     angle_array = Smooth_angle_between_vector(extruded_mesh_vector_array, active_mesh_vector_array, direction_vetor_array)
     
