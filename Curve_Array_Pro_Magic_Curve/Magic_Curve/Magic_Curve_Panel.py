@@ -17,4 +17,4 @@ class MAGICCURVE_PT_panel(bpy.types.Panel):
         properdelv = row.operator('magiccurve.create_curve', text = "Strong Curve")
         properdelv.curve_type = True
         row = layout.row()
-        row.operator('magiccurve.switch_curve', text = "Smooth Curve")
+        row.operator('magiccurve.switch_curve', text = "Switch curve direction")
