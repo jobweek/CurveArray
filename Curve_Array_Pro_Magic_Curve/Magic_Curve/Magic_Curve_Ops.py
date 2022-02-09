@@ -1,6 +1,5 @@
 import bpy # type: ignore
-import copy
-from .Errors import CancelError, ShowMessageBox
+from .Errors import CancelError
 from .General_Functions import first_step, second_step, final_step
 from .Smooth_Curve import (
     create_curve as Smooth_create_curve, 
@@ -55,10 +54,10 @@ def manager_strong_curve():
     
     final_step(extruded_mesh, curve_data)
                  
-class MAGICCURVE_OT_mgcrv_ops(bpy.types.Operator):
-    '''Clear selected curve'''
+class MAGICCURVE_OT_create_curve(bpy.types.Operator):
+    '''Create curve from loop'''
     bl_label = "Curve from loop"
-    bl_idname = 'magiccurve.mgcrv_ops'
+    bl_idname = 'magiccurve.create_curve'
     bl_options = {'REGISTER', 'UNDO'}
         
     curve_type : bpy.props.BoolProperty(
@@ -91,4 +90,30 @@ class MAGICCURVE_OT_mgcrv_ops(bpy.types.Operator):
             
         #     return {'CANCELLED'}       
  
+def manager_recalculate_curve():
+    
+    pass
+ 
+class MAGICCURVE_OT_switch_curve(bpy.types.Operator):
+    '''Switch curve direction and recalculate to right tilt'''
+    bl_label = "Switch curve direction"
+    bl_idname = 'magiccurve.switch_curve'
+    bl_options = {'REGISTER', 'UNDO'}
         
+    def execute(self, context):
+ 
+        try:
+            
+            manager_recalculate_curve()
+        
+            return {'FINISHED'}
+        
+        except CancelError:
+            
+            return {'CANCELLED'}
+
+        # except Exception as err:
+            
+        #     ShowMessageBox("Unkown Error, Please send me this report:", repr(err), 'ERROR')
+            
+        #     return {'CANCELLED'}   

@@ -29,7 +29,7 @@ bl_info = {
     "category":"3D View"
 }
 
-import bpy
+import bpy # type: ignore
 
 from .curve_array_pro_3_0 import (
     CRVARRPRO_PT_CurveArrayPro,
@@ -63,8 +63,11 @@ from .props.curve_array_props import (
     Main_Props
 )
 
-from .Magic_Curve.Magic_Curve_Ops import MAGICCURVE_OT_mgcrv_ops
-from .Magic_Curve.Magic_Curve_Panel import MAGICCURVE_PT_mgcrv_panel
+from .Magic_Curve.Magic_Curve_Ops import (
+    MAGICCURVE_OT_create_curve,
+    MAGICCURVE_OT_switch_curve,
+)
+from .Magic_Curve.Magic_Curve_Panel import MAGICCURVE_PT_panel
 
 classes = (
     Main_Props,
@@ -86,12 +89,13 @@ classes = (
     CRVARRPRO_OT_Empty,
     CRVARRPRO_PT_MainPanel,
     CRVARRPRO_OT_MakeIt,
-    MAGICCURVE_PT_mgcrv_panel,
-    MAGICCURVE_OT_mgcrv_ops,
     CRVARRPRO_PT_ButtonPanel,
     CRVARRPRO_OT_Delete_Last_Array,
     CRVARRPRO_OT_Reset_Settings,
-    CRVARRPRO_OT_Flip_Curve
+    CRVARRPRO_OT_Flip_Curve,
+    MAGICCURVE_OT_create_curve,
+    MAGICCURVE_OT_switch_curve,
+    MAGICCURVE_PT_panel,
 )
 
 def register():
