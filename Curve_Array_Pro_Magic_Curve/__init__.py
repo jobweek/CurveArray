@@ -63,11 +63,17 @@ from .props.curve_array_props import (
     Main_Props
 )
 
-from .Magic_Curve.Magic_Curve_Ops import (
-    MAGICCURVE_OT_create_curve,
-    MAGICCURVE_OT_switch_curve,
+from .Magic_Curve.Ops.Create_Curve import (
+    MAGICCURVE_OT_create_curve
 )
-from .Magic_Curve.Magic_Curve_Panel import MAGICCURVE_PT_panel
+
+from .Magic_Curve.Ops.Switch_Direction import (
+    MAGICCURVE_OT_switch_direction
+)
+
+from .Magic_Curve.Panels.Main_Panel import (
+    MAGICCURVE_PT_panel
+)
 
 classes = (
     Main_Props,
@@ -94,7 +100,7 @@ classes = (
     CRVARRPRO_OT_Reset_Settings,
     CRVARRPRO_OT_Flip_Curve,
     MAGICCURVE_OT_create_curve,
-    MAGICCURVE_OT_switch_curve,
+    MAGICCURVE_OT_switch_direction,
     MAGICCURVE_PT_panel,
 )
 
