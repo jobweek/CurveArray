@@ -1,10 +1,11 @@
-import bpy # type: ignore
-import bmesh # type: ignore
-import mathutils # type: ignore
+import bpy  # type: ignore
+import bmesh  # type: ignore
+import mathutils  # type: ignore
 import copy
 import numpy as np 
 from .Errors import CancelError, ShowMessageBox
 from .Classes import checker
+
 
 class Curve_Data:
     
@@ -26,7 +27,8 @@ class Curve_Data:
     def get_cyclic(self):
         
         return self.__cyclic
-            
+
+
 def active_vertex(bm):
     
     try:
@@ -47,6 +49,7 @@ def active_vertex(bm):
         
         raise CancelError
 
+
 def selected_verts(bm):
     
     selected = np.frompyfunc(lambda a: a.select, 1, 1)
@@ -66,7 +69,8 @@ def selected_verts(bm):
     else:
     
         return selected_verts_array
-         
+
+
 def verts_sequence(verts_count, act_vert, curve_data):
                 
     def selected_linked_edges(searched_vertex):        
@@ -139,6 +143,7 @@ def verts_sequence(verts_count, act_vert, curve_data):
                         
     return vert_sequence_array
 
+
 def create_extruded_curve(main_curve):
         
     extruded_curve = main_curve.copy()
@@ -149,6 +154,7 @@ def create_extruded_curve(main_curve):
     bpy.context.scene.collection.objects.link(extruded_curve)
     
     return extruded_curve
+
 
 def convert_extuded_curve_to_mesh(extruded_curve):
     
@@ -161,6 +167,7 @@ def convert_extuded_curve_to_mesh(extruded_curve):
     extruded_mesh = bpy.context.active_object
     
     return extruded_mesh
+
 
 def active_mesh_vector(vert_sequence_array, curve_data):
     
@@ -188,6 +195,7 @@ def active_mesh_vector(vert_sequence_array, curve_data):
         
     return active_mesh_vector_array
 
+
 def direction_vector(vert_sequence_array):
     
     direction_vetor_array = np.empty(len(vert_sequence_array), dtype=object)
@@ -199,7 +207,7 @@ def direction_vector(vert_sequence_array):
         first_vertex = vert_sequence_array[i]
         second_vertex = vert_sequence_array[i + 1]
             
-        direction_vetor = mathutils.Vector((second_vertex.co[0] -  first_vertex.co[0], second_vertex.co[1] -  first_vertex.co[1], second_vertex.co[2] -  first_vertex.co[2]))
+        direction_vetor = mathutils.Vector((second_vertex.co[0] - first_vertex.co[0], second_vertex.co[1] - first_vertex.co[1], second_vertex.co[2] - first_vertex.co[2]))
             
         direction_vetor_array[i] = direction_vetor.normalized()
         
@@ -209,6 +217,7 @@ def direction_vector(vert_sequence_array):
     
     return direction_vetor_array 
 
+
 def vert_co(vert_sequence_array):
     
     vert_co_array = np.frompyfunc(lambda a: copy.deepcopy(a.co), 1, 1)
@@ -216,6 +225,7 @@ def vert_co(vert_sequence_array):
     vert_co_array = vert_co_array(vert_sequence_array)
     
     return vert_co_array
+
 
 def first_step():
     
@@ -241,6 +251,7 @@ def first_step():
         
     return vert_co_array, active_mesh_vector_array, direction_vetor_array, active_object, curve_data
 
+
 def second_step(curve_data):
     
     extruded_curve = create_extruded_curve(curve_data.get_curve())
@@ -249,8 +260,9 @@ def second_step(curve_data):
     
     return extruded_mesh
 
+
 def final_step(extruded_mesh, curve_data):
-    
+
     main_curve = curve_data.get_curve()
     
     bpy.data.objects.remove(extruded_mesh, do_unlink=True)
