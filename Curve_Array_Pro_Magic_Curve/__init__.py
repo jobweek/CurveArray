@@ -63,11 +63,11 @@ from .props.curve_array_props import (
     Main_Props
 )
 
-from .Magic_Curve.Ops.Create_Curve import (
+from .Magic_Curve.Ops.Create_Curve_Ops import (
     MAGICCURVE_OT_create_curve
 )
 
-from .Magic_Curve.Ops.Switch_Direction import (
+from .Magic_Curve.Ops.Switch_Direction_Ops import (
     MAGICCURVE_OT_switch_direction
 )
 

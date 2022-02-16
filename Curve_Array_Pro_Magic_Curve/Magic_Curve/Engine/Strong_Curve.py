@@ -107,11 +107,11 @@ def angle_between_vector(extruded_mesh_vector_array, active_mesh_vector_array, d
         
         direction_angle = cross_vector.angle(vec_active_mesh)
                 
-        if direction_angle < math.pi/2:
+        if direction_angle <  math.radians(90):
             
             return angle
         
-        elif direction_angle > math.pi/2:
+        elif direction_angle >  math.radians(90):
             
             return angle * (-1)
         
@@ -125,6 +125,22 @@ def angle_between_vector(extruded_mesh_vector_array, active_mesh_vector_array, d
         correct_vec = vec - projection    
         
         return correct_vec
+        
+    def rotation_correction(angle, cross_vector, vec_active_mesh):
+
+        if angle > math.radians(90):
+            
+            angle = math.pi - angle 
+            
+            angle = angle_correction(angle, cross_vector, vec_active_mesh)
+            
+            angle += math.pi 
+        
+        else:
+            
+            angle = angle_correction(angle, cross_vector, vec_active_mesh)
+            
+        return angle
         
     angle_array = np.empty(len(extruded_mesh_vector_array), dtype=object)
     
@@ -147,18 +163,18 @@ def angle_between_vector(extruded_mesh_vector_array, active_mesh_vector_array, d
                 
         cross_vector = vec_direction.cross(correct_vec_extruded_mesh)
 
-        angle_first = angle_correction(angle_first, cross_vector, vec_active_mesh_first)
-        angle_second = angle_correction(angle_second, cross_vector, vec_active_mesh_second)
+        angle_first = rotation_correction(angle_first, cross_vector, vec_active_mesh_first)
+        angle_second = rotation_correction(angle_second, cross_vector, vec_active_mesh_second)
         
-        if math.fabs(angle_first - angle_second) > math.pi:
+        # if math.fabs(angle_first - angle_second) > math.pi:
             
-            if angle_second < 0:
+        #     if angle_second < 0:
             
-                angle_second = (math.pi*2 - math.fabs(angle_second))
+        #         angle_second = (math.pi*2 - math.fabs(angle_second))
                 
-            else: 
+        #     else: 
 
-                angle_second = (math.pi*2 - math.fabs(angle_second)) * (-1)
+        #         angle_second = (math.pi*2 - math.fabs(angle_second)) * (-1)
 
         angle_array[i] = [angle_first, angle_second]
         
