@@ -7,7 +7,7 @@ from .Errors import CancelError, ShowMessageBox
 from .Classes import checker
 
 
-class Curve_Data:
+class CurveData:
     
     __curve = None
     __cyclic = None
@@ -35,17 +35,17 @@ def active_vertex(bm):
         
         act_vert = bm.select_history.active
                 
-        if act_vert == None:
+        if act_vert is None:
             
-            ShowMessageBox("Error","The active vertex must be selected", 'ERROR')
+            ShowMessageBox("Error", "The active vertex must be selected", 'ERROR')
         
             raise CancelError
         
         return act_vert
 
-    except:
+    except CancelError:
         
-        ShowMessageBox("Error","The active vertex must be selected", 'ERROR')
+        ShowMessageBox("Error", "The active vertex must be selected", 'ERROR')
         
         raise CancelError
 
@@ -62,7 +62,7 @@ def selected_verts(bm):
                                                      
     if len(selected_verts_array) < 1:
         
-        ShowMessageBox("Error","Select two or more vertices", 'ERROR')
+        ShowMessageBox("Error", "Select two or more vertices", 'ERROR')
         
         raise CancelError
     
@@ -73,7 +73,7 @@ def selected_verts(bm):
 
 def verts_sequence(verts_count, act_vert, curve_data):
                 
-    def selected_linked_edges(searched_vertex):        
+    def selected_linked_edges(searched_vertex):
         
         linked_edges = searched_vertex.link_edges
         
@@ -81,7 +81,7 @@ def verts_sequence(verts_count, act_vert, curve_data):
         
         for edge in linked_edges:
             
-            if edge.select == True:
+            if edge.select:
                 
                 selected_linked_edges_buffer.append(edge)
         
@@ -95,7 +95,9 @@ def verts_sequence(verts_count, act_vert, curve_data):
                     
     if len(selected_linked_edges_buffer) < 1 or len(selected_linked_edges_buffer) > 2:
                 
-        ShowMessageBox("Error","Select only one loop, or a line segment from connected edges, without intersection, and activate start point at one end", 'ERROR')
+        ShowMessageBox("Error",
+                       "select some edges without intersections and activate the start vertex at one of the ends",
+                       "ERROR")
         
         raise CancelError
     
@@ -113,7 +115,9 @@ def verts_sequence(verts_count, act_vert, curve_data):
         
         if len(selected_linked_edges_buffer) != 2:
             
-            ShowMessageBox("Error","Select only one loop, or a line segment from connected edges, without intersection, and activate start point at one end", 'ERROR')
+            ShowMessageBox("Error",
+                           "Select some edges without intersections and activate the start vertex at one of the ends",
+                           'ERROR')
             
             raise CancelError
         
@@ -156,11 +160,11 @@ def create_extruded_curve(main_curve):
     return extruded_curve
 
 
-def convert_extuded_curve_to_mesh(extruded_curve):
+def convert_extruded_curve_to_mesh(extruded_curve):
     
     bpy.ops.object.select_all(action='DESELECT')
     extruded_curve.select_set(True)
-    bpy.context.view_layer.objects.active =  extruded_curve
+    bpy.context.view_layer.objects.active = extruded_curve
     
     bpy.ops.object.convert(target='MESH')
     
@@ -171,7 +175,7 @@ def convert_extuded_curve_to_mesh(extruded_curve):
 
 def active_mesh_vector(vert_sequence_array, curve_data):
     
-    if curve_data.get_cyclic() == False:
+    if not curve_data.get_cyclic():
             
         active_mesh_vector_array = np.empty(len(vert_sequence_array), dtype=object)
         
@@ -189,7 +193,7 @@ def active_mesh_vector(vert_sequence_array, curve_data):
         
         iterator += 1
         
-    if curve_data.get_cyclic() == True:
+    if curve_data.get_cyclic():
             
         active_mesh_vector_array[iterator] = copy.deepcopy(vert_sequence_array[0].normal)
         
@@ -198,7 +202,7 @@ def active_mesh_vector(vert_sequence_array, curve_data):
 
 def direction_vector(vert_sequence_array):
     
-    direction_vetor_array = np.empty(len(vert_sequence_array), dtype=object)
+    direction_vector_array = np.empty(len(vert_sequence_array), dtype=object)
     
     i = 0
     
@@ -207,15 +211,20 @@ def direction_vector(vert_sequence_array):
         first_vertex = vert_sequence_array[i]
         second_vertex = vert_sequence_array[i + 1]
             
-        direction_vetor = mathutils.Vector((second_vertex.co[0] - first_vertex.co[0], second_vertex.co[1] - first_vertex.co[1], second_vertex.co[2] - first_vertex.co[2]))
+        direction_vector = mathutils.Vector((
+            second_vertex.co[0] - first_vertex.co[0],
+            second_vertex.co[1] - first_vertex.co[1],
+            second_vertex.co[2] - first_vertex.co[2]
+        ))
             
-        direction_vetor_array[i] = direction_vetor.normalized()
+        direction_vector_array[i] = direction_vector.normalized()
         
         i += 1
+
+    # noinspection PyUnboundLocalVariable
+    direction_vector_array[i] = direction_vector.normalized()
     
-    direction_vetor_array[i] = direction_vetor.normalized()
-    
-    return direction_vetor_array 
+    return direction_vector_array
 
 
 def vert_co(vert_sequence_array):
@@ -233,7 +242,7 @@ def first_step():
     active_mesh = active_object.data
 
     checker.start_checker()
-    curve_data = Curve_Data()
+    curve_data = CurveData()
         
     bm = bmesh.from_edit_mesh(active_mesh)
             
@@ -243,20 +252,20 @@ def first_step():
     
     active_mesh_vector_array = active_mesh_vector(vert_sequence_array, curve_data)
     
-    direction_vetor_array = direction_vector(vert_sequence_array)
+    direction_vector_array = direction_vector(vert_sequence_array)
     
     vert_co_array = vert_co(vert_sequence_array)
         
     bpy.ops.object.editmode_toggle()
         
-    return vert_co_array, active_mesh_vector_array, direction_vetor_array, active_object, curve_data
+    return vert_co_array, active_mesh_vector_array, direction_vector_array, active_object, curve_data
 
 
 def second_step(curve_data):
     
     extruded_curve = create_extruded_curve(curve_data.get_curve())
     
-    extruded_mesh = convert_extuded_curve_to_mesh(extruded_curve)
+    extruded_mesh = convert_extruded_curve_to_mesh(extruded_curve)
     
     return extruded_mesh
 
