@@ -5,7 +5,7 @@ from .Errors import CancelError, ShowMessageBox
 class Checker:
 
     @staticmethod
-    def __object_checker():
+    def checker():
 
         objects = bpy.context.selected_objects
 
@@ -27,21 +27,12 @@ class Checker:
 
             raise CancelError
 
-    @staticmethod
-    def __mode_checker():
-            
         mode = bpy.context.active_object.mode
-        
+
         if mode != 'EDIT':
-            
             ShowMessageBox("Error", "Go to Edit Mode", 'ERROR')
-            
+
             raise CancelError
-        
-    def start_checker(self):
-        
-        self.__object_checker()
-        self.__mode_checker()
 
 
 class CurveData:

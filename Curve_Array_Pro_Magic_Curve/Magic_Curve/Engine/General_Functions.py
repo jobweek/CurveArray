@@ -200,9 +200,10 @@ def active_mesh_vector(vert_sequence_array, curve_data):
     return active_mesh_vector_array
 
 
+# вектор направления каждого сплайна кривой, он же вектор Z
 def direction_vector(vert_sequence_array):
     
-    direction_vector_array = np.empty(len(vert_sequence_array), dtype=object)
+    z_vector_array = np.empty(len(vert_sequence_array), dtype=object)
     
     i = 0
     
@@ -217,14 +218,14 @@ def direction_vector(vert_sequence_array):
             second_vertex.co[2] - first_vertex.co[2]
         ))
             
-        direction_vector_array[i] = direction_vector.normalized()
+        z_vector_array[i] = direction_vector.normalized()
         
         i += 1
 
     # noinspection PyUnboundLocalVariable
-    direction_vector_array[i] = direction_vector.normalized()
+    z_vector_array[i] = direction_vector.normalized()
     
-    return direction_vector_array
+    return z_vector_array
 
 
 def vert_co(vert_sequence_array):
@@ -252,13 +253,13 @@ def first_step():
     
     active_mesh_vector_array = active_mesh_vector(vert_sequence_array, curve_data)
     
-    direction_vector_array = direction_vector(vert_sequence_array)
+    z_vector_array = direction_vector(vert_sequence_array)
     
     vert_co_array = vert_co(vert_sequence_array)
         
     bpy.ops.object.editmode_toggle()
         
-    return vert_co_array, active_mesh_vector_array, direction_vector_array, active_object, curve_data
+    return vert_co_array, active_mesh_vector_array, z_vector_array, active_object, curve_data
 
 
 def second_step(curve_data):
