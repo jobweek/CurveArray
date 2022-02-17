@@ -3,6 +3,8 @@ import bmesh  # type: ignore
 import mathutils  # type: ignore
 import math
 import numpy as np 
+from .Errors import CancelError, ShowMessageBox
+from .Classes import checker
 
 
 def cyclic_correction(vert_co_array, curve_data):
@@ -207,3 +209,10 @@ def tilt_correction(angle_array, curve_data):
         spline.bezier_points[1].tilt = angle_spine_list[1]
                 
         i += 1
+
+
+def strong_curve_manager():
+
+
+
+    pass
