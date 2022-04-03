@@ -93,6 +93,21 @@ def verts_sequence(verts_count, act_vert, curve_data):
     return vert_sequence_array, edge_sequence_array
 
 
+def x_vector(edge_sequence_array):
+
+    for edge in edge_sequence_array:
+
+        if edge.link_faces > 2:
+
+            ShowMessageBox("Error",
+                           "Invalid mesh, an edge forming three or more faces is detected",
+                           "ERROR")
+
+            raise CancelError
+
+    return x_vector_array
+
+
 def cyclic_correction(vert_co_array, curve_data):
 
     if curve_data.get_cyclic():
@@ -314,3 +329,6 @@ def strong_curve_manager():
     vert_co_array = vert_co(vert_sequence_array)
 
     z_vector_array = direction_vector(vert_sequence_array)
+
+    x_vector_array = x_vector(edge_sequence_array)
+
