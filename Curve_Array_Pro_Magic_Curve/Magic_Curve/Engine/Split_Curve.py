@@ -10,7 +10,9 @@ from .Classes import (
 )
 from .Split_Curve_Functions import (
     active_vertex,
-    verts_sequence
+    verts_sequence,
+    y_normal_vector,
+    vert_co,
 )
 
 
@@ -28,4 +30,7 @@ def split_curve_manager():
 
     vert_sequence_array, curve_data = verts_sequence(active_mesh.total_vert_sel, act_vert, curve_data)
 
-    print(vert_sequence_array)
+    y_normal_vector_array = y_normal_vector(vert_sequence_array)
+
+    vert_co_array = vert_co(vert_sequence_array)
+

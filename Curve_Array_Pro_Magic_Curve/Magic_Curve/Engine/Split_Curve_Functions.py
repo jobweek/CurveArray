@@ -115,3 +115,29 @@ def verts_sequence(verts_count, act_vert, curve_data):
     vert_sequence_array[i] = searched_vertex
 
     return vert_sequence_array, curve_data
+
+
+#  Массив усредненных нормалей каждой вершины меша
+def y_normal_vector(vert_sequence_array):
+
+    y_normal_vector_array = np.empty(len(vert_sequence_array), dtype=object)
+
+    iterator = 0
+
+    for i in vert_sequence_array:
+        vertex = copy.deepcopy(i.normal)
+
+        y_normal_vector_array[iterator] = vertex
+
+        iterator += 1
+
+    return y_normal_vector_array
+
+
+def vert_co(vert_sequence_array):
+
+    vert_co_array = np.frompyfunc(lambda a: copy.deepcopy(a.co), 1, 1)
+
+    vert_co_array = vert_co_array(vert_sequence_array)
+
+    return vert_co_array
