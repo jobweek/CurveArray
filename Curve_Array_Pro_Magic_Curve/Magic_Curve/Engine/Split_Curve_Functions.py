@@ -4,10 +4,25 @@ import mathutils  # type: ignore
 import copy
 import numpy as np
 from .Errors import CancelError, ShowMessageBox
-from .Classes import checker
-from Split_Curve import (
-    curve_data,
-)
+
+
+def active_vertex(bm):
+    try:
+
+        act_vert = bm.select_history.active
+
+        if act_vert is None:
+            ShowMessageBox("Error", "The active vertex must be selected", 'ERROR')
+
+            raise CancelError
+
+        return act_vert
+
+    except CancelError:
+
+        ShowMessageBox("Error", "The active vertex must be selected", 'ERROR')
+
+        raise CancelError
 
 
 def verts_sequence(verts_count, act_vert, curve_data):
@@ -71,7 +86,7 @@ def verts_sequence(verts_count, act_vert, curve_data):
 
     i = 1
 
-    while i < verts_count:
+    while i < verts_count - 1:
 
         vert_sequence_array[i] = searched_vertex
 
@@ -97,4 +112,6 @@ def verts_sequence(verts_count, act_vert, curve_data):
 
         i += 1
 
-    return vert_sequence_array
+    vert_sequence_array[i] = searched_vertex
+
+    return vert_sequence_array, curve_data

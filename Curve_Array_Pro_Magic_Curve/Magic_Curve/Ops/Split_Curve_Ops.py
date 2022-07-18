@@ -1,6 +1,5 @@
 import bpy  # type: ignore
 from ..Engine.Errors import CancelError
-from ..Engine.General_Functions import first_step, second_step, final_step
 from ..Engine.Split_Curve import (
     split_curve_manager,
 )

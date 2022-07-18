@@ -4,7 +4,7 @@ import mathutils  # type: ignore
 import math
 import numpy as np
 from .Errors import CancelError, ShowMessageBox
-from .Classes import Checker, CurveData
+from .Classes import checker, CurveData
 from .General_Functions import (
     active_vertex,
     direction_vector,
