@@ -1,4 +1,5 @@
-import bpy # type: ignore
+import bpy  # type: ignore
+
 
 class MAGICCURVE_PT_panel(bpy.types.Panel):
     bl_label = "Magic Curve"
@@ -7,14 +8,11 @@ class MAGICCURVE_PT_panel(bpy.types.Panel):
     bl_region_type = 'UI'
     bl_category = 'CrvArrPro' 
     
-    def draw(self, context):    
+    def draw(self, _):
                 
         layout = self.layout
                             
         row = layout.row()
-        properdelv = row.operator('magiccurve.create_curve', text = "Smooth Curve")
-        properdelv.curve_type = False
-        properdelv = row.operator('magiccurve.create_curve', text = "Strong Curve")
-        properdelv.curve_type = True
+        row.operator('magiccurve.create_split_curve', text="Smooth Curve")
         row = layout.row()
-        row.operator('magiccurve.switch_direction', text = "Switch curve direction")
+        row.operator('magiccurve.switch_direction', text="Switch curve direction")
