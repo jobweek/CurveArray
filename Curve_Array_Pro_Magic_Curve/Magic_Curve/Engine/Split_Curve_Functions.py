@@ -190,3 +190,69 @@ def create_curve(vert_co_array, active_object, curve_data):
 
     return curve_data
 
+
+def create_extruded_mesh(main_curve):
+    extruded_curve = main_curve.copy()
+    extruded_curve.data = main_curve.data.copy()
+    extruded_curve.name = 'Split_Curve_Duplicate'
+    extruded_curve.data.name = 'Split_Curve_Duplicate'
+    extruded_curve.data.extrude = 0.5
+    bpy.context.scene.collection.objects.link(extruded_curve)
+
+    bpy.ops.object.select_all(action='DESELECT')
+    extruded_curve.select_set(True)
+    bpy.context.view_layer.objects.active = extruded_curve
+    bpy.ops.object.convert(target='MESH')
+    extruded_mesh = bpy.context.active_object
+
+    return extruded_mesh
+
+
+def extruded_mesh_vector(extruded_mesh, array_size):
+
+    extruded_mesh_vector_array = np.empty(array_size, dtype=object)
+
+    i = 0
+
+    while i < array_size:
+
+        first_point = extruded_mesh.data.vertices[0 + i*4]
+        second_point = extruded_mesh.data.vertices[1 + i*4]
+
+        vector = mathutils.Vector((
+            second_point.co[0] - first_point.co[0],
+            second_point.co[1] - first_point.co[1],
+            second_point.co[2] - first_point.co[2]
+        ))
+
+        extruded_mesh_vector_array[i] = vector
+
+        i += 1
+
+    return extruded_mesh_vector_array
+
+
+def tilt_correction(vert_sequence_array, ext_vec_arr, y_vec_arr, curve):
+
+    def z_vector(first_vertex, second_vertex):
+
+        direction_vector = mathutils.Vector((
+            second_vertex.co[0] - first_vertex.co[0],
+            second_vertex.co[1] - first_vertex.co[1],
+            second_vertex.co[2] - first_vertex.co[2]
+        ))
+
+        return direction_vector.normalized()
+
+    i = 0
+
+    while i < len(ext_vec_arr):
+
+        ext_vec = ext_vec_arr[i]
+        z_vec = z_vector(vert_sequence_array[i], vert_sequence_array[i + 1])
+        first_point = curve.data.splines[i].bezier_points[0]
+        second_point = curve.data.splines[i].bezier_points[1]
+        first_y_vec = y_vec_arr[i]
+        second_y_vec = y_vec_arr[i + 1]
+
+    return
