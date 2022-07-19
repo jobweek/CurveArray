@@ -244,6 +244,12 @@ def tilt_correction(vert_sequence_array, ext_vec_arr, y_vec_arr, curve):
 
         return direction_vector.normalized()
 
+    def vec_projection():
+
+        projection = (vec - vec.project(vec_direction)).normalized()
+
+        return projection
+
     i = 0
 
     while i < len(ext_vec_arr):
