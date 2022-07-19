@@ -244,7 +244,7 @@ def tilt_correction(vert_sequence_array, ext_vec_arr, y_vec_arr, curve):
 
         return direction_vector.normalized()
 
-    def vec_projection():
+    def vec_projection(vec, z_vec):
 
         projection = (vec - vec.project(vec_direction)).normalized()
 
@@ -254,11 +254,11 @@ def tilt_correction(vert_sequence_array, ext_vec_arr, y_vec_arr, curve):
 
     while i < len(ext_vec_arr):
 
-        ext_vec = ext_vec_arr[i]
         z_vec = z_vector(vert_sequence_array[i], vert_sequence_array[i + 1])
+        ext_vec = vec_projection(ext_vec_arr[i], z_vec)
         first_point = curve.data.splines[i].bezier_points[0]
         second_point = curve.data.splines[i].bezier_points[1]
-        first_y_vec = y_vec_arr[i]
-        second_y_vec = y_vec_arr[i + 1]
+        first_y_vec = vec_projection(y_vec_arr[i], z_vec)
+        second_y_vec = vec_projection(y_vec_arr[i + 1], z_vec)
 
     return
