@@ -141,3 +141,52 @@ def vert_co(vert_sequence_array):
     vert_co_array = vert_co_array(vert_sequence_array)
 
     return vert_co_array
+
+
+def create_curve(vert_co_array, active_object, curve_data):
+
+    crv_mesh = bpy.data.curves.new('Split_Curve', 'CURVE')
+    crv_mesh.dimensions = '3D'
+    crv_mesh.twist_mode = 'MINIMUM'
+
+    for _ in range(len(vert_co_array)-1):
+
+        spline = crv_mesh.splines.new(type='POLY')
+
+        spline.points.add(1)
+
+    i = 0
+
+    while i < len(vert_co_array)-1:
+
+        mesh_vertex_first_co = vert_co_array[i]
+        mesh_vertex_second_co = vert_co_array[i + 1]
+
+        spline = crv_mesh.splines[i]
+
+        spline.points[0].co[0] = mesh_vertex_first_co[0]
+        spline.points[0].co[1] = mesh_vertex_first_co[1]
+        spline.points[0].co[2] = mesh_vertex_first_co[2]
+        spline.points[0].co[3] = 0
+
+        spline.points[1].co[0] = mesh_vertex_second_co[0]
+        spline.points[1].co[1] = mesh_vertex_second_co[1]
+        spline.points[1].co[2] = mesh_vertex_second_co[2]
+        spline.points[1].co[3] = 0
+
+        i += 1
+
+    crv_obj = bpy.data.objects.new('Split_Curve', crv_mesh)
+
+    crv_obj.location = active_object.location
+
+    crv_obj.rotation_euler = active_object.rotation_euler
+
+    crv_obj.scale = active_object.scale
+
+    bpy.context.scene.collection.objects.link(crv_obj)
+
+    curve_data.set_curve(crv_obj)
+
+    return curve_data
+

@@ -13,6 +13,7 @@ from .Split_Curve_Functions import (
     verts_sequence,
     y_normal_vector,
     vert_co,
+    create_curve,
 )
 
 
@@ -34,3 +35,8 @@ def split_curve_manager():
 
     vert_co_array = vert_co(vert_sequence_array)
 
+    bm.free()
+    bpy.ops.object.editmode_toggle()
+
+    #  Создаем кривую
+    curve_data = create_curve(vert_co_array, active_object, curve_data)
