@@ -232,33 +232,66 @@ def extruded_mesh_vector(extruded_mesh, array_size):
     return extruded_mesh_vector_array
 
 
-def tilt_correction(vert_sequence_array, ext_vec_arr, y_vec_arr, curve):
+def tilt_correction(ext_vec_arr, y_vec_arr, curve):
 
     def z_vector(first_vertex, second_vertex):
 
-        direction_vector = mathutils.Vector((
+        z_vec = mathutils.Vector((
             second_vertex.co[0] - first_vertex.co[0],
             second_vertex.co[1] - first_vertex.co[1],
             second_vertex.co[2] - first_vertex.co[2]
         ))
 
-        return direction_vector.normalized()
+        return z_vec.normalized()
 
     def vec_projection(vec, z_vec):
 
-        projection = (vec - vec.project(vec_direction)).normalized()
+        projection = (vec - vec.project(z_vec)).normalized()
 
         return projection
+
+    def angle_calc(ext_vec, y_vec, cross_vec):
+
+        angle = ext_vec.angle(y_vec)
+
+        #  Определяем позитивное вращение или негативное
+        if ext_vec.dot(cross_vec) > 0:
+
+            angle = -angle
+
+        elif ext_vec.dot(cross_vec) == 0:
+
+            angle = 0
+
+        #  Предотвращение перекрещивания
+        if ext_vec.dot(y_vec) < 0:
+
+            if angle < 0:
+
+                angle = 180 + (180 + angle)
+
+            elif angle > 0:
+
+                angle = 180 - (180 - angle)
+
+        return angle
 
     i = 0
 
     while i < len(ext_vec_arr):
 
-        z_vec = z_vector(vert_sequence_array[i], vert_sequence_array[i + 1])
-        ext_vec = vec_projection(ext_vec_arr[i], z_vec)
         first_point = curve.data.splines[i].bezier_points[0]
         second_point = curve.data.splines[i].bezier_points[1]
+        z_vec = z_vector(first_point, second_point)
+        ext_vec = vec_projection(ext_vec_arr[i], z_vec)
         first_y_vec = vec_projection(y_vec_arr[i], z_vec)
         second_y_vec = vec_projection(y_vec_arr[i + 1], z_vec)
+        first_cross_vec = z_vec.cross(first_y_vec)
+        second_cross_vec = z_vec.cross(second_y_vec)
 
-    return
+        first_angle = angle_calc(ext_vec, first_y_vec, first_cross_vec)
+        second_angle = angle_calc(ext_vec, second_y_vec, second_cross_vec)
+
+        first_point.tilt = first_angle
+        second_point.tilt = second_angle
+

@@ -13,9 +13,11 @@ from .Split_Curve_Functions import (
     verts_sequence,
     y_normal_vector,
     vert_co,
+    z_direction_vector,
     create_curve,
     create_extruded_mesh,
     extruded_mesh_vector,
+    tilt_correction,
 )
 
 
@@ -47,3 +49,6 @@ def split_curve_manager():
     ext_vec_arr = extruded_mesh_vector(extruded_mesh, len(vert_sequence_array)-1)
 
     bpy.data.objects.remove(extruded_mesh, do_unlink=True)
+
+    tilt_correction(ext_vec_arr, y_vec_arr, curve_data.get_curve())
+
