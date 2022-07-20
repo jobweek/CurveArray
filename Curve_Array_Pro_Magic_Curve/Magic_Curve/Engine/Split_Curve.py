@@ -13,7 +13,6 @@ from .Split_Curve_Functions import (
     verts_sequence,
     y_normal_vector,
     vert_co,
-    z_direction_vector,
     create_curve,
     create_extruded_mesh,
     extruded_mesh_vector,
