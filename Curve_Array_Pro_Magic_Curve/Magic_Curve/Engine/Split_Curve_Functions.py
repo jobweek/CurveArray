@@ -2,6 +2,7 @@ import bpy  # type: ignore
 import bmesh  # type: ignore
 import mathutils  # type: ignore
 import copy
+import math
 import numpy as np
 from .Errors import CancelError, ShowMessageBox
 
@@ -125,9 +126,9 @@ def y_normal_vector(vert_sequence_array):
     iterator = 0
 
     for i in vert_sequence_array:
-        vertex = copy.deepcopy(i.normal)
 
-        y_normal_vector_array[iterator] = vertex
+        vertex_normal = copy.deepcopy(i.normal)
+        y_normal_vector_array[iterator] = vertex_normal
 
         iterator += 1
 
@@ -250,7 +251,7 @@ def tilt_correction(ext_vec_arr, y_vec_arr, curve):
 
         return projection
 
-    def angle_calc(ext_vec, y_vec, cross_vec):
+    def angle_calc(ext_vec, y_vec, cross_vec, i):
 
         angle = ext_vec.angle(y_vec)
 
@@ -268,11 +269,11 @@ def tilt_correction(ext_vec_arr, y_vec_arr, curve):
 
             if angle < 0:
 
-                angle = 180 + (180 + angle)
+                angle = math.radians(180) + (math.radians(180) + angle)
 
             elif angle > 0:
 
-                angle = 180 - (180 - angle)
+                angle = math.radians(180) - (math.radians(180) - angle)
 
         return angle
 
@@ -289,8 +290,8 @@ def tilt_correction(ext_vec_arr, y_vec_arr, curve):
         first_cross_vec = z_vec.cross(first_y_vec)
         second_cross_vec = z_vec.cross(second_y_vec)
 
-        first_angle = angle_calc(ext_vec, first_y_vec, first_cross_vec)
-        second_angle = angle_calc(ext_vec, second_y_vec, second_cross_vec)
+        first_angle = angle_calc(ext_vec, first_y_vec, first_cross_vec, i)
+        second_angle = angle_calc(ext_vec, second_y_vec, second_cross_vec, i)
 
         first_point.tilt = first_angle
         second_point.tilt = second_angle

@@ -51,3 +51,6 @@ def split_curve_manager():
 
     tilt_correction(ext_vec_arr, y_vec_arr, curve_data.get_curve())
 
+    bpy.ops.object.select_all(action='DESELECT')
+    curve_data.get_curve().select_set(True)
+    bpy.context.view_layer.objects.active = curve_data.get_curve()
