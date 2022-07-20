@@ -251,7 +251,7 @@ def tilt_correction(ext_vec_arr, y_vec_arr, curve):
 
         return projection
 
-    def angle_calc(ext_vec, y_vec, cross_vec, i):
+    def angle_calc(ext_vec, y_vec, cross_vec):
 
         angle = ext_vec.angle(y_vec)
 
@@ -290,8 +290,8 @@ def tilt_correction(ext_vec_arr, y_vec_arr, curve):
         first_cross_vec = z_vec.cross(first_y_vec)
         second_cross_vec = z_vec.cross(second_y_vec)
 
-        first_angle = angle_calc(ext_vec, first_y_vec, first_cross_vec, i)
-        second_angle = angle_calc(ext_vec, second_y_vec, second_cross_vec, i)
+        first_angle = angle_calc(ext_vec, first_y_vec, first_cross_vec)
+        second_angle = angle_calc(ext_vec, second_y_vec, second_cross_vec)
 
         first_point.tilt = first_angle
         second_point.tilt = second_angle
