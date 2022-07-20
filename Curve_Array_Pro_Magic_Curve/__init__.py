@@ -1,4 +1,4 @@
-'''
+"""
 Copyright (C) 2021 JobWeek
 5236131@mail.ru
 
@@ -16,20 +16,9 @@ Created by JobWeek
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 
-bl_info = {
-    "name":"CurveArrayPro + MagicCurve",
-    "author":"JobWeek",
-    "version":(4, 0, 0),
-    "blender":(3, 0, 0),
-    "location":"View3d > Tool",
-    "warning":"",
-    "wiki_url":"https://jobweek.bit.ai/docs/view/JZbQGc7JokXJuaS2",
-    "category":"3D View"
-}
-
-import bpy
+import bpy  # type: ignore
 
 from .curve_array_pro_3_0 import (
     CRVARRPRO_PT_CurveArrayPro,
@@ -63,8 +52,18 @@ from .props.curve_array_props import (
     Main_Props
 )
 
-from .Magic_Curve.Magic_Curve_Ops import MAGICCURVE_OT_mgcrv_ops
-from .Magic_Curve.Magic_Curve_Panel import MAGICCURVE_PT_mgcrv_panel
+
+from .Magic_Curve.Ops.Split_Curve_Ops import (
+    MAGICCURVE_OT_Create_Split_Curve
+)
+
+from .Magic_Curve.Ops.Switch_Direction_Ops import (
+    MAGICCURVE_OT_switch_direction
+)
+
+from .Magic_Curve.Panels.Main_Panel import (
+    MAGICCURVE_PT_panel
+)
 
 classes = (
     Main_Props,
@@ -86,13 +85,26 @@ classes = (
     CRVARRPRO_OT_Empty,
     CRVARRPRO_PT_MainPanel,
     CRVARRPRO_OT_MakeIt,
-    MAGICCURVE_PT_mgcrv_panel,
-    MAGICCURVE_OT_mgcrv_ops,
     CRVARRPRO_PT_ButtonPanel,
     CRVARRPRO_OT_Delete_Last_Array,
     CRVARRPRO_OT_Reset_Settings,
-    CRVARRPRO_OT_Flip_Curve
+    CRVARRPRO_OT_Flip_Curve,
+    MAGICCURVE_OT_Create_Split_Curve,
+    MAGICCURVE_OT_switch_direction,
+    MAGICCURVE_PT_panel,
 )
+
+bl_info = {
+    "name": "CurveArrayPro + MagicCurve",
+    "author": "JobWeek",
+    "version": (4, 0, 0),
+    "blender": (3, 0, 0),
+    "location": "View3d > Tool",
+    "warning": "",
+    "wiki_url": "https://jobweek.bit.ai/docs/view/JZbQGc7JokXJuaS2",
+    "category": "3D View"
+}
+
 
 def register():
 
@@ -108,7 +120,7 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    bpy.types.Scene.curve_array_properties = bpy.props.PointerProperty(type=Main_Props, name = 'Curve Array Properties')
+    bpy.types.Scene.curve_array_properties = bpy.props.PointerProperty(type=Main_Props, name='Curve Array Properties')
 
 
 def unregister():
@@ -126,6 +138,7 @@ def unregister():
         bpy.utils.unregister_class(cls)
 
     del bpy.types.Scene.curve_array_properties
+
 
 if __name__ == "__main__":
     register()
