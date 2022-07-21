@@ -1,10 +1,8 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
 import mathutils  # type: ignore
-import copy
 import math
 import numpy as np
-from .Errors import CancelError, ShowMessageBox
 
 
 def create_curve(vert_co_array, active_object, curve_data):
@@ -78,7 +76,7 @@ def extruded_mesh_vector(extruded_mesh, array_size, curve_data):
     return extruded_mesh_vector_array
 
 
-def tilt_correction(ext_vec_arr, y_vec_arr, curve):
+def tilt_correction(ext_vec_arr, y_vec_arr, curve, cyclic):
 
     def z_vector(first_vertex, second_vertex):
 
@@ -130,21 +128,52 @@ def tilt_correction(ext_vec_arr, y_vec_arr, curve):
 
     i = 0
 
-    while i < len(ext_vec_arr):
+    #  Если кривая циклична, последнюю точку не считаем
+    if not cyclic:
 
-        first_point = curve.data.splines[i].points[0]
-        second_point = curve.data.splines[i].points[1]
-        z_vec = z_vector(first_point, second_point)
+        cycle_lenth = len(ext_vec_arr)
+
+    else:
+
+        cycle_lenth = len(ext_vec_arr) - 1
+
+    while i < cycle_lenth:
+
+        point = curve.data.splines[0].points[i]
+
+        if not cyclic:
+
+            if i == 0:
+
+                z_vec = z_vector(curve.data.splines[0].points[i], curve.data.splines[0].points[i+1])
+
+            elif i == cycle_lenth - 1:
+
+                z_vec = z_vector(curve.data.splines[0].points[i-1], curve.data.splines[0].points[i])
+
+            else:
+
+                z_vec = z_vector(curve.data.splines[0].points[i-1], curve.data.splines[0].points[i+1])
+
+        else:
+
+            if i == 0:
+
+                z_vec = z_vector(curve.data.splines[0].points[i-2], curve.data.splines[0].points[i+1])
+
+            else:
+
+                z_vec = z_vector(curve.data.splines[0].points[i-1], curve.data.splines[0].points[i+1])
+
         ext_vec = vec_projection(ext_vec_arr[i], z_vec)
-        first_y_vec = vec_projection(y_vec_arr[i], z_vec)
-        second_y_vec = vec_projection(y_vec_arr[i + 1], z_vec)
-        first_cross_vec = z_vec.cross(first_y_vec)
-        second_cross_vec = z_vec.cross(second_y_vec)
+        y_vec = vec_projection(y_vec_arr[i], z_vec)
+        cross_vec = z_vec.cross(y_vec)
+        angle = angle_calc(ext_vec, y_vec, cross_vec)
 
-        first_angle = angle_calc(ext_vec, first_y_vec, first_cross_vec)
-        second_angle = angle_calc(ext_vec, second_y_vec, second_cross_vec)
-
-        first_point.tilt = first_angle
-        second_point.tilt = second_angle
+        point.tilt = angle
 
         i += 1
+
+    if cyclic:
+
+        curve.data.splines[0].points[-1].tilt = curve.data.splines[0].points[0].tilt

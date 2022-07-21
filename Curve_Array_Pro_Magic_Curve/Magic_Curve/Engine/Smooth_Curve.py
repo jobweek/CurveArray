@@ -48,7 +48,7 @@ def smooth_curve_manager():
 
     bpy.data.objects.remove(extruded_mesh, do_unlink=True)
 
-    tilt_correction(ext_vec_arr, y_vec_arr, curve_data.get_curve())
+    tilt_correction(ext_vec_arr, y_vec_arr, curve_data.get_curve(), curve_data.get_cyclic())
 
     bpy.ops.object.select_all(action='DESELECT')
     curve_data.get_curve().select_set(True)
