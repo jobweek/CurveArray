@@ -1,7 +1,7 @@
 import bpy  # type: ignore
-from ..Engine.Errors import CancelError
-from ..Engine.Split_Curve import (
-    split_curve_manager,
+from ..Engine.Errors import CancelError, ShowMessageBox
+from ..Engine.Smooth_Curve import (
+    smooth_curve_manager,
 )
 
 
@@ -11,11 +11,11 @@ class MAGICCURVE_OT_Create_Smooth_Curve(bpy.types.Operator):
     bl_idname = 'magiccurve.create_smooth_curve'
     bl_options = {'REGISTER', 'UNDO'}
 
-    def execute(self, context):
+    def execute(self, _):
 
         try:
 
-            split_curve_manager()
+            smooth_curve_manager()
 
             return {'FINISHED'}
 

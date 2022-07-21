@@ -7,20 +7,40 @@ import numpy as np
 from .Errors import CancelError, ShowMessageBox
 
 
-def active_vertex(bm):
-    try:
+def create_curve(vert_co_array, active_object, curve_data):
+    crv_mesh = bpy.data.curves.new('MgCrv_curve_smooth', 'CURVE')
+    crv_mesh.dimensions = '3D'
+    crv_mesh.twist_mode = 'MINIMUM'
+    spline = crv_mesh.splines.new(type='POLY')
 
-        act_vert = bm.select_history.active
+    spline.points.add(len(vert_co_array) - 1)
 
-        if act_vert is None:
-            ShowMessageBox("Error", "The active vertex must be selected", 'ERROR')
+    if curve_data.get_cyclic():
 
-            raise CancelError
+        spline.use_cyclic_u = True
 
-        return act_vert
+    iterator = 0
 
-    except CancelError:
+    for i in vert_co_array:
+        spline.points[iterator].co[0] = i[0]
+        spline.points[iterator].co[1] = i[1]
+        spline.points[iterator].co[2] = i[2]
+        spline.points[iterator].co[3] = 0
 
-        ShowMessageBox("Error", "The active vertex must be selected", 'ERROR')
+        iterator += 1
 
-        raise CancelError
+    main_curve = bpy.data.objects.new('MgCrv_curve_smooth', crv_mesh)
+
+    main_curve.location = active_object.location
+
+    main_curve.rotation_euler = active_object.rotation_euler
+
+    main_curve.scale = active_object.scale
+
+    bpy.context.scene.collection.objects.link(main_curve)
+
+    spline.type = 'BEZIER'
+
+    curve_data.set_curve(main_curve)
+
+    return curve_data
