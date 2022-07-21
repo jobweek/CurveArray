@@ -1,3 +1,4 @@
 *.zip
 *.idea
-*.blend_files
+!/blend_files/
+blend_files/
