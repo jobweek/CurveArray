@@ -253,7 +253,13 @@ def tilt_correction(ext_vec_arr, y_vec_arr, curve):
 
     def angle_calc(ext_vec, y_vec, cross_vec):
 
-        angle = ext_vec.angle(y_vec)
+        try:
+
+            angle = ext_vec.angle(y_vec)
+
+        except ValueError:
+
+            angle = 0
 
         #  Определяем позитивное вращение или негативное
         if ext_vec.dot(cross_vec) > 0:
