@@ -1,7 +1,7 @@
 import bpy # type: ignore
 from ..Engine.Errors import CancelError
 from ..Engine.General_Functions import first_step, second_step, final_step
-from ..Engine.Smooth_Curve import (
+from ..Engine.Smooth_Curve_Old import (
     create_curve as Smooth_create_curve,
     extruded_mesh_vector as Smooth_extruded_mesh_vector,
     angle_between_vector as Smooth_angle_between_vector,

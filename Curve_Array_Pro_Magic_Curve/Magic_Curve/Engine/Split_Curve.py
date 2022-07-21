@@ -1,9 +1,6 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
 import mathutils  # type: ignore
-import copy
-import numpy as np
-from .Errors import CancelError, ShowMessageBox
 from .Classes import (
     checker,
     CurveData,
