@@ -13,6 +13,8 @@ class MAGICCURVE_PT_panel(bpy.types.Panel):
         layout = self.layout
                             
         row = layout.row()
-        row.operator('magiccurve.create_split_curve', text="Smooth Curve")
+        row.operator('magiccurve.create_split_curve', text="Split Curve")
+        row = layout.row()
+        row.operator('magiccurve.create_smooth_curve', text="Smooth Curve")
         row = layout.row()
         row.operator('magiccurve.switch_direction', text="Switch curve direction")

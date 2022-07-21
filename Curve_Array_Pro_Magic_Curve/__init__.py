@@ -57,6 +57,10 @@ from .Magic_Curve.Ops.Split_Curve_Ops import (
     MAGICCURVE_OT_Create_Split_Curve
 )
 
+from .Magic_Curve.Ops.Smooth_Curve_Ops import (
+    MAGICCURVE_OT_Create_Smooth_Curve
+)
+
 from .Magic_Curve.Ops.Switch_Direction_Ops import (
     MAGICCURVE_OT_switch_direction
 )
@@ -90,6 +94,7 @@ classes = (
     CRVARRPRO_OT_Reset_Settings,
     CRVARRPRO_OT_Flip_Curve,
     MAGICCURVE_OT_Create_Split_Curve,
+    MAGICCURVE_OT_Create_Smooth_Curve,
     MAGICCURVE_OT_switch_direction,
     MAGICCURVE_PT_panel,
 )

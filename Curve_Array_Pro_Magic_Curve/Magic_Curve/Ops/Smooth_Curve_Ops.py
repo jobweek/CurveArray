@@ -5,10 +5,10 @@ from ..Engine.Split_Curve import (
 )
 
 
-class MAGICCURVE_OT_Create_Split_Curve(bpy.types.Operator):
+class MAGICCURVE_OT_Create_Smooth_Curve(bpy.types.Operator):
     """Create curve from loop"""
     bl_label = "Curve from loop"
-    bl_idname = 'magiccurve.create_split_curve'
+    bl_idname = 'magiccurve.create_smooth_curve'
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
