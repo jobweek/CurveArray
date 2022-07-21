@@ -8,6 +8,7 @@ from .Classes import (
 from .Smooth_Curve_Functions import (
     create_curve,
     extruded_mesh_vector,
+    tilt_correction,
 )
 from .Split_Curve_Functions import (
     active_vertex,
@@ -43,4 +44,12 @@ def smooth_curve_manager():
 
     extruded_mesh = create_extruded_mesh(curve_data.get_curve())
 
-    ext_vec_arr = extruded_mesh_vector(extruded_mesh, len(vert_sequence_array))
+    ext_vec_arr = extruded_mesh_vector(extruded_mesh, len(vert_sequence_array), curve_data)
+
+    bpy.data.objects.remove(extruded_mesh, do_unlink=True)
+
+    tilt_correction(ext_vec_arr, y_vec_arr, curve_data.get_curve())
+
+    bpy.ops.object.select_all(action='DESELECT')
+    curve_data.get_curve().select_set(True)
+    bpy.context.view_layer.objects.active = curve_data.get_curve()

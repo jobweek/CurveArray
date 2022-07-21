@@ -46,11 +46,15 @@ def create_curve(vert_co_array, active_object, curve_data):
     return curve_data
 
 
-def extruded_mesh_vector(extruded_mesh, array_size):
+def extruded_mesh_vector(extruded_mesh, array_size, curve_data):
 
     extruded_mesh_vector_array = np.empty(array_size, dtype=object)
 
     i = 0
+
+    if curve_data.get_cyclic():
+
+        array_size -= 1
 
     while i < array_size:
 
@@ -67,4 +71,80 @@ def extruded_mesh_vector(extruded_mesh, array_size):
 
         i += 1
 
+    if curve_data.get_cyclic():
+
+        extruded_mesh_vector_array[i] = extruded_mesh_vector_array[0]
+
     return extruded_mesh_vector_array
+
+
+def tilt_correction(ext_vec_arr, y_vec_arr, curve):
+
+    def z_vector(first_vertex, second_vertex):
+
+        z_vec = mathutils.Vector((
+            second_vertex.co[0] - first_vertex.co[0],
+            second_vertex.co[1] - first_vertex.co[1],
+            second_vertex.co[2] - first_vertex.co[2]
+        ))
+
+        return z_vec.normalized()
+
+    def vec_projection(vec, z_vec):
+
+        projection = (vec - vec.project(z_vec)).normalized()
+
+        return projection
+
+    def angle_calc(ext_vec, y_vec, cross_vec):
+
+        try:
+
+            angle = ext_vec.angle(y_vec)
+
+        except ValueError:
+
+            angle = 0
+
+        #  Определяем позитивное вращение или негативное
+        if ext_vec.dot(cross_vec) > 0:
+
+            angle = -angle
+
+        elif ext_vec.dot(cross_vec) == 0:
+
+            angle = 0
+
+        #  Предотвращение перекрещивания
+        if ext_vec.dot(y_vec) < 0:
+
+            if angle < 0:
+
+                angle = math.radians(180) + (math.radians(180) + angle)
+
+            elif angle > 0:
+
+                angle = math.radians(180) - (math.radians(180) - angle)
+
+        return angle
+
+    i = 0
+
+    while i < len(ext_vec_arr):
+
+        first_point = curve.data.splines[i].points[0]
+        second_point = curve.data.splines[i].points[1]
+        z_vec = z_vector(first_point, second_point)
+        ext_vec = vec_projection(ext_vec_arr[i], z_vec)
+        first_y_vec = vec_projection(y_vec_arr[i], z_vec)
+        second_y_vec = vec_projection(y_vec_arr[i + 1], z_vec)
+        first_cross_vec = z_vec.cross(first_y_vec)
+        second_cross_vec = z_vec.cross(second_y_vec)
+
+        first_angle = angle_calc(ext_vec, first_y_vec, first_cross_vec)
+        second_angle = angle_calc(ext_vec, second_y_vec, second_cross_vec)
+
+        first_point.tilt = first_angle
+        second_point.tilt = second_angle
+
+        i += 1
