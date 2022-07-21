@@ -7,12 +7,14 @@ from .Classes import (
 )
 from .Smooth_Curve_Functions import (
     create_curve,
+    extruded_mesh_vector,
 )
 from .Split_Curve_Functions import (
     active_vertex,
     verts_sequence,
     y_normal_vector,
-    vert_co
+    vert_co,
+    create_extruded_mesh,
 )
 
 
@@ -38,3 +40,7 @@ def smooth_curve_manager():
     bpy.ops.object.editmode_toggle()
 
     curve_data = create_curve(vert_co_arr, active_object, curve_data)
+
+    extruded_mesh = create_extruded_mesh(curve_data.get_curve())
+
+    ext_vec_arr = extruded_mesh_vector(extruded_mesh, len(vert_sequence_array))

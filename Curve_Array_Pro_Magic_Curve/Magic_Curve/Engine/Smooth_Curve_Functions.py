@@ -44,3 +44,27 @@ def create_curve(vert_co_array, active_object, curve_data):
     curve_data.set_curve(main_curve)
 
     return curve_data
+
+
+def extruded_mesh_vector(extruded_mesh, array_size):
+
+    extruded_mesh_vector_array = np.empty(array_size, dtype=object)
+
+    i = 0
+
+    while i < array_size:
+
+        first_point = extruded_mesh.data.vertices[0 + i*2]
+        second_point = extruded_mesh.data.vertices[1 + i*2]
+
+        vector = mathutils.Vector((
+            second_point.co[0] - first_point.co[0],
+            second_point.co[1] - first_point.co[1],
+            second_point.co[2] - first_point.co[2]
+        ))
+
+        extruded_mesh_vector_array[i] = vector
+
+        i += 1
+
+    return extruded_mesh_vector_array
