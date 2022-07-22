@@ -23,8 +23,8 @@ class MAGICCURVE_OT_Create_Smooth_Curve(bpy.types.Operator):
 
             return {'CANCELLED'}
 
-        except Exception as err:
-
-            ShowMessageBox("Unknown Error, Please send me this report:", repr(err), 'ERROR')
-
-            return {'CANCELLED'}
+        # except Exception as err:
+        #
+        #     ShowMessageBox("Unknown Error, Please send me this report:", repr(err), 'ERROR')
+        #
+        #     return {'CANCELLED'}

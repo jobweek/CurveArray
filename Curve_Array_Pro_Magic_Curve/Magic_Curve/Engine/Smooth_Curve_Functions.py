@@ -127,6 +127,7 @@ def tilt_correction(ext_vec_arr, y_vec_arr, curve, cyclic):
         return angle
 
     i = 0
+    spline_point = curve.data.splines[0].bezier_points
 
     #  Если кривая циклична, последнюю точку не считаем
     if not cyclic:
@@ -139,41 +140,39 @@ def tilt_correction(ext_vec_arr, y_vec_arr, curve, cyclic):
 
     while i < cycle_lenth:
 
-        point = curve.data.splines[0].points[i]
-
         if not cyclic:
 
             if i == 0:
 
-                z_vec = z_vector(curve.data.splines[0].points[i], curve.data.splines[0].points[i+1])
+                z_vec = z_vector(spline_point[i], spline_point[i+1])
 
             elif i == cycle_lenth - 1:
 
-                z_vec = z_vector(curve.data.splines[0].points[i-1], curve.data.splines[0].points[i])
+                z_vec = z_vector(spline_point[i-1], spline_point[i])
 
             else:
 
-                z_vec = z_vector(curve.data.splines[0].points[i-1], curve.data.splines[0].points[i+1])
+                z_vec = z_vector(spline_point[i-1], spline_point[i+1])
 
         else:
 
             if i == 0:
 
-                z_vec = z_vector(curve.data.splines[0].points[i-2], curve.data.splines[0].points[i+1])
+                z_vec = z_vector(spline_point[i-2], spline_point[i+1])
 
             else:
 
-                z_vec = z_vector(curve.data.splines[0].points[i-1], curve.data.splines[0].points[i+1])
+                z_vec = z_vector(spline_point[i-1], spline_point[i+1])
 
         ext_vec = vec_projection(ext_vec_arr[i], z_vec)
         y_vec = vec_projection(y_vec_arr[i], z_vec)
         cross_vec = z_vec.cross(y_vec)
         angle = angle_calc(ext_vec, y_vec, cross_vec)
 
-        point.tilt = angle
+        spline_point[i].tilt = angle
 
         i += 1
 
     if cyclic:
 
-        curve.data.splines[0].points[-1].tilt = curve.data.splines[0].points[0].tilt
+        spline_point[-1].tilt = spline_point[0].tilt
