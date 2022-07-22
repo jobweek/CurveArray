@@ -2,7 +2,6 @@ import bpy  # type: ignore
 import bmesh  # type: ignore
 import mathutils  # type: ignore
 from .Classes import (
-    checker,
     CurveData,
 )
 from .Smooth_Curve_Functions import (
@@ -11,6 +10,7 @@ from .Smooth_Curve_Functions import (
     tilt_correction,
 )
 from .Split_Curve_Functions import (
+    checker,
     active_vertex,
     verts_sequence,
     y_normal_vector,

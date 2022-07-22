@@ -2,10 +2,10 @@ import bpy  # type: ignore
 import bmesh  # type: ignore
 import mathutils  # type: ignore
 from .Classes import (
-    checker,
     CurveData,
 )
 from .Split_Curve_Functions import (
+    checker,
     active_vertex,
     verts_sequence,
     y_normal_vector,

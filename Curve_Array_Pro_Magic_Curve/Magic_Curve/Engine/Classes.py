@@ -1,35 +1,4 @@
 import bpy  # type: ignore
-from .Errors import CancelError, ShowMessageBox
-
-
-def checker():
-
-    objects = bpy.context.selected_objects
-
-    if len(objects) == 0:
-
-        ShowMessageBox("Error", "Select object", 'ERROR')
-
-        raise CancelError
-
-    elif len(objects) > 1:
-
-        ShowMessageBox("Error", "Select only one object", 'ERROR')
-
-        raise CancelError
-
-    if objects[0].type != 'MESH':
-
-        ShowMessageBox("Error", "Object should be mesh", 'ERROR')
-
-        raise CancelError
-
-    mode = bpy.context.active_object.mode
-
-    if mode != 'EDIT':
-        ShowMessageBox("Error", "Go to Edit Mode", 'ERROR')
-
-        raise CancelError
 
 
 class CurveData:

@@ -7,6 +7,36 @@ import numpy as np
 from .Errors import CancelError, ShowMessageBox
 
 
+def checker():
+
+    objects = bpy.context.selected_objects
+
+    if len(objects) == 0:
+
+        ShowMessageBox("Error", "Select object", 'ERROR')
+
+        raise CancelError
+
+    elif len(objects) > 1:
+
+        ShowMessageBox("Error", "Select only one object", 'ERROR')
+
+        raise CancelError
+
+    if objects[0].type != 'MESH':
+
+        ShowMessageBox("Error", "Object should be mesh", 'ERROR')
+
+        raise CancelError
+
+    mode = bpy.context.active_object.mode
+
+    if mode != 'EDIT':
+        ShowMessageBox("Error", "Go to Edit Mode", 'ERROR')
+
+        raise CancelError
+
+
 def active_vertex(bm):
     try:
 
@@ -195,8 +225,8 @@ def create_curve(vert_co_array, active_object, curve_data):
 def create_extruded_mesh(main_curve):
     extruded_curve = main_curve.copy()
     extruded_curve.data = main_curve.data.copy()
-    extruded_curve.name = 'Split_Curve_Duplicate'
-    extruded_curve.data.name = 'Split_Curve_Duplicate'
+    extruded_curve.name = main_curve.name + 'Duplicate'
+    extruded_curve.data.name = main_curve.data.name + 'Duplicate'
     extruded_curve.data.extrude = 0.5
     bpy.context.scene.collection.objects.link(extruded_curve)
 
