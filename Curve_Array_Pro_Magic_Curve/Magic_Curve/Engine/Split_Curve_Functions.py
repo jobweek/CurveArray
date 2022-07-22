@@ -225,8 +225,8 @@ def create_curve(vert_co_array, active_object, curve_data):
 def create_extruded_mesh(main_curve):
     extruded_curve = main_curve.copy()
     extruded_curve.data = main_curve.data.copy()
-    extruded_curve.name = main_curve.name + 'Duplicate'
-    extruded_curve.data.name = main_curve.data.name + 'Duplicate'
+    extruded_curve.name = main_curve.name + '_Duplicate'
+    extruded_curve.data.name = main_curve.data.name + '_Duplicate'
     extruded_curve.data.extrude = 0.5
     bpy.context.scene.collection.objects.link(extruded_curve)
 
