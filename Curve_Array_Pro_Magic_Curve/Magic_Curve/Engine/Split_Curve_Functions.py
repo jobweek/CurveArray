@@ -182,8 +182,10 @@ def vert_co(vert_sequence_array):
         if vert_co_array[i] == vert_co_array[i-1]:
 
             ShowMessageBox("Error",
-                           "In the sequence you have chosen, there are two vertices in the same coordinates."
-                           " You can merge it.",
+                           "In the sequence you have chosen, there are vertices in the same coordinates."
+                           " You can merge it."
+                           " Their indices: " + str(vert_sequence_array[i-1].index) +
+                           ", " + str(vert_sequence_array[i].index),
                            'ERROR')
 
             raise CancelError
