@@ -81,3 +81,109 @@ def ext_vec(active_curve):
         i += 1
 
     return extruded_mesh_vector_array
+
+
+def z_vec(curve, array_size):
+
+    def calc_vec(first_vertex, second_vertex):
+
+        vec = mathutils.Vector((
+            second_vertex.co[0] - first_vertex.co[0],
+            second_vertex.co[1] - first_vertex.co[1],
+            second_vertex.co[2] - first_vertex.co[2]
+        ))
+
+        return vec.normalized()
+
+    def prev_point_search(points, index):
+
+        while index > 0:
+
+            if points[index].co == points[index - 1].co:
+
+                index -= 1
+                continue
+
+            else:
+
+                return points[index - 1]
+
+        return points[index]
+
+    def next_point_search(points, index):
+
+        while index < len(points)-1:
+
+            if points[index].co == points[index + 1].co:
+
+                index += 1
+                continue
+
+            else:
+
+                return points[index + 1]
+
+        return points[index]
+
+    z_vec_arr = np.empty(array_size, dtype=object)
+
+    iterator = 0
+
+    for s in curve.data.splines:
+
+        if s.type == 'POLY':
+
+            points = s.points
+
+        elif s.type == 'BEZIER':
+
+            points = s.bezier_points
+
+        else:
+
+            ShowMessageBox("Error", "Nurbs curves are not supported", 'ERROR')
+
+            raise CancelError
+
+        if not s.use_cyclic_u:
+
+            i = 0
+
+            next_point = next_point_search(points, i)
+
+            z_vec = calc_vec(points[i], next_point)
+
+            z_vec_arr[iterator] = z_vec
+            iterator += 1
+            i += 1
+
+            while i < len(points)-1:
+
+                if points[i].co == points[i+1].co:
+
+                    z_vec_arr[iterator] = None
+                    iterator += 1
+                    continue
+
+                prev_point = prev_point_search(points, i)
+                next_point = next_point_search(points, i)
+
+                z_vec = calc_vec(prev_point, next_point)
+
+                z_vec_arr[iterator] = z_vec
+                iterator += 1
+
+                i += 1
+
+            prev_point = prev_point_search(points, i)
+
+            z_vec = calc_vec(prev_point, points[i])
+
+            z_vec_arr[iterator] = z_vec
+            iterator += 1
+
+        else:
+
+            pass
+
+    return z_vec_arr
