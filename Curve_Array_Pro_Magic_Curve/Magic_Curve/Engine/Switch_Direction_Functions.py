@@ -93,6 +93,10 @@ def z_vec(curve, array_size):
             second_vertex.co[2] - first_vertex.co[2]
         ))
 
+        if vec.length == 0:
+
+            return None
+
         return vec.normalized()
 
     def prev_point_search(points, index):
@@ -150,9 +154,7 @@ def z_vec(curve, array_size):
             i = 0
 
             next_point = next_point_search(points, i)
-
             z_vec = calc_vec(points[i], next_point)
-
             z_vec_arr[iterator] = z_vec
             iterator += 1
             i += 1
@@ -167,18 +169,14 @@ def z_vec(curve, array_size):
 
                 prev_point = prev_point_search(points, i)
                 next_point = next_point_search(points, i)
-
                 z_vec = calc_vec(prev_point, next_point)
-
                 z_vec_arr[iterator] = z_vec
                 iterator += 1
 
                 i += 1
 
             prev_point = prev_point_search(points, i)
-
             z_vec = calc_vec(prev_point, points[i])
-
             z_vec_arr[iterator] = z_vec
             iterator += 1
 
