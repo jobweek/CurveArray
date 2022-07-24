@@ -37,6 +37,65 @@ def checker():
         raise CancelError
 
 
+def merged_points_check(curve):
+
+    iterator = 0
+    points_count = 0
+
+    for s in curve.data.splines:
+
+        if s.type == 'POLY':
+
+            points = s.points
+
+        elif s.type == 'BEZIER':
+
+            points = s.bezier_points
+
+        else:
+
+            ShowMessageBox("Error", "Nurbs curves are not supported", 'ERROR')
+
+            raise CancelError
+
+        points_count += len(points)
+        i = 0
+
+        while i < len(points) - 1:
+
+            if points[i].co == points[i+1].co:
+
+                ShowMessageBox("Error",
+                               "In the curve you have chosen, there are points in the same coordinates."
+                               " You can remove it."
+                               " Their indices: "
+                               "Spline: " + str(iterator) +
+                               ", Points: " + str(i) + "," + str(i+1)
+                               , 'ERROR')
+
+                raise CancelError
+
+            i += 1
+
+        if s.use_cyclic_u:
+
+            if points[i].co == points[0].co:
+
+                ShowMessageBox("Error",
+                               "In the curve you have chosen, there are points in the same coordinates."
+                               " You can remove it."
+                               " Their indices: "
+                               "Spline: " + str(iterator) +
+                               ", Points: " + str(i) + "," + str(0)
+                               , 'ERROR')
+
+                raise CancelError
+
+        iterator += 1
+
+    return points_count
+
+
 def duplicate(active_curve):
 
     switched_curve = active_curve.copy()
@@ -52,7 +111,9 @@ def duplicate(active_curve):
     return switched_curve
 
 
-def ext_vec(active_curve):
+def ext_vec(active_curve, arr_size):
+
+    extruded_mesh_vector_array = np.empty(arr_size, dtype=object)
 
     active_curve.data.extrude = 0.5
     bpy.ops.object.select_all(action='DESELECT')
@@ -60,8 +121,6 @@ def ext_vec(active_curve):
     bpy.context.view_layer.objects.active = active_curve
     bpy.ops.object.convert(target='MESH')
     extruded_mesh = bpy.context.active_object
-    arr_size = int(len(extruded_mesh.data.vertices) / 2)
-    extruded_mesh_vector_array = np.empty(arr_size, dtype=object)
 
     i = 0
 
