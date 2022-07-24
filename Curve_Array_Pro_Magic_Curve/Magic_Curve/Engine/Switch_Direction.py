@@ -26,6 +26,8 @@ def recalculate_curve_manager():
     bpy.ops.curve.switch_direction()
     bpy.ops.object.editmode_toggle()
 
+    return
+
     ext_vec_arr = ext_vec(extruded_curve, points_count)
     bpy.data.objects.remove(extruded_curve, do_unlink=True)
 

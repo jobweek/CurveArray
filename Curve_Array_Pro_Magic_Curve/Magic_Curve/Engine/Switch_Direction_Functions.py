@@ -100,6 +100,29 @@ def merged_points_check(curve):
     return points_count
 
 
+def points_select(curve):
+
+    for s in curve.data.splines:
+
+        if s.type == 'POLY':
+
+            for p in s.points:
+
+                p.select = True
+
+        elif s.type == 'BEZIER':
+
+            for p in s.bezier_points:
+
+                p.select_control_point = True
+
+        else:
+
+            ShowMessageBox("Error", "Nurbs curves are not supported", 'ERROR')
+
+            raise CancelError
+
+
 def duplicate(active_curve):
 
     switched_curve = active_curve.copy()
@@ -204,15 +227,9 @@ def z_vec(curve, array_size):
 
             points = s.points
 
-        elif s.type == 'BEZIER':
-
-            points = s.bezier_points
-
         else:
 
-            ShowMessageBox("Error", "Nurbs curves are not supported", 'ERROR')
-
-            raise CancelError
+            points = s.bezier_points
 
         i = 0
 
