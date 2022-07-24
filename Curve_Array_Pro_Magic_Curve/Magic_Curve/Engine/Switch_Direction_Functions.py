@@ -166,6 +166,9 @@ def ext_vec(active_curve, arr_size):
 
         i += 1
 
+    #  Переворачиваем массив
+    extruded_mesh_vector_array = np.flip(extruded_mesh_vector_array)
+
     return extruded_mesh_vector_array
 
 
