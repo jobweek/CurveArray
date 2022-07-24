@@ -4,6 +4,7 @@ import mathutils  # type: ignore
 from .Switch_Direction_Functions import (
     checker,
     merged_points_check,
+    points_select,
     duplicate,
     ext_vec,
     z_vec,
@@ -16,6 +17,7 @@ def recalculate_curve_manager():
     switched_curve = bpy.context.active_object
     checker()
     points_count = merged_points_check(switched_curve)
+    points_select(switched_curve)
 
     extruded_curve = duplicate(switched_curve)
 
