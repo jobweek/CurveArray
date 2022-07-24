@@ -129,6 +129,53 @@ def z_vec(curve, array_size):
 
         return points[index]
 
+    def prev_point_search_cyclic(points, index):
+
+        stop_point = points[index + 1]
+
+        while points[index] != stop_point:
+
+            if points[index].co == points[index - 1].co:
+
+                index -= 1
+                continue
+
+            else:
+
+                return points[index - 1]
+
+        return points[index]
+
+    def next_point_search_cyclic(points, index):
+
+        stop_point = points[index - 1]
+
+        while points[index] != stop_point:
+
+            if index + 1 == len(points):
+
+                next_point = points[0]
+
+            else:
+
+                next_point = points[index + 1]
+
+            if points[index].co == next_point.co:
+
+                index += 1
+
+                if index == len(points):
+
+                    index = 0
+
+                continue
+
+            else:
+
+                return next_point
+
+        return points[index]
+
     z_vec_arr = np.empty(array_size, dtype=object)
 
     iterator = 0
@@ -182,6 +229,22 @@ def z_vec(curve, array_size):
 
         else:
 
-            pass
+            i = 0
+
+            while i < len(points):
+
+                if points[i].co == points[i+1].co:
+
+                    z_vec_arr[iterator] = None
+                    iterator += 1
+                    continue
+
+                prev_point = prev_point_search_cyclic(points, i)
+                next_point = next_point_search_cyclic(points, i)
+                z_vec = calc_vec(prev_point, next_point)
+                z_vec_arr[iterator] = z_vec
+                iterator += 1
+
+                i += 1
 
     return z_vec_arr
