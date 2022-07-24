@@ -280,5 +280,13 @@ def tilt_correction(ext_vec_arr, y_vec_arr, z_vec_arr, curve):
 
             points[i].tilt = angle
 
+            if iterator == 0:
+
+                print('ext_vec :', ext_vec)
+                print('y_vec :', y_vec)
+                print('cross_vec :', cross_vec)
+                print('z_vec_arr :', z_vec_arr[iterator])
+                print('angle :', angle)
+
             iterator += 1
             i += 1
