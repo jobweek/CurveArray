@@ -7,6 +7,7 @@ from .Switch_Direction_Functions import (
     duplicate,
     ext_vec,
     z_vec,
+    tilt_correction,
 )
 
 
@@ -28,11 +29,14 @@ def recalculate_curve_manager():
     ext_vec_arr = ext_vec(extruded_curve, points_count)
     bpy.data.objects.remove(extruded_curve, do_unlink=True)
 
-    #  До сюда я проверил
-    z_vec_arr = z_vec(switched_curve, len(extruded_curve))
+    z_vec_arr = z_vec(switched_curve, points_count)
 
     extruded_switched_curve = duplicate(switched_curve)
-    y_vec_arr = ext_vec(extruded_switched_curve)
+    y_vec_arr = ext_vec(extruded_switched_curve, points_count)
+    bpy.data.objects.remove(extruded_switched_curve, do_unlink=True)
 
+    tilt_correction(ext_vec_arr, y_vec_arr, z_vec_arr, switched_curve)
 
-
+    bpy.ops.object.select_all(action='DESELECT')
+    switched_curve.select_set(True)
+    bpy.context.view_layer.objects.active = switched_curve

@@ -76,6 +76,40 @@ def extruded_mesh_vector(extruded_mesh, array_size, curve_data):
     return extruded_mesh_vector_array
 
 
+def vec_projection(vec, z_vec):
+
+    projection = (vec - vec.project(z_vec)).normalized()
+
+    return projection
+
+
+def angle_calc(ext_vec, y_vec, cross_vec):
+
+    angle = ext_vec.angle(y_vec)
+
+    #  Определяем позитивное вращение или негативное
+    if ext_vec.dot(cross_vec) > 0:
+
+        angle = -angle
+
+    elif ext_vec.dot(cross_vec) == 0:
+
+        angle = 0
+
+    #  Предотвращение перекрещивания
+    if ext_vec.dot(y_vec) < 0:
+
+        if angle < 0:
+
+            angle = math.radians(180) + (math.radians(180) + angle)
+
+        elif angle > 0:
+
+            angle = math.radians(180) - (math.radians(180) - angle)
+
+    return angle
+
+
 def tilt_correction(ext_vec_arr, y_vec_arr, curve, cyclic):
 
     def z_vector(first_vertex, second_vertex):
@@ -87,44 +121,6 @@ def tilt_correction(ext_vec_arr, y_vec_arr, curve, cyclic):
         ))
 
         return z_vec.normalized()
-
-    def vec_projection(vec, z_vec):
-
-        projection = (vec - vec.project(z_vec)).normalized()
-
-        return projection
-
-    def angle_calc(ext_vec, y_vec, cross_vec):
-
-        try:
-
-            angle = ext_vec.angle(y_vec)
-
-        except ValueError:
-
-            angle = 0
-
-        #  Определяем позитивное вращение или негативное
-        if ext_vec.dot(cross_vec) > 0:
-
-            angle = -angle
-
-        elif ext_vec.dot(cross_vec) == 0:
-
-            angle = 0
-
-        #  Предотвращение перекрещивания
-        if ext_vec.dot(y_vec) < 0:
-
-            if angle < 0:
-
-                angle = math.radians(180) + (math.radians(180) + angle)
-
-            elif angle > 0:
-
-                angle = math.radians(180) - (math.radians(180) - angle)
-
-        return angle
 
     i = 0
     spline_point = curve.data.splines[0].bezier_points

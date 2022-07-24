@@ -5,6 +5,10 @@ import copy
 import math
 import numpy as np
 from .Errors import CancelError, ShowMessageBox
+from .Smooth_Curve_Functions import (
+    vec_projection,
+    angle_calc,
+)
 
 
 def checker():
@@ -158,82 +162,37 @@ def z_vec(curve, array_size):
 
         return vec.normalized()
 
-    def prev_point_search(points, index):
+    def prev_point_search(points, index, cyclic):
 
-        while index > 0:
+        if cyclic and index == 0:
 
-            if points[index].co == points[index - 1].co:
+            prev_point = points[-1]
 
-                index -= 1
-                continue
+        elif not cyclic and index == 0:
 
-            else:
+            prev_point = points[index]
 
-                return points[index - 1]
+        else:
 
-        return points[index]
+            prev_point = points[index - 1]
 
-    def next_point_search(points, index):
+        return prev_point
 
-        while index < len(points)-1:
+    def next_point_search(points, index, cyclic):
 
-            if points[index].co == points[index + 1].co:
+        if cyclic and index == len(points)-1:
 
-                index += 1
-                continue
+            next_point = points[0]
 
-            else:
+        elif not cyclic and index == len(points)-1:
 
-                return points[index + 1]
+            next_point = points[index]
 
-        return points[index]
+        else:
 
-    def prev_point_search_cyclic(points, index):
+            next_point = points[index + 1]
 
-        stop_point = points[index + 1]
-
-        while points[index] != stop_point:
-
-            if points[index].co == points[index - 1].co:
-
-                index -= 1
-                continue
-
-            else:
-
-                return points[index - 1]
-
-        return points[index]
-
-    def next_point_search_cyclic(points, index):
-
-        stop_point = points[index - 1]
-
-        while points[index] != stop_point:
-
-            if index + 1 == len(points):
-
-                next_point = points[0]
-
-            else:
-
-                next_point = points[index + 1]
-
-            if points[index].co == next_point.co:
-
-                index += 1
-
-                if index == len(points):
-
-                    index = 0
-
-                continue
-
-            else:
-
-                return next_point
-
-        return points[index]
+        return next_point
 
     z_vec_arr = np.empty(array_size, dtype=object)
 
@@ -255,55 +214,51 @@ def z_vec(curve, array_size):
 
             raise CancelError
 
-        if not s.use_cyclic_u:
+        i = 0
 
-            i = 0
+        while i < len(points):
 
-            next_point = next_point_search(points, i)
-            z_vec = calc_vec(points[i], next_point)
+            prev_point = prev_point_search(points, i, s.use_cyclic_u)
+            next_point = next_point_search(points, i, s.use_cyclic_u)
+            z_vec = calc_vec(prev_point, next_point)
             z_vec_arr[iterator] = z_vec
+
             iterator += 1
             i += 1
 
-            while i < len(points)-1:
+    return z_vec_arr
 
-                if points[i].co == points[i+1].co:
 
-                    z_vec_arr[iterator] = None
-                    iterator += 1
-                    continue
+def tilt_correction(ext_vec_arr, y_vec_arr, z_vec_arr, curve):
 
-                prev_point = prev_point_search(points, i)
-                next_point = next_point_search(points, i)
-                z_vec = calc_vec(prev_point, next_point)
-                z_vec_arr[iterator] = z_vec
-                iterator += 1
+    iterator = 0
 
-                i += 1
+    for s in curve.data.splines:
 
-            prev_point = prev_point_search(points, i)
-            z_vec = calc_vec(prev_point, points[i])
-            z_vec_arr[iterator] = z_vec
-            iterator += 1
+        if s.type == 'POLY':
+
+            points = s.points
 
         else:
 
-            i = 0
+            points = s.bezier_points
 
-            while i < len(points):
+        i = 0
 
-                if points[i].co == points[i+1].co:
+        while i < len(points):
 
-                    z_vec_arr[iterator] = None
-                    iterator += 1
-                    continue
+            if z_vec_arr[iterator] is None:
 
-                prev_point = prev_point_search_cyclic(points, i)
-                next_point = next_point_search_cyclic(points, i)
-                z_vec = calc_vec(prev_point, next_point)
-                z_vec_arr[iterator] = z_vec
                 iterator += 1
-
                 i += 1
+                continue
 
-    return z_vec_arr
+            ext_vec = vec_projection(ext_vec_arr[iterator], z_vec_arr[iterator])
+            y_vec = vec_projection(y_vec_arr[iterator], z_vec_arr[iterator])
+            cross_vec = z_vec_arr[iterator].cross(y_vec)
+            angle = angle_calc(ext_vec, y_vec, cross_vec)
+
+            points[i].tilt = angle
+
+            iterator += 1
+            i += 1

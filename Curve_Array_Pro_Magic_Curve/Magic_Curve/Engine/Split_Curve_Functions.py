@@ -167,31 +167,6 @@ def y_normal_vector(vert_sequence_array):
 
 def vert_co(vert_sequence_array):
 
-    vert_co_array = np.empty(len(vert_sequence_array), dtype=object)
-
-    i = 1
-    vert_co_array[0] = copy.deepcopy(vert_sequence_array[0].co)
-
-    while i < len(vert_sequence_array):
-
-        vert_co_array[i] = copy.deepcopy(vert_sequence_array[i].co)
-
-        # Если у меша есть две вершины в одних координатах,
-        # то при конвертировании в кривую они станут одной,
-        # что приведет к ошибке
-        if vert_co_array[i] == vert_co_array[i-1]:
-
-            ShowMessageBox("Error",
-                           "In the sequence you have chosen, there are vertices in the same coordinates."
-                           " You can merge it."
-                           " Their indices: " + str(vert_sequence_array[i-1].index) +
-                           ", " + str(vert_sequence_array[i].index),
-                           'ERROR')
-
-            raise CancelError
-
-        i += 1
-
     vert_co_array = np.frompyfunc(lambda a: copy.deepcopy(a.co), 1, 1)
 
     vert_co_array = vert_co_array(vert_sequence_array)
