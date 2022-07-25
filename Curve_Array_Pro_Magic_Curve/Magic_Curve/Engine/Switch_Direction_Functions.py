@@ -1,8 +1,6 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
 import mathutils  # type: ignore
-import copy
-import math
 import numpy as np
 from .Errors import CancelError, ShowMessageBox
 from .Smooth_Curve_Functions import (
@@ -45,6 +43,8 @@ def merged_points_check(curve):
 
     iterator = 0
     points_count = 0
+    merged_points_buffer = []
+    error_case = False
 
     for s in curve.data.splines:
 
@@ -64,20 +64,14 @@ def merged_points_check(curve):
 
         points_count += len(points)
         i = 0
+        merged_points_buffer.append([])
 
         while i < len(points) - 1:
 
             if points[i].co == points[i+1].co:
 
-                ShowMessageBox("Error",
-                               "In the curve you have chosen, there are points in the same coordinates."
-                               " You can remove it."
-                               " Their indices: "
-                               "Spline: " + str(iterator) +
-                               ", Points: " + str(i) + "," + str(i+1)
-                               , 'ERROR')
-
-                raise CancelError
+                merged_points_buffer[iterator].append([points[i].co, points[i+1].co])
+                error_case = True
 
             i += 1
 
@@ -85,17 +79,33 @@ def merged_points_check(curve):
 
             if points[i].co == points[0].co:
 
-                ShowMessageBox("Error",
-                               "In the curve you have chosen, there are points in the same coordinates."
-                               " You can remove it."
-                               " Their indices: "
-                               "Spline: " + str(iterator) +
-                               ", Points: " + str(i) + "," + str(0)
-                               , 'ERROR')
-
-                raise CancelError
+                merged_points_buffer[iterator].append([points[i].co, points[0].co])
+                error_case = True
 
         iterator += 1
+
+    if error_case:
+
+        verts_str = ""
+        i = 0
+
+        while i < len(merged_points_buffer):
+
+            if len(merged_points_buffer[i]) != 0:
+
+                verts_str += "Spline: {0}, Points: ".format(i)
+
+                for p in merged_points_buffer[i]:
+
+                    verts_str += "({0},{1}) ".format(p[0], p[1])
+
+        ShowMessageBox("Error",
+                       "In the curve you have chosen, there are points in the same coordinates."
+                       " You can remove it."
+                       " Their place: " + verts_str,
+                       'ERROR')
+
+        raise CancelError
 
     return points_count
 

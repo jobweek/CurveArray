@@ -148,6 +148,36 @@ def verts_sequence(verts_count, act_vert, curve_data):
     return vert_sequence_array, curve_data
 
 
+def merged_vertices_check(vert_sequence_array):
+
+    i = 0
+    merged_vertices_buffer = []
+
+    while i < len(vert_sequence_array)-1:
+
+        if vert_sequence_array[i].co == vert_sequence_array[i+1].co:
+
+            merged_vertices_buffer.append([vert_sequence_array[i], vert_sequence_array[i+1]])
+
+        i += 1
+
+    if len(merged_vertices_buffer) != 0:
+
+        verts_str = "Vertices Indices: "
+
+        for v in merged_vertices_buffer:
+
+            verts_str += "({0},{1}) ".format(v[0], v[1])
+
+        ShowMessageBox("Error",
+                       "In the sequence you have chosen, there are vertices in the same coordinates."
+                       " You can merge it."
+                       " Their indices: " + verts_str,
+                       'ERROR')
+
+        raise CancelError
+
+
 #  Массив усредненных нормалей каждой вершины меша
 def y_normal_vector(vert_sequence_array):
 
