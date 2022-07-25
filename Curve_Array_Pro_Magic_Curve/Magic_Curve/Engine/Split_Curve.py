@@ -31,7 +31,7 @@ def split_curve_manager():
     act_vert = active_vertex(bm)
 
     vert_sequence_array, curve_data = verts_sequence(active_mesh.total_vert_sel, act_vert, curve_data, True)
-    merged_vertices_check(vert_sequence_array)
+    merged_vertices_check(vert_sequence_array, True, curve_data.get_cyclic())
 
     y_vec_arr = y_normal_vector(vert_sequence_array)
 

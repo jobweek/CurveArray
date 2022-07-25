@@ -133,7 +133,7 @@ def tilt_correction(ext_vec_arr, y_vec_arr, curve, cyclic):
 
                 z_vec = z_vector(spline_point[i], spline_point[i+1])
 
-            elif i == cycle_lenth - 1:
+            elif i == len(ext_vec_arr) - 1:
 
                 z_vec = z_vector(spline_point[i-1], spline_point[i])
 

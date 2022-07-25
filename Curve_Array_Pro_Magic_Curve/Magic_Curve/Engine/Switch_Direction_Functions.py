@@ -9,6 +9,11 @@ from .Smooth_Curve_Functions import (
 )
 
 
+def vec_equal(vec_1, vec_2):
+
+    return vec_1.to_tuple(4) == vec_2.to_tuple(4)
+
+
 def checker():
 
     objects = bpy.context.selected_objects
@@ -68,18 +73,18 @@ def merged_points_check(curve):
 
         while i < len(points) - 1:
 
-            if points[i].co == points[i+1].co:
+            if vec_equal(points[i].co, points[i+1].co):
 
-                merged_points_buffer[iterator].append([points[i].co, points[i+1].co])
+                merged_points_buffer[iterator].append([i, i+1])
                 error_case = True
 
             i += 1
 
         if s.use_cyclic_u:
 
-            if points[i].co == points[0].co:
+            if vec_equal(points[i].co, points[0].co):
 
-                merged_points_buffer[iterator].append([points[i].co, points[0].co])
+                merged_points_buffer[iterator].append([i, 0])
                 error_case = True
 
         iterator += 1
@@ -98,6 +103,8 @@ def merged_points_check(curve):
                 for p in merged_points_buffer[i]:
 
                     verts_str += "({0},{1}) ".format(p[0], p[1])
+
+            i += 1
 
         ShowMessageBox("Error",
                        "In the curve you have chosen, there are points in the same coordinates."

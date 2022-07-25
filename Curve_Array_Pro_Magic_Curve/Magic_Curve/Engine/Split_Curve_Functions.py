@@ -7,6 +7,11 @@ import numpy as np
 from .Errors import CancelError, ShowMessageBox
 
 
+def vec_equal(vec_1, vec_2):
+
+    return vec_1.to_tuple(4) == vec_2.to_tuple(4)
+
+
 def checker():
 
     objects = bpy.context.selected_objects
@@ -148,22 +153,28 @@ def verts_sequence(verts_count, act_vert, curve_data, split_curve):
     return vert_sequence_array, curve_data
 
 
-def merged_vertices_check(vert_sequence_array):
+def merged_vertices_check(vert_sequence_array, split_curve, cyclic):
 
     i = 0
     merged_vertices_buffer = []
 
     while i < len(vert_sequence_array)-1:
 
-        if vert_sequence_array[i].co == vert_sequence_array[i+1].co:
+        if vec_equal(vert_sequence_array[i].co, vert_sequence_array[i+1].co):
 
-            merged_vertices_buffer.append([vert_sequence_array[i], vert_sequence_array[i+1]])
+            merged_vertices_buffer.append([vert_sequence_array[i].index, vert_sequence_array[i+1].index])
 
         i += 1
 
+    if not split_curve or (split_curve and not cyclic):
+
+        if vec_equal(vert_sequence_array[i].co, vert_sequence_array[0].co):
+
+            merged_vertices_buffer.append([vert_sequence_array[i].index, vert_sequence_array[0].index])
+
     if len(merged_vertices_buffer) != 0:
 
-        verts_str = "Vertices Indices: "
+        verts_str = ""
 
         for v in merged_vertices_buffer:
 
