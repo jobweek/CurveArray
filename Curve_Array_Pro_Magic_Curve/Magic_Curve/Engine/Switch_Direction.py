@@ -1,6 +1,7 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
 import mathutils  # type: ignore
+import numpy as np
 from .Switch_Direction_Functions import (
     checker,
     merged_points_check,
@@ -28,13 +29,15 @@ def recalculate_curve_manager():
     bpy.ops.curve.switch_direction()
     bpy.ops.object.editmode_toggle()
 
-    ext_vec_arr = ext_vec(extruded_curve, points_count)
+    y_vec_arr = ext_vec(extruded_curve, points_count)
+    #  Переворачиваем массив
+    y_vec_arr = np.flip(y_vec_arr)
     bpy.data.objects.remove(extruded_curve, do_unlink=True)
 
     z_vec_arr = z_vec(switched_curve, points_count)
 
     extruded_switched_curve = duplicate(switched_curve)
-    y_vec_arr = ext_vec(extruded_switched_curve, points_count)
+    ext_vec_arr = ext_vec(extruded_switched_curve, points_count)
     bpy.data.objects.remove(extruded_switched_curve, do_unlink=True)
 
     tilt_correction(ext_vec_arr, y_vec_arr, z_vec_arr, switched_curve)

@@ -166,9 +166,6 @@ def ext_vec(active_curve, arr_size):
 
         i += 1
 
-    #  Переворачиваем массив
-    extruded_mesh_vector_array = np.flip(extruded_mesh_vector_array)
-
     return extruded_mesh_vector_array
 
 
@@ -278,7 +275,7 @@ def tilt_correction(ext_vec_arr, y_vec_arr, z_vec_arr, curve):
             cross_vec = z_vec_arr[iterator].cross(y_vec)
             angle = angle_calc(ext_vec, y_vec, cross_vec)
 
-            points[i].tilt = angle
+            points[i].tilt += angle
 
             if iterator == 0:
 
