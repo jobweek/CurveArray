@@ -56,7 +56,7 @@ def active_vertex(bm):
         raise CancelError
 
 
-def verts_sequence(verts_count, act_vert, curve_data):
+def verts_sequence(verts_count, act_vert, curve_data, split_curve):
 
     # Функция извлечения выделенных ребер из всех принадлежащих вершине
     def selected_linked_edges(searched_vertex):
@@ -100,14 +100,14 @@ def verts_sequence(verts_count, act_vert, curve_data):
         raise CancelError
 
     # Создадим массив фиксированной длины
-    if not curve_data.get_cyclic():
-
-        vert_sequence_array = np.empty(verts_count, dtype=object)
-
-    else:
+    if split_curve and curve_data.get_cyclic():
 
         vert_sequence_array = np.empty(verts_count + 1, dtype=object)
         vert_sequence_array[-1] = act_vert
+
+    else:
+
+        vert_sequence_array = np.empty(verts_count, dtype=object)
 
     # Наполняем массив
     vert_sequence_array[0] = act_vert
