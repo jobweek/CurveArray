@@ -155,33 +155,52 @@ def duplicate(active_curve):
     return switched_curve
 
 
-def ext_vec(active_curve, arr_size):
+def ext_vec(curve, arr_size):
 
-    extruded_mesh_vector_array = np.empty(arr_size, dtype=object)
+    extruded_mesh_vector_array = []
 
-    active_curve.data.extrude = 0.5
+    for s in curve.data.splines:
+
+        if s.type == 'POLY':
+
+            points = s.points
+
+        elif s.type == 'BEZIER':
+
+            points = s.bezier_points
+
+        extruded_mesh_vector_array.append(np.empty(len(s.points), dtype=object))
+
+    curve.data.extrude = 0.5
     bpy.ops.object.select_all(action='DESELECT')
-    active_curve.select_set(True)
-    bpy.context.view_layer.objects.active = active_curve
+    curve.select_set(True)
+    bpy.context.view_layer.objects.active = curve
     bpy.ops.object.convert(target='MESH')
     extruded_mesh = bpy.context.active_object
 
-    i = 0
+    iterator = 0
 
-    while i < arr_size:
+    for arr in extruded_mesh_vector_array:
 
-        first_point = extruded_mesh.data.vertices[0 + i*2]
-        second_point = extruded_mesh.data.vertices[1 + i*2]
+        i = 0
 
-        vector = mathutils.Vector((
-            second_point.co[0] - first_point.co[0],
-            second_point.co[1] - first_point.co[1],
-            second_point.co[2] - first_point.co[2]
-        ))
+        while i < len(arr):
 
-        extruded_mesh_vector_array[i] = vector
+            first_point = extruded_mesh.data.vertices[0 + iterator * 2]
+            second_point = extruded_mesh.data.vertices[1 + iterator * 2]
 
-        i += 1
+            vector = mathutils.Vector((
+                second_point.co[0] - first_point.co[0],
+                second_point.co[1] - first_point.co[1],
+                second_point.co[2] - first_point.co[2]
+            ))
+
+            arr[i] = vector
+
+            i += 1
+            iterator += 1
+
+        arr = np.flip(arr)
 
     return extruded_mesh_vector_array
 
@@ -257,6 +276,14 @@ def z_vec(curve, array_size):
             z_vec = calc_vec(prev_point, next_point)
             z_vec_arr[iterator] = z_vec
 
+            if iterator == 0:
+
+                print('0_p', points[i].co)
+                print('next_point', next_point.co)
+                print('prev_point', prev_point.co)
+                print('z_vec', z_vec)
+                print('///')
+
             iterator += 1
             i += 1
 
@@ -293,6 +320,12 @@ def tilt_correction(ext_vec_arr, y_vec_arr, z_vec_arr, curve):
             angle = angle_calc(ext_vec, y_vec, cross_vec)
 
             points[i].tilt += angle
+
+            if iterator == 0:
+
+                print('y_vec', y_vec)
+                print('ext_vec', ext_vec)
+                print('z_vec_arr', z_vec_arr[iterator])
 
             iterator += 1
             i += 1
