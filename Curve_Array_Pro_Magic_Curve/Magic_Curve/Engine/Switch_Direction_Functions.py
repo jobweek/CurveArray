@@ -275,6 +275,14 @@ def z_vec(curve):
 
         return next_point
 
+    def prev_handle_search(points, index, cyclic):
+
+        return True
+
+    def next_handle_search(points, index, cyclic):
+
+        return True
+
     z_vec_arr = []
 
     for s in curve.data.splines:
@@ -303,8 +311,8 @@ def z_vec(curve):
 
             else:
 
-                prev_point = points[i].handle_left
-                next_point = points[i].handle_right
+                prev_point = prev_handle_search(points, i, s.use_cyclic_u)
+                next_point = next_handle_search(points, i, s.use_cyclic_u)
 
             z_vec = calc_vec(prev_point, next_point)
             arr[i] = z_vec
