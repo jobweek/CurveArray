@@ -282,10 +282,12 @@ def z_vec(curve):
         if s.type == 'POLY':
 
             points = s.points
+            spline_type = True
 
         else:
 
             points = s.bezier_points
+            spline_type = False
 
         arr = np.empty(len(points), dtype=object)
         z_vec_arr.append(arr)
@@ -294,8 +296,16 @@ def z_vec(curve):
 
         while i < len(points):
 
-            prev_point = prev_point_search(points, i, s.use_cyclic_u)
-            next_point = next_point_search(points, i, s.use_cyclic_u)
+            if spline_type:
+
+                prev_point = prev_point_search(points, i, s.use_cyclic_u)
+                next_point = next_point_search(points, i, s.use_cyclic_u)
+
+            else:
+
+                prev_point = points[i].handle_left
+                next_point = points[i].handle_right
+
             z_vec = calc_vec(prev_point, next_point)
             arr[i] = z_vec
 
