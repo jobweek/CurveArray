@@ -158,6 +158,7 @@ def duplicate(active_curve):
 def ext_vec(curve, flip):
 
     extruded_mesh_vector_array = []
+    cyclic_list = []
 
     for s in curve.data.splines:
 
@@ -171,7 +172,16 @@ def ext_vec(curve, flip):
 
         extruded_mesh_vector_array.append(np.empty(len(points), dtype=object))
 
+        if s.use_cyclic_u:
+
+            cyclic_list.append(True)
+
+        else:
+
+            cyclic_list.append(False)
+
     curve.data.extrude = 0.5
+    curve.data.resolution_u = 1
     bpy.ops.object.select_all(action='DESELECT')
     curve.select_set(True)
     bpy.context.view_layer.objects.active = curve
@@ -202,13 +212,17 @@ def ext_vec(curve, flip):
 
     i = 0
 
-    if flip:
+    while i < len(extruded_mesh_vector_array):
 
-        while i < len(extruded_mesh_vector_array):
+        if cyclic_list[i]:
+
+            extruded_mesh_vector_array[i] = np.roll(extruded_mesh_vector_array[i], -1)
+
+        if flip:
 
             extruded_mesh_vector_array[i] = np.flip(extruded_mesh_vector_array[i])
 
-            i += 1
+        i += 1
 
     return extruded_mesh_vector_array
 
@@ -308,9 +322,8 @@ def tilt_correction(ext_vec_arr, y_vec_arr, z_vec_arr, curve):
 
         while i < len(points):
 
-            if z_vec_arr[iterator] is None:
+            if z_vec_arr[iterator][i] is None:
 
-                iterator += 1
                 i += 1
                 continue
 
@@ -321,5 +334,12 @@ def tilt_correction(ext_vec_arr, y_vec_arr, z_vec_arr, curve):
 
             points[i].tilt += angle
 
-            iterator += 1
+            if iterator == 0 and i == 0:
+
+                print('ext_vec:', ext_vec)
+                print('z_vec:', z_vec_arr[iterator][i])
+                print('y_vec:', y_vec)
+
             i += 1
+
+        iterator += 1
