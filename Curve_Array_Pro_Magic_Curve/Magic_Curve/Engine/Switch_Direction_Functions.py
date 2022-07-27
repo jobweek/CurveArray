@@ -257,7 +257,6 @@ def ext_vec(curve, flip: bool):  # Если flip == false, вычисляем z_
     while list_iter < len(ext_mesh_vec_arr):
 
         ext_arr = ext_mesh_vec_arr[list_iter]
-        z_arr = z_vec_arr[list_iter]
 
         spline_iter = 0  # Соответствует индексу поинтов одного сплайна
 
@@ -279,8 +278,9 @@ def ext_vec(curve, flip: bool):  # Если flip == false, вычисляем z_
 
             if not flip:
 
-                prev_point = prev_point_search(verts, first_point.index, cyclic_list[list_iter])
+                z_arr = z_vec_arr[list_iter]
 
+                prev_point = prev_point_search(verts, first_point.index, cyclic_list[list_iter])
                 next_point = next_point_search(verts, first_point.index, cyclic_list[list_iter])
 
                 z_vec = calc_vec(prev_point, next_point, True)
