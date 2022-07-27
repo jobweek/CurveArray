@@ -176,13 +176,7 @@ def ext_vec(curve, flip):
 
         extruded_mesh_vector_array.append(np.empty(len(points), dtype=object))
 
-        if s.use_cyclic_u:
-
-            cyclic_list.append(True)
-
-        else:
-
-            cyclic_list.append(False)
+        cyclic_list.append(s.use_cyclic_u)
 
     curve.data.extrude = 0.5
     bpy.ops.object.select_all(action='DESELECT')
@@ -191,18 +185,18 @@ def ext_vec(curve, flip):
     bpy.ops.object.convert(target='MESH')
     extruded_mesh = bpy.context.active_object
 
-    spline_iter = 0  # Соответствует сплайну и принадлежащим им спискам/массивам
+    list_iter = 0  # Соответствует сплайну и принадлежащим им спискам/массивам
     curve_iter = 0  # Соответствует индексу поинтов всей кривой
 
-    while spline_iter < len(extruded_mesh_vector_array):
+    while list_iter < len(extruded_mesh_vector_array):
 
-        arr = extruded_mesh_vector_array[spline_iter]
+        arr = extruded_mesh_vector_array[list_iter]
 
         spline_iter = 0  # Соответствует индексу поинтов одного сплайна
 
         while spline_iter < len(arr):
 
-            if spline_type_list[spline_iter]:
+            if spline_type_list[list_iter]:
 
                 first_point = extruded_mesh.data.vertices[0 + curve_iter * 2]
                 second_point = extruded_mesh.data.vertices[1 + curve_iter * 2]
@@ -223,7 +217,7 @@ def ext_vec(curve, flip):
             spline_iter += 1
             curve_iter += 1
 
-        spline_iter += 1
+        list_iter += 1
 
     i = 0
 
