@@ -159,16 +159,20 @@ def ext_vec(curve, flip):
 
     extruded_mesh_vector_array = []
     cyclic_list = []
+    spline_type_list = []  # Poly == True; Bezier == False;
+    resol = curve.data.resolution_u
 
     for s in curve.data.splines:
 
         if s.type == 'POLY':
 
             points = s.points
+            spline_type_list.append(True)
 
         else:
 
             points = s.bezier_points
+            spline_type_list.append(False)
 
         extruded_mesh_vector_array.append(np.empty(len(points), dtype=object))
 
@@ -181,23 +185,32 @@ def ext_vec(curve, flip):
             cyclic_list.append(False)
 
     curve.data.extrude = 0.5
-    curve.data.resolution_u = 1
     bpy.ops.object.select_all(action='DESELECT')
     curve.select_set(True)
     bpy.context.view_layer.objects.active = curve
     bpy.ops.object.convert(target='MESH')
     extruded_mesh = bpy.context.active_object
 
-    iterator = 0
+    spline_iter = 0  # Соответствует сплайну и принадлежащим им спискам/массивам
+    curve_iter = 0  # Соответствует индексу поинтов всей кривой
 
-    for arr in extruded_mesh_vector_array:
+    while spline_iter < len(extruded_mesh_vector_array):
 
-        i = 0
+        arr = extruded_mesh_vector_array[spline_iter]
 
-        while i < len(arr):
+        spline_iter = 0  # Соответствует индексу поинтов одного сплайна
 
-            first_point = extruded_mesh.data.vertices[0 + iterator * 2]
-            second_point = extruded_mesh.data.vertices[1 + iterator * 2]
+        while spline_iter < len(arr):
+
+            if spline_type_list[spline_iter]:
+
+                first_point = extruded_mesh.data.vertices[0 + curve_iter * 2]
+                second_point = extruded_mesh.data.vertices[1 + curve_iter * 2]
+
+            else:
+
+                first_point = extruded_mesh.data.vertices[0 + curve_iter * 2 * resol]
+                second_point = extruded_mesh.data.vertices[1 + curve_iter * 2 * resol]
 
             vector = mathutils.Vector((
                 second_point.co[0] - first_point.co[0],
@@ -205,10 +218,12 @@ def ext_vec(curve, flip):
                 second_point.co[2] - first_point.co[2]
             ))
 
-            arr[i] = vector
+            arr[spline_iter] = vector
 
-            i += 1
-            iterator += 1
+            spline_iter += 1
+            curve_iter += 1
+
+        spline_iter += 1
 
     i = 0
 
