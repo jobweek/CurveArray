@@ -199,21 +199,21 @@ def ext_vec(curve, flip: bool):  # Если flip == false, вычисляем z_
 
     def next_point_search(verts, index_0, cyclic: bool):
 
-        if cyclic and index_0 == len(verts)-1:
+        if cyclic and index_0 == len(verts)-2:
 
-            prev_point_0 = verts[0]
+            next_point_0 = verts[0]
 
-        elif not cyclic and index_0 == 0:
+        elif not cyclic and index_0 == len(verts)-2:
 
-            prev_point_0 = verts[index_0]
+            next_point_0 = verts[index_0]
 
         else:
 
-            prev_point_0 = verts[index_0 + 2]
+            next_point_0 = verts[index_0 + 2]
 
-        prev_point_1 = verts[prev_point_0.index + 1]
+        next_point_1 = verts[next_point_0.index + 1]
 
-        res = midle_point(prev_point_0, prev_point_1)
+        res = midle_point(next_point_0, next_point_1)
 
         return res
 
