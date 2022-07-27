@@ -159,7 +159,7 @@ def ext_vec(curve, flip: bool):  # Если flip == false, вычисляем z_
 
     def calc_vec(first_vertex, second_vertex, normalize: bool):
 
-        vec = second_vertex.co - first_vertex.co
+        vec = second_vertex - first_vertex
 
         if vec.length < 0.0001:
 
@@ -272,7 +272,7 @@ def ext_vec(curve, flip: bool):  # Если flip == false, вычисляем z_
                 first_point = verts[0 + curve_iter * 2 * resol]
                 second_point = verts[1 + curve_iter * 2 * resol]
 
-            ext_vec = calc_vec(first_point, second_point, True)
+            ext_vec = calc_vec(first_point.co, second_point.co, True)
 
             ext_arr[spline_iter] = ext_vec
 
