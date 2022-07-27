@@ -173,7 +173,7 @@ def ext_vec(curve, flip: bool):  # Если flip == false, вычисляем z_
 
     def midle_point(first_vertex, second_vertex):
 
-        vec = first_vertex.co + calc_vec(first_vertex, second_vertex, False)/2
+        vec = first_vertex.co + calc_vec(first_vertex.co, second_vertex.co, False)/2
 
         return vec
 
