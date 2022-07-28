@@ -155,7 +155,7 @@ def duplicate(active_curve):
     return switched_curve
 
 
-def ext_vec(curve, flip: bool):  # Если flip == false, вычисляем z_vec_arr
+def ext_z_vec(curve, flip: bool):  # Если flip == false, вычисляем z_vec_arr
 
     def calc_vec(first_vertex, second_vertex, normalize: bool):
 
