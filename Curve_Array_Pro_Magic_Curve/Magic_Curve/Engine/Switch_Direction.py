@@ -1,7 +1,6 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
 import mathutils  # type: ignore
-import numpy as np
 from .Switch_Direction_Functions import (
     checker,
     merged_points_check,
@@ -16,7 +15,7 @@ def recalculate_curve_manager():
 
     switched_curve = bpy.context.active_object
     checker()
-    points_count = merged_points_check(switched_curve)
+    merged_points_check(switched_curve)
     points_select(switched_curve)
 
     extruded_curve = duplicate(switched_curve)

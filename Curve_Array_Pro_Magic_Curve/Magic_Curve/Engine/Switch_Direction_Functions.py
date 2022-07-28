@@ -47,7 +47,6 @@ def checker():
 def merged_points_check(curve):
 
     iterator = 0
-    points_count = 0
     merged_points_buffer = []
     error_case = False
 
@@ -67,7 +66,6 @@ def merged_points_check(curve):
 
             raise CancelError
 
-        points_count += len(points)
         i = 0
         merged_points_buffer.append([])
 
@@ -113,8 +111,6 @@ def merged_points_check(curve):
                        'ERROR')
 
         raise CancelError
-
-    return points_count
 
 
 def points_select(curve):

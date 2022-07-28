@@ -18,7 +18,7 @@ from .Split_Curve_Functions import (
     create_extruded_mesh,
 )
 from .Switch_Direction_Functions import (
-    z_vec,
+    #  z_vec,
     tilt_correction,
 )
 
@@ -46,7 +46,7 @@ def smooth_curve_manager():
     bpy.ops.object.editmode_toggle()
 
     curve_data = create_curve(vert_co_arr, active_object, curve_data)
-    z_vec_arr = z_vec(curve_data.get_curve(), len(vert_sequence_array))
+    #  z_vec_arr = z_vec(curve_data.get_curve(), len(vert_sequence_array))
 
     extruded_mesh = create_extruded_mesh(curve_data.get_curve())
 
@@ -54,7 +54,7 @@ def smooth_curve_manager():
 
     bpy.data.objects.remove(extruded_mesh, do_unlink=True)
 
-    tilt_correction(ext_vec_arr, y_vec_arr, z_vec_arr, curve_data.get_curve())
+    #  tilt_correction(ext_vec_arr, y_vec_arr, z_vec_arr, curve_data.get_curve())
 
     bpy.ops.object.select_all(action='DESELECT')
     curve_data.get_curve().select_set(True)
