@@ -151,7 +151,7 @@ def duplicate(active_curve):
     return switched_curve
 
 
-def ext_z_vec(curve, flip: bool):  # Если flip == false, вычисляем z_vec_arr
+def ext_z_vec(curve, flip: bool):  # Если flip == false, вычисляем z_vec_arr, не переворачиев массив ext_vec_arr
 
     def calc_vec(first_vertex, second_vertex, normalize: bool):
 
@@ -292,7 +292,7 @@ def ext_z_vec(curve, flip: bool):  # Если flip == false, вычисляем 
 
     while i < len(ext_mesh_vec_arr):
 
-        if cyclic_list[i] and spline_type_list[i]:
+        if cyclic_list[i] and not spline_type_list[i]:  # Если сплайн цикличен и Bezier, то сдвигаем на -1
 
             ext_mesh_vec_arr[i] = np.roll(ext_mesh_vec_arr[i], -1)
 
