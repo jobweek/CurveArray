@@ -8,7 +8,6 @@ from .Switch_Direction_Functions import (
     points_select,
     duplicate,
     ext_vec,
-    z_vec,
     tilt_correction,
 )
 
