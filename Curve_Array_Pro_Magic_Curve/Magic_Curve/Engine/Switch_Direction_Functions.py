@@ -223,6 +223,7 @@ def ext_z_vec(curve, flip: bool):  # Если flip == false, вычисляем 
     z_vec_arr = []
     cyclic_list = []  # Cyclic == True; Not_Cyclic == False;
     spline_type_list = []  # Poly == True; Bezier == False;
+    curve_resolution = curve.data.resolution_u
 
     for s in curve.data.splines:
 
@@ -254,7 +255,6 @@ def ext_z_vec(curve, flip: bool):  # Если flip == false, вычисляем 
     list_iter = 0  # Соответствует сплайну и принадлежащим им спискам/массивам
     curve_iter = 0  # Соответствует индексу поинтов всей кривой
     verts = extruded_mesh.data.vertices
-    curve_resolution = curve.data.resolution_u
 
     while list_iter < len(ext_mesh_vec_arr):
 
