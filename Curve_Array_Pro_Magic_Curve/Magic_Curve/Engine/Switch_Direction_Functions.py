@@ -173,13 +173,13 @@ def ext_z_vec(curve, flip: bool):  # Если flip == false, вычисляем 
 
         return vec
 
-    def prev_point_search(verts, index_0, cyclic: bool):
+    def prev_point_search(verts, index_0, cyclic: bool, verts_range):
 
-        if cyclic and index_0 == 0:
+        if cyclic and index_0 == verts_range[0]:
 
             prev_point_0 = verts[-2]
 
-        elif not cyclic and index_0 == 0:
+        elif not cyclic and index_0 == verts_range[0]:
 
             prev_point_0 = verts[index_0]
 
@@ -193,13 +193,13 @@ def ext_z_vec(curve, flip: bool):  # Если flip == false, вычисляем 
 
         return res
 
-    def next_point_search(verts, index_0, cyclic: bool):
+    def next_point_search(verts, index_0, cyclic: bool, verts_range):
 
-        if cyclic and index_0 == len(verts)-2:
+        if cyclic and index_0 == verts_range[1]:
 
             next_point_0 = verts[0]
 
-        elif not cyclic and index_0 == len(verts)-2:
+        elif not cyclic and index_0 == verts_range[1]:
 
             next_point_0 = verts[index_0]
 
@@ -256,6 +256,9 @@ def ext_z_vec(curve, flip: bool):  # Если flip == false, вычисляем 
 
         spline_iter = 0  # Соответствует индексу поинтов одного сплайна
 
+        verts_range = [curve_iter * 2, (curve_iter + (len(ext_arr) - 1)) * 2]  # Первая и последняя точка на меше,
+        # соответствующему конкретному сплайну
+
         while spline_iter < len(ext_arr):
 
             if spline_type_list[list_iter]:
@@ -276,8 +279,8 @@ def ext_z_vec(curve, flip: bool):  # Если flip == false, вычисляем 
 
                 z_arr = z_vec_arr[list_iter]
 
-                prev_point = prev_point_search(verts, first_point.index, cyclic_list[list_iter])
-                next_point = next_point_search(verts, first_point.index, cyclic_list[list_iter])
+                prev_point = prev_point_search(verts, first_point.index, cyclic_list[list_iter], verts_range)
+                next_point = next_point_search(verts, first_point.index, cyclic_list[list_iter], verts_range)
 
                 z_vec = calc_vec(prev_point, next_point, True)
 
