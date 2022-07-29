@@ -177,7 +177,7 @@ def ext_z_vec(curve, flip: bool):  # Если flip == false, вычисляем 
 
         if cyclic and index_0 == verts_range[0]:
 
-            prev_point_0 = verts[-2]
+            prev_point_0 = verts[verts_range[1] - 2]
 
         elif not cyclic and index_0 == verts_range[0]:
 
@@ -197,7 +197,7 @@ def ext_z_vec(curve, flip: bool):  # Если flip == false, вычисляем 
 
         if cyclic and index_0 == verts_range[1]:
 
-            next_point_0 = verts[0]
+            next_point_0 = verts[verts_range[0]]
 
         elif not cyclic and index_0 == verts_range[1]:
 
