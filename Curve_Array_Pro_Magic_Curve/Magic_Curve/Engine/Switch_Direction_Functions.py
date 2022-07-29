@@ -223,7 +223,6 @@ def ext_z_vec(curve, flip: bool):  # Если flip == false, вычисляем 
     z_vec_arr = []
     cyclic_list = []  # Cyclic == True; Not_Cyclic == False;
     spline_type_list = []  # Poly == True; Bezier == False;
-    resol = curve.data.resolution_u
 
     for s in curve.data.splines:
 
@@ -262,20 +261,23 @@ def ext_z_vec(curve, flip: bool):  # Если flip == false, вычисляем 
 
         spline_iter = 0  # Соответствует индексу поинтов одного сплайна
 
-        verts_range = [curve_iter * 2, (curve_iter + (len(ext_arr) - 1)) * 2]  # Первая и последняя точка на меше,
-        # соответствующему конкретному сплайну
+        if spline_type_list[list_iter]:
+
+            resol = 1
+
+        else:
+
+            resol = curve.data.resolution_u
+
+        # Первая и последняя точка на меше, соответствующему конкретному сплайну
+        verts_range = [curve_iter * 2, (curve_iter + (len(ext_arr) - 1)) * 2 * resol]
+
+        print(verts_range)
 
         while spline_iter < len(ext_arr):
 
-            if spline_type_list[list_iter]:
-
-                first_point = verts[0 + curve_iter * 2]
-                second_point = verts[1 + curve_iter * 2]
-
-            else:
-
-                first_point = verts[0 + curve_iter * 2 * resol]
-                second_point = verts[1 + curve_iter * 2 * resol]
+            first_point = verts[0 + curve_iter * 2 * resol]
+            second_point = verts[1 + curve_iter * 2 * resol]
 
             ext_vec = calc_vec(first_point.co, second_point.co, True)
 
