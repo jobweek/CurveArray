@@ -254,6 +254,7 @@ def ext_z_vec(curve, flip: bool):  # Если flip == false, вычисляем 
     list_iter = 0  # Соответствует сплайну и принадлежащим им спискам/массивам
     curve_iter = 0  # Соответствует индексу поинтов всей кривой
     verts = extruded_mesh.data.vertices
+    curve_resolution = curve.data.resolution_u
 
     while list_iter < len(ext_mesh_vec_arr):
 
@@ -267,10 +268,10 @@ def ext_z_vec(curve, flip: bool):  # Если flip == false, вычисляем 
 
         else:
 
-            resol = curve.data.resolution_u
+            resol = curve_resolution
 
         # Первая и последняя точка на меше, соответствующему конкретному сплайну
-        verts_range = [curve_iter * 2, (curve_iter + (len(ext_arr) - 1)) * 2 * resol]
+        verts_range = [curve_iter * 2 * resol, (curve_iter + (len(ext_arr) - 1)) * 2 * resol]
 
         print(verts_range)
 
