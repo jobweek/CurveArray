@@ -270,10 +270,20 @@ def ext_z_vec(curve, flip: bool):  # Если flip == false, вычисляем 
 
             resol = curve_resolution
 
-        # Первая и последняя точка на меше, соответствующему конкретному сплайну
-        verts_range = [curve_iter * 2 * resol, (curve_iter + (len(ext_arr) - 1)) * 2 * resol]
+        if cyclic_list[list_iter] and not spline_type_list[list_iter]:  # Если сплайн цикличен и Bezier
+
+            # Первая и последняя точка на меше, соответствующему конкретному сплайну
+            verts_range = [curve_iter * 2 * resol, ((curve_iter + 1) + (len(ext_arr) - 1)) * 2 * resol]
+
+        else:
+
+            # Первая и последняя точка на меше, соответствующему конкретному сплайну
+            verts_range = [curve_iter * 2 * resol, (curve_iter + (len(ext_arr) - 1)) * 2 * resol]
 
         print(verts_range)
+        print('curve_iter: ', curve_iter)
+        print('len(ext_arr): ', len(ext_arr))
+        print('resol: ', resol)
 
         while spline_iter < len(ext_arr):
 
