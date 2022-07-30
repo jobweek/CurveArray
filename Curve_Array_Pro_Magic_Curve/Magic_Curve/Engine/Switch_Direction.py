@@ -34,21 +34,28 @@ def recalculate_curve_manager():
     # Получаем массив y_vec
     y_vec_arr = ext_vec(mesh_curve_duplicate, curve_duplicate_data.get_curve_data())
 
-    print(y_vec_arr)
-
-    return
+    bpy.data.objects.remove(mesh_curve_duplicate, do_unlink=True)
 
     # Меняем направление
     switched_curve = switch_curve(curve)
 
-    y_vec_arr, _ = ext_z_vec(extruded_curve, True)
-    bpy.data.objects.remove(extruded_curve, do_unlink=True)
+    # Дублируем кривую
+    switched_curve_duplicate = duplicate(switched_curve)
 
-    extruded_switched_curve = duplicate(switched_curve)
+    # Получим информацию о кривой
+    switched_curve_duplicate_data = Curve_Data(curve_duplicate)
 
-    ext_vec_arr, z_vec_arr = ext_z_vec(extruded_switched_curve, False)
-    bpy.data.objects.remove(extruded_switched_curve, do_unlink=True)
+    # Конвертируем в меш
+    mesh_switched_curve_duplicate = convert_to_mesh(switched_curve_duplicate)
 
+    # Получаем массив ext_vec
+    ext_vec_arr = ext_vec(mesh_switched_curve_duplicate, switched_curve_duplicate_data.get_curve_data())
+
+    # Получаем массив z_vec
+    z_vec_arr = z_vec(mesh_switched_curve_duplicate, switched_curve_duplicate_data.get_curve_data())
+    bpy.data.objects.remove(mesh_switched_curve_duplicate, do_unlink=True)
+
+    # Корректируем тильт
     tilt_correction(ext_vec_arr, y_vec_arr, z_vec_arr, switched_curve)
 
     bpy.ops.object.select_all(action='DESELECT')
