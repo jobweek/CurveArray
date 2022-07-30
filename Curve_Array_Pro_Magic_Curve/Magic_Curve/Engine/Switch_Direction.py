@@ -1,6 +1,8 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
 import mathutils  # type: ignore
+import numpy as np
+
 from .Switch_Direction_Functions import (
     checker,
     merged_points_check,
@@ -35,6 +37,9 @@ def recalculate_curve_manager():
     y_vec_arr = ext_vec(mesh_curve_duplicate, curve_duplicate_data.get_curve_data())
     bpy.data.objects.remove(mesh_curve_duplicate, do_unlink=True)
 
+    # Переворачивем массив y_vec
+    y_vec_arr = np.flip(y_vec_arr)
+
     # Меняем направление
     switched_curve = switch_curve(curve)
 
@@ -52,7 +57,7 @@ def recalculate_curve_manager():
 
     # Получаем массив z_vec
     z_vec_arr = z_vec(mesh_switched_curve_duplicate, switched_curve_duplicate_data.get_curve_data())
-    # bpy.data.objects.remove(mesh_switched_curve_duplicate, do_unlink=True)
+    bpy.data.objects.remove(mesh_switched_curve_duplicate, do_unlink=True)
 
     # Корректируем тильт
     tilt_correction(ext_vec_arr, y_vec_arr, z_vec_arr, switched_curve)

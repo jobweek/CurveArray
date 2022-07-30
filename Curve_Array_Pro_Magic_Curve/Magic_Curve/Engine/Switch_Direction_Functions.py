@@ -471,9 +471,9 @@ def tilt_correction(ext_vec_arr, y_vec_arr, z_vec_arr, curve):
 
             if iterator == 0 and i == 0:
 
-                print('ext_vec:', ext_vec)
+                print('y_vec:', y_vec_arr[iterator][i])
+                print('ext_vec:', ext_vec_arr[iterator][i])
                 print('z_vec:', z_vec_arr[iterator][i])
-                print('y_vec:', y_vec)
 
             i += 1
 
