@@ -359,7 +359,7 @@ def z_vec(mesh, curve_data):
         else:
 
             prev_point_0 = verts[index_0 - 2]
-
+        print('prev_point_0: ', prev_point_0.index)
         prev_point_1 = verts[prev_point_0.index + 1]
 
         res = midle_point(prev_point_0, prev_point_1)
@@ -382,7 +382,7 @@ def z_vec(mesh, curve_data):
         else:
 
             next_point_0 = verts[index_0 + 2]
-
+        print('next_point_0: ', next_point_0.index)
         next_point_1 = verts[next_point_0.index + 1]
 
         res = midle_point(next_point_0, next_point_1)
@@ -419,12 +419,14 @@ def z_vec(mesh, curve_data):
         while spline_point_iter < len(z_arr):
 
             index_0 = verts_range[0] + spline_point_iter * 2 * resol
-
+            print('spline_point_iter: ', spline_point_iter-1)
+            print('index_0: ', index_0)
+            print('verts_range: ', verts_range)
             prev_point = prev_point_search(verts, index_0, cyclic_list[list_iter], verts_range)
             next_point = next_point_search(verts, index_0, cyclic_list[list_iter], verts_range)
 
             z_vec = calc_vec(prev_point, next_point, True)
-
+            print('z_vec: ', z_vec)
             z_arr[spline_point_iter] = z_vec
 
             spline_point_iter += 1
@@ -435,206 +437,6 @@ def z_vec(mesh, curve_data):
     z_vec_arr = arr_roll(z_vec_arr, cyclic_list, spline_type_list, -1)
 
     return z_vec_arr
-
-
-def ext_z_vec(curve, flip: bool):  # Если flip == false, вычисляем z_vec_arr, не переворачиев массив ext_vec_arr
-
-    def calc_vec(first_vertex, second_vertex, normalize: bool):
-
-        vec = second_vertex - first_vertex
-
-        if vec.length < 0.0001:
-
-            return None
-
-        if normalize:
-
-            vec = vec.normalized()
-
-        return vec
-
-    def midle_point(first_vertex, second_vertex):
-
-        vec = first_vertex.co + calc_vec(first_vertex.co, second_vertex.co, False)/2
-
-        return vec
-
-    def prev_point_search(verts, index_0, cyclic: bool, verts_range):
-
-        # Example
-        # index_0 = 45, verts_range = [(45,_),(52,_)]
-        if cyclic and index_0 == verts_range[0]:
-
-            prev_point_0 = verts[verts_range[1]]
-        #  prev_point_0 = 52
-
-        elif not cyclic and index_0 == verts_range[0]:
-
-            prev_point_0 = verts[index_0]
-
-        else:
-
-            prev_point_0 = verts[index_0 - 2]
-
-        prev_point_1 = verts[prev_point_0.index + 1]
-
-        res = midle_point(prev_point_0, prev_point_1)
-
-        return res
-
-    def next_point_search(verts, index_0, cyclic: bool, verts_range):
-
-        # Example
-        # index_0 = 52, verts_range = [(45,_),(52,_)]
-        if cyclic and index_0 == verts_range[1]:
-
-            next_point_0 = verts[verts_range[0]]
-        # next_point_0 = 45
-
-        elif not cyclic and index_0 == verts_range[1]:
-
-            next_point_0 = verts[index_0]
-
-        else:
-
-            next_point_0 = verts[index_0 + 2]
-
-        next_point_1 = verts[next_point_0.index + 1]
-
-        res = midle_point(next_point_0, next_point_1)
-
-        return res
-
-    ext_mesh_vec_arr = []
-    z_vec_arr = []
-    cyclic_list = []  # Cyclic == True; Not_Cyclic == False;
-    spline_type_list = []  # Poly == True; Bezier == False;
-    spline_range_list = []  # Каждый элемент - список из начальной и конечной "нулевой" вершины меша сплайна
-    curve_resolution = curve.data.resolution_u
-
-    for s in curve.data.splines:
-
-        if s.type == 'POLY':
-
-            points = s.points
-            spline_type_list.append(True)
-
-            if len(spline_range_list) == 0:
-
-                start_range = 0
-
-            else:
-
-                start_range = spline_range_list[-1][1] + 2
-
-            end_range = start_range + (len(points) - 1) * 2
-
-            spline_range_list.append([start_range, end_range])
-
-        else:
-
-            points = s.bezier_points
-            spline_type_list.append(False)
-
-            if len(spline_range_list) == 0:
-
-                start_range = 0
-
-            else:
-
-                start_range = spline_range_list[-1][1] + 2
-
-            if s.use_cyclic_u:
-
-                end_range = (start_range + (len(points) * 2 * curve_resolution)) - 2
-
-            else:
-
-                end_range = start_range + ((len(points) - 1) * 2 * curve_resolution)
-
-            spline_range_list.append([start_range, end_range])
-
-        print('RANGE: ', start_range, ', ', end_range)
-
-        ext_mesh_vec_arr.append(np.empty(len(points), dtype=object))
-
-        if not flip:
-
-            z_vec_arr.append(np.empty(len(points), dtype=object))
-
-        cyclic_list.append(s.use_cyclic_u)
-
-    curve.data.extrude = 0.5
-    bpy.ops.object.select_all(action='DESELECT')
-    curve.select_set(True)
-    bpy.context.view_layer.objects.active = curve
-    bpy.ops.object.convert(target='MESH')
-    extruded_mesh = bpy.context.active_object
-
-    list_iter = 0  # Соответствует сплайну и принадлежащим им спискам/массивам
-    curve_iter = 0  # Соответствует индексу поинтов всей кривой
-    verts = extruded_mesh.data.vertices
-
-    while list_iter < len(ext_mesh_vec_arr):
-
-        ext_arr = ext_mesh_vec_arr[list_iter]
-
-        verts_range = spline_range_list[list_iter]
-
-        spline_iter = 0  # Соответствует индексу поинтов одного сплайна
-
-        if spline_type_list[list_iter]:
-
-            resol = 1
-
-        else:
-
-            resol = curve_resolution
-
-        while spline_iter < len(ext_arr):
-
-            first_point = verts[0 + curve_iter * 2 * resol]
-            second_point = verts[1 + curve_iter * 2 * resol]
-
-            ext_vec = calc_vec(first_point.co, second_point.co, True)
-
-            ext_arr[spline_iter] = ext_vec
-
-            if not flip:
-
-                z_arr = z_vec_arr[list_iter]
-
-                prev_point = prev_point_search(verts, first_point.index, cyclic_list[list_iter], verts_range)
-                next_point = next_point_search(verts, first_point.index, cyclic_list[list_iter], verts_range)
-
-                z_vec = calc_vec(prev_point, next_point, True)
-
-                z_arr[spline_iter] = z_vec
-
-            spline_iter += 1
-            curve_iter += 1
-
-        list_iter += 1
-
-    i = 0
-
-    while i < len(ext_mesh_vec_arr):
-
-        if cyclic_list[i] and not spline_type_list[i]:  # Если сплайн цикличен и Bezier, то сдвигаем на -1
-
-            ext_mesh_vec_arr[i] = np.roll(ext_mesh_vec_arr[i], -1)
-
-            if not flip:
-
-                z_vec_arr[i] = np.roll(z_vec_arr[i], -1)
-
-        if flip:
-
-            ext_mesh_vec_arr[i] = np.flip(ext_mesh_vec_arr[i])
-
-        i += 1
-
-    return ext_mesh_vec_arr, z_vec_arr
 
 
 def tilt_correction(ext_vec_arr, y_vec_arr, z_vec_arr, curve):
