@@ -9,6 +9,7 @@ from .Switch_Direction_Functions import (
     Curve_Data,
     convert_to_mesh,
     switch_curve,
+    ext_vec,
     ext_z_vec,
     tilt_correction,
 )
@@ -32,6 +33,10 @@ def recalculate_curve_manager():
 
     # Получаем массив y_vec
     y_vec_arr = ext_vec(mesh_curve_duplicate, curve_duplicate_data.get_curve_data())
+
+    print(y_vec_arr)
+
+    return
 
     # Меняем направление
     switched_curve = switch_curve(curve)

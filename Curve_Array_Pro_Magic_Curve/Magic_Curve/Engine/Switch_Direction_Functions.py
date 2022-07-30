@@ -44,6 +44,21 @@ def create_arr(points_count_list):
     return arr
 
 
+def arr_roll(arr, cyclic_list, spline_type_list, roll: int):
+
+    i = 0
+
+    while i < len(arr):
+
+        if cyclic_list[i] and not spline_type_list[i]:
+
+            arr[i] = np.roll(arr[i], roll)
+
+        i += 1
+
+    return arr
+
+
 def checker():
 
     objects = bpy.context.selected_objects
@@ -303,7 +318,7 @@ def ext_vec(mesh, curve_data):
 
         while spline_point_iter < len(ext_arr):
 
-            first_point = verts[0 + curve_iter * 2 * resol]
+            first_point = verts[verts_range[0] + spline_point_iter * 2 * resol]
             second_point = verts[first_point.index + 1]
 
             ext_vec = calc_vec(first_point.co, second_point.co, True)
@@ -313,6 +328,9 @@ def ext_vec(mesh, curve_data):
             spline_point_iter += 1
 
         list_iter += 1
+
+    # Если сплайн цикличен и Bezier, то сдвигаем на -1
+    ext_vec_arr = arr_roll(ext_vec_arr, cyclic_list, spline_type_list, -1)
 
     return ext_vec_arr
 
