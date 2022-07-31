@@ -200,18 +200,24 @@ class Curve_Data:
 
     def __init__(self, curve):
 
-        self.spline_point_count = []  # Количество точек на каждом сплайне
-        self.cyclic_list = []  # Cyclic == True; Not_Cyclic == False;
-        self.spline_type_list = []  # Poly == True; Bezier == False;
-        self.spline_range_list = []  # Каждый элемент - список из начальной и конечной "нулевой" вершины меша сплайна
+        splines = curve.data.splines
+        spline_count = len(splines)
+
+        self.spline_point_count = np.empty(spline_count, dtype=int)  # Количество точек на каждом сплайне
+        self.cyclic_list = np.empty(spline_count, dtype=bool)  # Cyclic == True; Not_Cyclic == False;
+        self.spline_type_list = np.empty(spline_count, dtype=bool)  # Poly == True; Bezier == False;
+        # Каждый элемент - список из начальной и конечной "нулевой" вершины меша сплайна
+        self.spline_range_list = np.empty(spline_count, dtype=object)
         self.curve_resolution = curve.data.resolution_u
 
-        for s in curve.data.splines:
+        i = 0
 
-            if s.type == 'POLY':
+        while i < len(splines):
 
-                points = s.points
-                self.spline_type_list.append(True)
+            if splines[i].type == 'POLY':
+
+                points = splines[i].points
+                self.spline_type_list[i] = True
 
                 if len(self.spline_range_list) == 0:
 
@@ -223,12 +229,12 @@ class Curve_Data:
 
                 end_range = start_range + (len(points) - 1) * 2
 
-                self.spline_range_list.append([start_range, end_range])
+                self.spline_range_list[i] = [start_range, end_range]
 
             else:
 
-                points = s.bezier_points
-                self.spline_type_list.append(False)
+                points = splines[i].bezier_points
+                self.spline_type_list[i] = False
 
                 if len(self.spline_range_list) == 0:
 
@@ -238,7 +244,7 @@ class Curve_Data:
 
                     start_range = self.spline_range_list[-1][1] + 2
 
-                if s.use_cyclic_u:
+                if splines[i].use_cyclic_u:
 
                     end_range = (start_range + (len(points) * 2 * self.curve_resolution)) - 2
 
@@ -246,11 +252,11 @@ class Curve_Data:
 
                     end_range = start_range + ((len(points) - 1) * 2 * self.curve_resolution)
 
-                self.spline_range_list.append([start_range, end_range])
+                self.spline_range_list[i] = [start_range, end_range]
 
-            self.spline_point_count.append(len(points))
+            self.spline_point_count[i] = len(points)
 
-            self.cyclic_list.append(s.use_cyclic_u)
+            self.cyclic_list[i] = splines[i].use_cyclic_u
 
     def get_curve_data(self):
 
@@ -462,8 +468,8 @@ def tilt_correction(ext_vec_arr, y_vec_arr, z_vec_arr, curve):
                 i += 1
                 continue
 
-            ext_vec = vec_projection(ext_vec_arr[iterator][i], z_vec_arr[iterator][i])
-            y_vec = vec_projection(y_vec_arr[iterator][i], z_vec_arr[iterator][i])
+            ext_vec = ext_vec_arr[iterator][i]
+            y_vec = y_vec_arr[iterator][i]
             cross_vec = z_vec_arr[iterator][i].cross(y_vec)
             angle = angle_calc(ext_vec, y_vec, cross_vec)
 
