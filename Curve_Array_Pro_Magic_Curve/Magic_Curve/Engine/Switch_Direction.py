@@ -12,8 +12,9 @@ from .Switch_Direction_Functions import (
     convert_to_mesh,
     switch_curve,
     ext_vec,
-    z_vec,
+    angle_betw_vec,
     tilt_correction,
+    angle_correction,
 )
 
 
@@ -54,13 +55,32 @@ def recalculate_curve_manager():
 
     # Получаем массив ext_vec
     ext_vec_arr = ext_vec(mesh_switched_curve_duplicate, switched_curve_duplicate_data.get_curve_data())
-
-    # Получаем массив z_vec
-    z_vec_arr = z_vec(mesh_switched_curve_duplicate, switched_curve_duplicate_data.get_curve_data())
     bpy.data.objects.remove(mesh_switched_curve_duplicate, do_unlink=True)
 
+    # Получаем угол между векторами
+    angle_y_ext_arr = angle_betw_vec(y_vec_arr, ext_vec_arr, switched_curve_duplicate_data.get_curve_data()[0])
+
+    # Дублируем кривую
+    test_curve = duplicate(switched_curve)
+
+    # Тестово поворачиваем точки на половину угла
+    tilt_correction(angle_y_ext_arr, test_curve, True)
+
+    # Конвертируем в меш
+    mesh_test_curve = convert_to_mesh(test_curve)
+
+    # Получаем массив test_vec
+    test_vec_arr = ext_vec(mesh_test_curve, switched_curve_duplicate_data.get_curve_data())
+    bpy.data.objects.remove(mesh_test_curve, do_unlink=True)
+
+    # Получаем угол между векторами после поворота
+    angle_y_test_arr = angle_betw_vec(y_vec_arr, test_vec_arr, switched_curve_duplicate_data.get_curve_data()[0])
+
+    # Корректируем углы
+    angle_y_ext_arr = angle_correction(angle_y_ext_arr, angle_y_test_arr)
+
     # Корректируем тильт
-    tilt_correction(ext_vec_arr, y_vec_arr, z_vec_arr, switched_curve)
+    tilt_correction(angle_y_ext_arr, switched_curve, False)
 
     bpy.ops.object.select_all(action='DESELECT')
     switched_curve.select_set(True)

@@ -2,11 +2,8 @@ import bpy  # type: ignore
 import bmesh  # type: ignore
 import mathutils  # type: ignore
 import numpy as np
+import copy
 from .Errors import CancelError, ShowMessageBox
-from .Smooth_Curve_Functions import (
-    vec_projection,
-    angle_calc,
-)
 
 
 def vec_equal(vec_1, vec_2):
@@ -208,7 +205,7 @@ class Curve_Data:
         self.spline_type_list = np.empty(spline_count, dtype=bool)  # Poly == True; Bezier == False;
         # Каждый элемент - список из начальной и конечной "нулевой" вершины меша сплайна
         self.spline_range_list = np.empty(spline_count, dtype=object)
-        self.curve_resolution = curve.data.resolution_u
+        self.curve_resolution = copy.copy(curve.data.resolution_u)
 
         i = 0
 
@@ -341,6 +338,89 @@ def ext_vec(mesh, curve_data):
     return ext_vec_arr
 
 
+def angle_betw_vec(y_vec_arr, ext_vec_arr, spline_point_count):
+
+    angle_betw_vec_arr = create_arr(spline_point_count)
+
+    list_iter = 0
+
+    while list_iter < len(ext_vec_arr):
+
+        angle_arr = angle_betw_vec_arr[list_iter]
+        y_arr = y_vec_arr[list_iter]
+        ext_arr = ext_vec_arr[ext_vec_arr]
+
+        spline_point_iter = 0
+
+        while spline_point_iter < len(angle_arr):
+
+            y_vec = y_arr[spline_point_iter]
+            ext_vec = ext_arr[spline_point_iter]
+
+            angle_arr[spline_point_iter] = ext_vec.angle(y_vec)
+
+            spline_point_iter += 1
+
+        list_iter += 1
+
+    return angle_betw_vec_arr
+
+
+def tilt_correction(angle_betw_vec_arr, curve, test: bool):
+
+    iterator = 0
+
+    for s in curve.data.splines:
+
+        if s.type == 'POLY':
+
+            points = s.points
+
+        else:
+
+            points = s.bezier_points
+
+        i = 0
+
+        while i < len(points):
+
+            angle = angle_betw_vec_arr[iterator][i]
+
+            if test:
+
+                angle = angle * 0.5
+
+            points[i].tilt += angle
+
+            i += 1
+
+        iterator += 1
+
+
+def angle_correction(angle_y_ext_arr, angle_y_test_arr):
+
+    list_iter = 0
+
+    while list_iter < len(angle_y_ext_arr):
+
+        y_ext_arr = angle_y_ext_arr[list_iter]
+        y_test_arr = angle_y_test_arr[list_iter]
+
+        i = 0
+
+        while i < len(y_ext_arr):
+
+            if y_ext_arr[i] < y_test_arr[i]:
+
+                y_ext_arr[i] = -y_ext_arr[i]
+
+            i += 1
+
+        list_iter += 1
+
+    return angle_y_ext_arr
+
+
 def z_vec(mesh, curve_data):
 
     def midle_point(first_vertex, second_vertex):
@@ -443,44 +523,3 @@ def z_vec(mesh, curve_data):
     z_vec_arr = arr_roll(z_vec_arr, cyclic_list, spline_type_list, -1)
 
     return z_vec_arr
-
-
-def tilt_correction(ext_vec_arr, y_vec_arr, z_vec_arr, curve):
-
-    iterator = 0
-
-    for s in curve.data.splines:
-
-        if s.type == 'POLY':
-
-            points = s.points
-
-        else:
-
-            points = s.bezier_points
-
-        i = 0
-
-        while i < len(points):
-
-            if z_vec_arr[iterator][i] is None:
-
-                i += 1
-                continue
-
-            ext_vec = ext_vec_arr[iterator][i]
-            y_vec = y_vec_arr[iterator][i]
-            cross_vec = z_vec_arr[iterator][i].cross(y_vec)
-            angle = angle_calc(ext_vec, y_vec, cross_vec)
-
-            points[i].tilt += angle
-
-            if iterator == 0 and i == 0:
-
-                print('y_vec:', y_vec_arr[iterator][i])
-                print('ext_vec:', ext_vec_arr[iterator][i])
-                print('z_vec:', z_vec_arr[iterator][i])
-
-            i += 1
-
-        iterator += 1
