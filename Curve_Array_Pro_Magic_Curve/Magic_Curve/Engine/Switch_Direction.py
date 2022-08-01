@@ -12,6 +12,7 @@ from .Switch_Direction_Functions import (
     convert_to_mesh,
     switch_curve,
     ext_vec,
+    arr_flip,
     angle_betw_vec,
     tilt_correction,
     angle_correction,
@@ -24,6 +25,9 @@ def recalculate_curve_manager():
     checker()
     merged_points_check(curve)
     points_select(curve)
+
+    # Создаем кривую которую будем использовать в качестве профиля
+    # profile_obj = create_profile()
 
     # Дублируем кривую
     curve_duplicate = duplicate(curve)
@@ -39,8 +43,8 @@ def recalculate_curve_manager():
     bpy.data.objects.remove(mesh_curve_duplicate, do_unlink=True)
 
     # Переворачивем массив y_vec
-    y_vec_arr = np.flip(y_vec_arr)
-
+    y_vec_arr = arr_flip(y_vec_arr)
+    print('y_vec_arr', y_vec_arr)
     # Меняем направление
     switched_curve = switch_curve(curve)
 
@@ -49,16 +53,17 @@ def recalculate_curve_manager():
 
     # Получим информацию о кривой
     switched_curve_duplicate_data = Curve_Data(switched_curve_duplicate)
-
+    print(switched_curve_duplicate_data.get_curve_data()[1])
     # Конвертируем в меш
     mesh_switched_curve_duplicate = convert_to_mesh(switched_curve_duplicate)
 
     # Получаем массив ext_vec
     ext_vec_arr = ext_vec(mesh_switched_curve_duplicate, switched_curve_duplicate_data.get_curve_data())
     bpy.data.objects.remove(mesh_switched_curve_duplicate, do_unlink=True)
-
+    print('ext_vec_arr', ext_vec_arr)
     # Получаем угол между векторами
     angle_y_ext_arr = angle_betw_vec(y_vec_arr, ext_vec_arr, switched_curve_duplicate_data.get_curve_data()[0])
+    print(angle_y_ext_arr)
 
     # Дублируем кривую
     test_curve = duplicate(switched_curve)
@@ -79,6 +84,7 @@ def recalculate_curve_manager():
     # Корректируем углы
     angle_y_ext_arr = angle_correction(angle_y_ext_arr, angle_y_test_arr)
 
+    print(angle_y_ext_arr)
     # Корректируем тильт
     tilt_correction(angle_y_ext_arr, switched_curve, False)
 
