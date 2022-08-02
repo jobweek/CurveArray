@@ -1,8 +1,6 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
-import mathutils  # type: ignore
-import numpy as np
-
+from .Errors import CancelError, ShowMessageBox
 from .Switch_Direction_Functions import (
     checker,
     merged_points_check,
@@ -26,8 +24,21 @@ def recalculate_curve_manager():
     merged_points_check(curve)
     points_select(curve)
 
-    # Создаем кривую которую будем использовать в качестве профиля
-    # profile_obj = create_profile()
+    if curve.data.twist_mode == 'Z_UP':
+
+        switched_curve = switch_curve(curve)
+
+        bpy.ops.object.select_all(action='DESELECT')
+        switched_curve.select_set(True)
+        bpy.context.view_layer.objects.active = switched_curve
+
+        return
+
+    elif curve.data.twist_mode == 'TANGENT':
+
+        ShowMessageBox("Error", "Tangent twist curves are not supported", 'ERROR')
+
+        raise CancelError
 
     # Дублируем кривую
     curve_duplicate = duplicate(curve)
@@ -44,7 +55,7 @@ def recalculate_curve_manager():
 
     # Переворачивем массив y_vec
     y_vec_arr = arr_flip(y_vec_arr)
-    print('y_vec_arr', y_vec_arr)
+
     # Меняем направление
     switched_curve = switch_curve(curve)
 
@@ -53,17 +64,16 @@ def recalculate_curve_manager():
 
     # Получим информацию о кривой
     switched_curve_duplicate_data = Curve_Data(switched_curve_duplicate)
-    print(switched_curve_duplicate_data.get_curve_data()[1])
+
     # Конвертируем в меш
     mesh_switched_curve_duplicate = convert_to_mesh(switched_curve_duplicate)
 
     # Получаем массив ext_vec
     ext_vec_arr = ext_vec(mesh_switched_curve_duplicate, switched_curve_duplicate_data.get_curve_data())
     bpy.data.objects.remove(mesh_switched_curve_duplicate, do_unlink=True)
-    print('ext_vec_arr', ext_vec_arr)
+
     # Получаем угол между векторами
     angle_y_ext_arr = angle_betw_vec(y_vec_arr, ext_vec_arr, switched_curve_duplicate_data.get_curve_data()[0])
-    print(angle_y_ext_arr)
 
     # Дублируем кривую
     test_curve = duplicate(switched_curve)
@@ -84,7 +94,6 @@ def recalculate_curve_manager():
     # Корректируем углы
     angle_y_ext_arr = angle_correction(angle_y_ext_arr, angle_y_test_arr)
 
-    print(angle_y_ext_arr)
     # Корректируем тильт
     tilt_correction(angle_y_ext_arr, switched_curve, False)
 

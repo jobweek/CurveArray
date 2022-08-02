@@ -333,6 +333,10 @@ class Curve_Data:
 def convert_to_mesh(curve):
 
     curve.data.extrude = 0.5
+    curve.data.offset = 0.0
+    curve.data.taper_object = None
+    curve.data.bevel_depth = 0.0
+    curve.data.bevel_object = None
     bpy.ops.object.select_all(action='DESELECT')
     curve.select_set(True)
     bpy.context.view_layer.objects.active = curve
@@ -349,6 +353,7 @@ def switch_curve(curve):
     bpy.context.view_layer.objects.active = curve
     bpy.ops.object.editmode_toggle()
     bpy.ops.curve.switch_direction()
+    curve.data.offset = -curve.data.offset
     bpy.ops.object.editmode_toggle()
 
     return curve
