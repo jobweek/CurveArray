@@ -13,8 +13,9 @@ from .Switch_Direction_Functions import (
     ext_vec,
     arr_flip,
     angle_betw_vec,
-    tilt_correction,
     angle_correction,
+    tilt_correction,
+    twist_correction,
 )
 
 
@@ -48,10 +49,10 @@ def recalculate_curve_manager():
     curve_duplicate_data = Curve_Data(curve_duplicate)
 
     # Полуичм разницу наклонов точек прямой
-    tilt_twist_arr = tilt_twist_calc(curve_duplicate)
+    tilt_twist_y_arr = tilt_twist_calc(curve_duplicate)
 
     # Переворачивем массив tilt_twist_arr
-    tilt_twist_arr = arr_flip(tilt_twist_arr)
+    tilt_twist_y_arr = arr_flip(tilt_twist_y_arr)
 
     # Конвертируем в меш
     mesh_curve_duplicate = convert_to_mesh(curve_duplicate)
@@ -103,6 +104,12 @@ def recalculate_curve_manager():
 
     # Корректируем тильт
     tilt_correction(angle_y_ext_arr, switched_curve, False)
+
+    tilt_twist_ext_arr = tilt_twist_calc(switched_curve)
+    print('tilt_twist_y_arr', tilt_twist_ext_arr)
+    print('tilt_twist_ext_arr', tilt_twist_ext_arr)
+    # Корректируем твист
+    twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, switched_curve)
 
     bpy.ops.object.select_all(action='DESELECT')
     switched_curve.select_set(True)

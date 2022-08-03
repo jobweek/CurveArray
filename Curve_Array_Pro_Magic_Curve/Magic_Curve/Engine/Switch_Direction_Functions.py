@@ -1,3 +1,5 @@
+import math
+
 import bpy  # type: ignore
 import bmesh  # type: ignore
 import mathutils  # type: ignore
@@ -347,13 +349,25 @@ def tilt_twist_calc(curve):
 
             points = splines[spline_iter].bezier_points
 
-        tilt_twist_arr[spline_iter] = np.empty(len(points)-1, dtype=np.float64)
+        tilt_twist_arr[spline_iter] = np.empty(len(points)-1, dtype=int)
 
         i = 0
 
         while i < len(points)-1:
 
-            twist = points[i].tilt - points[i+1].tilt
+            twist = points[i+1].tilt - points[i].tilt
+
+            if points[i].tilt > points[i+1].tilt:
+
+                twist = -(abs(twist) // (math.pi * 2)) - 1
+
+            elif points[i].tilt < points[i+1].tilt:
+
+                twist = twist // (math.pi * 2) + 1
+
+            else:
+
+                twist = 0
 
             tilt_twist_arr[spline_iter][i] = twist
 
@@ -458,6 +472,30 @@ def angle_betw_vec(y_vec_arr, ext_vec_arr, spline_point_count):
     return angle_betw_vec_arr
 
 
+def angle_correction(angle_y_ext_arr, angle_y_test_arr):
+
+    list_iter = 0
+
+    while list_iter < len(angle_y_ext_arr):
+
+        y_ext_arr = angle_y_ext_arr[list_iter]
+        y_test_arr = angle_y_test_arr[list_iter]
+
+        i = 0
+
+        while i < len(y_ext_arr):
+
+            if y_ext_arr[i] < y_test_arr[i]:
+
+                y_ext_arr[i] = -y_ext_arr[i]
+
+            i += 1
+
+        list_iter += 1
+
+    return angle_y_ext_arr
+
+
 def tilt_correction(angle_betw_vec_arr, curve, test: bool):
 
     iterator = 0
@@ -491,116 +529,35 @@ def tilt_correction(angle_betw_vec_arr, curve, test: bool):
         iterator += 1
 
 
-def angle_correction(angle_y_ext_arr, angle_y_test_arr):
+def twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, curve):
 
-    list_iter = 0
-
-    while list_iter < len(angle_y_ext_arr):
-
-        y_ext_arr = angle_y_ext_arr[list_iter]
-        y_test_arr = angle_y_test_arr[list_iter]
-
-        i = 0
-
-        while i < len(y_ext_arr):
-
-            if y_ext_arr[i] < y_test_arr[i]:
-
-                y_ext_arr[i] = -y_ext_arr[i]
-
-            i += 1
-
-        list_iter += 1
-
-    return angle_y_ext_arr
-
-
-def twist_correction(angle_y_ext_arr, tilt_twist_arr):
-
+    splines = curve.data.splines
     spline_iter = 0
 
-    while spline_iter < len(angle_y_ext_arr):
+    while spline_iter < len(splines):
+
+        if splines[spline_iter].type == 'POLY':
+
+            points = splines[spline_iter].points
+
+        else:
+
+            points = splines[spline_iter].bezier_points
 
         i = 0
 
-        while i < len(tilt_twist_arr[spline_iter]):
+        while i < len(tilt_twist_y_arr[spline_iter]):
 
-            new_twist = angle_y_ext_arr[spline_iter][i] - angle_y_ext_arr[spline_iter][i+1]
-            old_twist = tilt_twist_arr[spline_iter][i]
+            diff = +(tilt_twist_y_arr[spline_iter][i] - tilt_twist_ext_arr[spline_iter][i]) - 1
+
+            if tilt_twist_ext_arr[spline_iter][i] < tilt_twist_y_arr[spline_iter][i]:
+
+                points[i+1].tilt += math.pi * 2 * diff
+
+            elif tilt_twist_ext_arr[spline_iter][i] > tilt_twist_y_arr[spline_iter][i]:
+
+                points[i+1].tilt -= math.pi * 2 * diff
 
             i += 1
 
         spline_iter += 1
-
-    return angle_y_ext_arr
-
-
-def z_vec(mesh, curve_data):
-
-    def midle_point(first_vertex, second_vertex):
-
-        vec = first_vertex.co + calc_vec(first_vertex.co, second_vertex.co, False)/2
-
-        return vec
-
-    def prev_point_search(index_0, cyclic: bool, spline_verts_index_arr, list_iter):
-
-        return
-
-    def next_point_search(verts, index_0, cyclic: bool, verts_range):
-
-        # Example
-        # index_0 = 52, verts_range = [(45,_),(52,_)]
-        if cyclic and index_0 == verts_range[1]:
-
-            next_point_0 = verts[verts_range[0]]
-        # next_point_0 = 45
-
-        elif not cyclic and index_0 == verts_range[1]:
-
-            next_point_0 = verts[index_0]
-
-        else:
-
-            next_point_0 = verts[index_0 + 2]
-        print('next_point_0: ', next_point_0.index)
-        next_point_1 = verts[next_point_0.index + 1]
-
-        res = midle_point(next_point_0, next_point_1)
-
-        return res
-
-    (
-        spline_point_count_arr,
-        spline_verts_index_arr,
-        cyclic_arr,
-        spline_type_arr,
-    ) = curve_data
-
-    z_vec_arr = create_arr(spline_point_count_arr)
-    verts = mesh.data.vertices
-    list_iter = 0
-
-    while list_iter < len(z_vec_arr):
-
-        z_arr = z_vec_arr[list_iter]
-
-        spline_point_iter = 0  # Соответствует индексу поинтов одного сплайна
-
-        while spline_point_iter < len(z_arr):
-
-            first_point_index = spline_verts_index_arr[list_iter][spline_point_iter]
-
-            prev_point_index = None
-
-            next_point_index = None
-
-            z_vec = calc_vec(verts[prev_point_index], verts[next_point_index], True)
-
-            z_arr[spline_point_iter] = z_vec
-
-            spline_point_iter += 1
-
-        list_iter += 1
-
-    return z_vec_arr
