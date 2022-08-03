@@ -1,5 +1,5 @@
 import bpy  # type: ignore
-from ..Engine.Errors import CancelError
+from ..Engine.Errors import CancelError, ShowMessageBox
 from ..Engine.Switch_Direction import (
     recalculate_curve_manager
 )
@@ -23,8 +23,8 @@ class MAGICCURVE_OT_switch_direction(bpy.types.Operator):
             
             return {'CANCELLED'}
 
-        # except Exception as err:
+        except Exception as err:
             
-        #     ShowMessageBox("Unkown Error, Please send me this report:", repr(err), 'ERROR')
+            ShowMessageBox("Unkown Error, Please send me this report:", repr(err), 'ERROR')
             
-        #     return {'CANCELLED'}
+            return {'CANCELLED'}
