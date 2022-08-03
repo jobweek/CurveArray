@@ -7,6 +7,7 @@ from .Switch_Direction_Functions import (
     points_select,
     duplicate,
     Curve_Data,
+    tilt_twist_calc,
     convert_to_mesh,
     switch_curve,
     ext_vec,
@@ -45,6 +46,12 @@ def recalculate_curve_manager():
 
     # Получим информацию о кривой
     curve_duplicate_data = Curve_Data(curve_duplicate)
+
+    # Полуичм разницу наклонов точек прямой
+    tilt_twist_arr = tilt_twist_calc(curve_duplicate)
+
+    # Переворачивем массив tilt_twist_arr
+    tilt_twist_arr = arr_flip(tilt_twist_arr)
 
     # Конвертируем в меш
     mesh_curve_duplicate = convert_to_mesh(curve_duplicate)

@@ -330,6 +330,40 @@ class Curve_Data:
         )
 
 
+def tilt_twist_calc(curve):
+
+    splines = curve.data.splines
+    tilt_twist_arr = np.empty(len(curve.data.splines), dtype=object)
+
+    spline_iter = 0
+
+    while spline_iter < len(splines):
+
+        if splines[spline_iter].type == 'POLY':
+
+            points = splines[spline_iter].points
+
+        else:
+
+            points = splines[spline_iter].bezier_points
+
+        tilt_twist_arr[spline_iter] = np.empty(len(points)-1, dtype=np.float64)
+
+        i = 0
+
+        while i < len(points)-1:
+
+            twist = points[i].tilt - points[i+1].tilt
+
+            tilt_twist_arr[spline_iter][i] = twist
+
+            i += 1
+
+        spline_iter += 1
+
+    return tilt_twist_arr
+
+
 def convert_to_mesh(curve):
 
     curve.data.extrude = 0.5
@@ -477,6 +511,26 @@ def angle_correction(angle_y_ext_arr, angle_y_test_arr):
             i += 1
 
         list_iter += 1
+
+    return angle_y_ext_arr
+
+
+def twist_correction(angle_y_ext_arr, tilt_twist_arr):
+
+    spline_iter = 0
+
+    while spline_iter < len(angle_y_ext_arr):
+
+        i = 0
+
+        while i < len(tilt_twist_arr[spline_iter]):
+
+            new_twist = angle_y_ext_arr[spline_iter][i] - angle_y_ext_arr[spline_iter][i+1]
+            old_twist = tilt_twist_arr[spline_iter][i]
+
+            i += 1
+
+        spline_iter += 1
 
     return angle_y_ext_arr
 
