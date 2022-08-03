@@ -12,6 +12,40 @@ def vec_equal(vec_1, vec_2):
     return vec_1.to_tuple(4) == vec_2.to_tuple(4)
 
 
+def calc_vec(first_vertex, second_vertex, normalize: bool):
+
+    vec = second_vertex - first_vertex
+
+    if vec.length < 0.0001:
+
+        return None
+
+    if normalize:
+
+        vec = vec.normalized()
+
+    return vec
+
+
+class CurveData:
+
+    def __init__(self):
+        self.__curve = None
+        self.__cyclic = None
+
+    def set_curve(self, curve):
+        self.__curve = curve
+
+    def get_curve(self):
+        return self.__curve
+
+    def set_cyclic(self, cyclic):
+        self.__cyclic = cyclic
+
+    def get_cyclic(self):
+        return self.__cyclic
+
+
 def checker():
 
     objects = bpy.context.selected_objects
@@ -61,7 +95,7 @@ def active_vertex(bm):
         raise CancelError
 
 
-def verts_sequence(verts_count, act_vert, curve_data, split_curve):
+def verts_sequence(verts_count, act_vert, curve_data, split_curve: bool):
 
     # Функция извлечения выделенных ребер из всех принадлежащих вершине
     def selected_linked_edges(searched_vertex):
@@ -153,7 +187,7 @@ def verts_sequence(verts_count, act_vert, curve_data, split_curve):
     return vert_sequence_array, curve_data
 
 
-def merged_vertices_check(vert_sequence_array, split_curve, cyclic):
+def merged_vertices_check(vert_sequence_array, split_curve, cyclic: bool):
 
     i = 0
     merged_vertices_buffer = []
@@ -190,20 +224,20 @@ def merged_vertices_check(vert_sequence_array, split_curve, cyclic):
 
 
 #  Массив усредненных нормалей каждой вершины меша
-def y_normal_vector(vert_sequence_array):
+def y_vec(vert_sequence_array):
 
-    y_normal_vector_array = np.empty(len(vert_sequence_array), dtype=object)
+    y_vec_arr = np.empty(len(vert_sequence_array), dtype=object)
 
-    iterator = 0
+    i = 0
 
-    for i in vert_sequence_array:
+    while i < len(vert_sequence_array):
 
-        vertex_normal = copy.deepcopy(i.normal)
-        y_normal_vector_array[iterator] = vertex_normal
+        vertex_normal = copy.deepcopy(vert_sequence_array[i].normal)
+        y_vec_arr[i] = vertex_normal
 
-        iterator += 1
+        i += 1
 
-    return y_normal_vector_array
+    return y_vec_arr
 
 
 def vert_co(vert_sequence_array):
@@ -280,9 +314,9 @@ def create_extruded_mesh(main_curve):
     return extruded_mesh
 
 
-def extruded_mesh_vector(extruded_mesh, array_size):
+def ext_vec(extruded_mesh, array_size):
 
-    extruded_mesh_vector_array = np.empty(array_size, dtype=object)
+    ext_vec_arr = np.empty(array_size, dtype=object)
 
     i = 0
 
@@ -297,11 +331,11 @@ def extruded_mesh_vector(extruded_mesh, array_size):
             second_point.co[2] - first_point.co[2]
         ))
 
-        extruded_mesh_vector_array[i] = vector
+        ext_vec_arr[i] = vector
 
         i += 1
 
-    return extruded_mesh_vector_array
+    return ext_vec_arr
 
 
 def tilt_correction(ext_vec_arr, y_vec_arr, curve):

@@ -1,25 +1,22 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
 import mathutils  # type: ignore
-from .Classes import (
-    CurveData,
-)
 from .Smooth_Curve_Functions import (
     create_curve,
-    extruded_mesh_vector,
+    ext_vec,
 )
 from .Split_Curve_Functions import (
+    CurveData,
     checker,
     active_vertex,
     verts_sequence,
     merged_vertices_check,
-    y_normal_vector,
+    y_vec,
     vert_co,
-    create_extruded_mesh,
 )
 from .Switch_Direction_Functions import (
-    #  z_vec,
-    tilt_correction,
+    duplicate,
+    convert_to_mesh,
 )
 
 
@@ -33,26 +30,37 @@ def smooth_curve_manager():
 
     bm = bmesh.from_edit_mesh(active_mesh)
 
+    # Получаем активную вершину
     act_vert = active_vertex(bm)
 
+    # Получаем последовательность выбранных пользователем вершин
     vert_sequence_array, curve_data = verts_sequence(active_mesh.total_vert_sel, act_vert, curve_data, False)
+
+    # Проверяем последовательность на существование вершин с одинакеовыми координатами
     merged_vertices_check(vert_sequence_array, False, curve_data.get_cyclic())
 
-    y_vec_arr = y_normal_vector(vert_sequence_array)
+    # Получаем массив векторов y_vec
+    y_vec_arr = y_vec(vert_sequence_array)
 
+    # Получаем массив координат каждой вершины последовательности
     vert_co_arr = vert_co(vert_sequence_array)
 
     bm.free()
     bpy.ops.object.editmode_toggle()
 
+    # Создаем кривую из последовательности вершин
     curve_data = create_curve(vert_co_arr, active_object, curve_data)
-    #  z_vec_arr = z_vec(curve_data.get_curve(), len(vert_sequence_array))
 
-    extruded_mesh = create_extruded_mesh(curve_data.get_curve())
+    # Дублируем кривую
+    curve_duplicate = duplicate(curve_data.get_curve())
 
-    ext_vec_arr = extruded_mesh_vector(extruded_mesh, len(vert_sequence_array), curve_data)
+    # Конвертируем в меш
+    mesh_curve_duplicate = convert_to_mesh(curve_duplicate)
 
-    bpy.data.objects.remove(extruded_mesh, do_unlink=True)
+    # Полуаем массив ext_vec
+    ext_vec_arr = ext_vec(mesh_curve_duplicate, len(vert_sequence_array))
+
+    bpy.data.objects.remove(mesh_curve_duplicate, do_unlink=True)
 
     #  tilt_correction(ext_vec_arr, y_vec_arr, z_vec_arr, curve_data.get_curve())
 

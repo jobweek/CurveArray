@@ -5,8 +5,23 @@ import math
 import numpy as np
 
 
+def calc_vec(first_vertex, second_vertex, normalize: bool):
+
+    vec = second_vertex - first_vertex
+
+    if vec.length < 0.0001:
+
+        return None
+
+    if normalize:
+
+        vec = vec.normalized()
+
+    return vec
+
+
 def create_curve(vert_co_array, active_object, curve_data):
-    crv_mesh = bpy.data.curves.new('MgCrv_curve_smooth', 'CURVE')
+    crv_mesh = bpy.data.curves.new('Smooth_Curve', 'CURVE')
     crv_mesh.dimensions = '3D'
     crv_mesh.twist_mode = 'MINIMUM'
     spline = crv_mesh.splines.new(type='POLY')
@@ -17,17 +32,18 @@ def create_curve(vert_co_array, active_object, curve_data):
 
         spline.use_cyclic_u = True
 
-    iterator = 0
+    i = 0
 
-    for i in vert_co_array:
-        spline.points[iterator].co[0] = i[0]
-        spline.points[iterator].co[1] = i[1]
-        spline.points[iterator].co[2] = i[2]
-        spline.points[iterator].co[3] = 0
+    while i < len(vert_co_array):
 
-        iterator += 1
+        spline.points[i].co[0] = vert_co_array[i][0]
+        spline.points[i].co[1] = vert_co_array[i][1]
+        spline.points[i].co[2] = vert_co_array[i][2]
+        spline.points[i].co[3] = 0
 
-    main_curve = bpy.data.objects.new('MgCrv_curve_smooth', crv_mesh)
+        i += 1
+
+    main_curve = bpy.data.objects.new('Smooth_Curve', crv_mesh)
 
     main_curve.location = active_object.location
 
@@ -44,36 +60,24 @@ def create_curve(vert_co_array, active_object, curve_data):
     return curve_data
 
 
-def extruded_mesh_vector(extruded_mesh, array_size, curve_data):
+def ext_vec(extruded_mesh, array_size):
 
-    extruded_mesh_vector_array = np.empty(array_size, dtype=object)
+    ext_vec_arr = np.empty(array_size, dtype=object)
 
     i = 0
-
-    if curve_data.get_cyclic():
-
-        array_size -= 1
 
     while i < array_size:
 
         first_point = extruded_mesh.data.vertices[0 + i*2]
         second_point = extruded_mesh.data.vertices[1 + i*2]
 
-        vector = mathutils.Vector((
-            second_point.co[0] - first_point.co[0],
-            second_point.co[1] - first_point.co[1],
-            second_point.co[2] - first_point.co[2]
-        ))
+        vector = calc_vec(first_point, second_point, True)
 
-        extruded_mesh_vector_array[i] = vector
+        ext_vec_arr[i] = vector
 
         i += 1
 
-    if curve_data.get_cyclic():
-
-        extruded_mesh_vector_array[i] = extruded_mesh_vector_array[0]
-
-    return extruded_mesh_vector_array
+    return ext_vec_arr
 
 
 def vec_projection(vec, z_vec):
