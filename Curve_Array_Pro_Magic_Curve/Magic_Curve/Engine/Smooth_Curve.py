@@ -4,6 +4,8 @@ import mathutils  # type: ignore
 from .Smooth_Curve_Functions import (
     create_curve,
     ext_vec,
+    z_vec,
+    tilt_correction,
 )
 from .Split_Curve_Functions import (
     CurveData,
@@ -59,10 +61,13 @@ def smooth_curve_manager():
 
     # Полуаем массив ext_vec
     ext_vec_arr = ext_vec(mesh_curve_duplicate, len(vert_sequence_array))
-
     bpy.data.objects.remove(mesh_curve_duplicate, do_unlink=True)
 
-    #  tilt_correction(ext_vec_arr, y_vec_arr, z_vec_arr, curve_data.get_curve())
+    # Получаем массив z_vec
+    z_vec_arr = z_vec(curve_data.get_curve(), len(vert_sequence_array))
+
+    # Корректируем тильт
+    tilt_correction(ext_vec_arr, y_vec_arr, z_vec_arr, curve_data.get_curve())
 
     bpy.ops.object.select_all(action='DESELECT')
     curve_data.get_curve().select_set(True)

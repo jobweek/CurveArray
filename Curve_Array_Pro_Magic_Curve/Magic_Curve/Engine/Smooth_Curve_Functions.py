@@ -5,21 +5,6 @@ import math
 import numpy as np
 
 
-def calc_vec(first_vertex, second_vertex, normalize: bool):
-
-    vec = second_vertex - first_vertex
-
-    if vec.length < 0.0001:
-
-        return None
-
-    if normalize:
-
-        vec = vec.normalized()
-
-    return vec
-
-
 def create_curve(vert_co_array, active_object, curve_data):
     crv_mesh = bpy.data.curves.new('Smooth_Curve', 'CURVE')
     crv_mesh.dimensions = '3D'
@@ -71,13 +56,38 @@ def ext_vec(extruded_mesh, array_size):
         first_point = extruded_mesh.data.vertices[0 + i*2]
         second_point = extruded_mesh.data.vertices[1 + i*2]
 
-        vector = calc_vec(first_point, second_point, True)
+        vector = (second_point.co - first_point.co).normalized()
 
         ext_vec_arr[i] = vector
 
         i += 1
 
     return ext_vec_arr
+
+
+def z_vec(curve, array_size):
+
+    z_vec_arr = np.empty(array_size, dtype=object)
+
+    i = 0
+
+    while i < len(z_vec_arr):
+
+        point = curve.data.splines[0].bezier_points[i]
+
+        h_1 = point.handle_left
+        h_2 = point.handle_right
+
+        vec_h_1 = (h_1 - point.co).normalized()
+        vec_h_2 = (h_2 - point.co).normalized()
+
+        vec = (vec_h_2 - vec_h_1).normalized()
+
+        z_vec_arr[i] = vec
+
+        i += 1
+
+    return z_vec_arr
 
 
 def vec_projection(vec, z_vec):
@@ -114,46 +124,14 @@ def angle_calc(ext_vec, y_vec, cross_vec):
     return angle
 
 
-def tilt_correction(ext_vec_arr, y_vec_arr, curve, cyclic):
-
-    def z_vector(first_vertex, second_vertex):
-
-        z_vec = mathutils.Vector((
-            second_vertex.co[0] - first_vertex.co[0],
-            second_vertex.co[1] - first_vertex.co[1],
-            second_vertex.co[2] - first_vertex.co[2]
-        ))
-
-        return z_vec.normalized()
+def tilt_correction(ext_vec_arr, y_vec_arr, z_vec_arr, curve):
 
     i = 0
     spline_point = curve.data.splines[0].bezier_points
 
     while i < len(ext_vec_arr):
 
-        if not cyclic:
-
-            if i == 0:
-
-                z_vec = z_vector(spline_point[i], spline_point[i+1])
-
-            elif i == len(ext_vec_arr) - 1:
-
-                z_vec = z_vector(spline_point[i-1], spline_point[i])
-
-            else:
-
-                z_vec = z_vector(spline_point[i-1], spline_point[i+1])
-
-        else:
-
-            if i == 0:
-
-                z_vec = z_vector(spline_point[i-1], spline_point[i+1])
-
-            else:
-
-                z_vec = z_vector(spline_point[i-1], spline_point[i+1])
+        z_vec = z_vec_arr[i]
 
         ext_vec = vec_projection(ext_vec_arr[i], z_vec)
         y_vec = vec_projection(y_vec_arr[i], z_vec)

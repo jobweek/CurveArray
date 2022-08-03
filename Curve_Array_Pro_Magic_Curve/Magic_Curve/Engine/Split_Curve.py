@@ -9,11 +9,11 @@ from .Split_Curve_Functions import (
     active_vertex,
     verts_sequence,
     merged_vertices_check,
-    y_normal_vector,
+    y_vec,
     vert_co,
     create_curve,
     create_extruded_mesh,
-    extruded_mesh_vector,
+    ext_vec,
     tilt_correction,
 )
 
@@ -33,7 +33,7 @@ def split_curve_manager():
     vert_sequence_array, curve_data = verts_sequence(active_mesh.total_vert_sel, act_vert, curve_data, True)
     merged_vertices_check(vert_sequence_array, True, curve_data.get_cyclic())
 
-    y_vec_arr = y_normal_vector(vert_sequence_array)
+    y_vec_arr = y_vec(vert_sequence_array)
 
     vert_co_arr = vert_co(vert_sequence_array)
 
@@ -44,7 +44,7 @@ def split_curve_manager():
 
     extruded_mesh = create_extruded_mesh(curve_data.get_curve())
 
-    ext_vec_arr = extruded_mesh_vector(extruded_mesh, len(vert_sequence_array)-1)
+    ext_vec_arr = ext_vec(extruded_mesh, len(vert_sequence_array)-1)
 
     bpy.data.objects.remove(extruded_mesh, do_unlink=True)
 
