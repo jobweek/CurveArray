@@ -1,21 +1,21 @@
 import bpy  # type: ignore
 from ..Engine.Errors import CancelError, ShowMessageBox
-from ..Engine.Togle_Cyclic import (
-    togle_cyclic_manager
+from ..Engine.Toggle_Cyclic import (
+    toggle_cyclic_manager
 )
 
 
 class MAGICCURVE_OT_togle_cyclic(bpy.types.Operator):
     """Switch curve direction and recalculate to right tilt"""
-    bl_label = "Togle Curve Cyclic"
-    bl_idname = 'magiccurve.togle_cyclic'
+    bl_label = "Toggle Curve Cyclic"
+    bl_idname = 'magiccurve.toggle_cyclic'
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, _):
 
         try:
 
-            togle_cyclic_manager()
+            toggle_cyclic_manager()
 
             return {'FINISHED'}
 

@@ -19,7 +19,7 @@ from .Switch_Direction_Functions import (
 )
 
 
-def togle_cyclic_manager():
+def toggle_cyclic_manager():
 
     curve = bpy.context.active_object
     checker()
@@ -41,6 +41,13 @@ def togle_cyclic_manager():
         ShowMessageBox("Error", "Tangent twist curves are not supported", 'ERROR')
 
         raise CancelError
+
+
+
+
+
+
+
 
     # Дублируем кривую
     curve_duplicate = duplicate(curve)
