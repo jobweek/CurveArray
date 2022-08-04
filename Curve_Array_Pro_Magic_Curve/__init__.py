@@ -52,19 +52,18 @@ from .props.curve_array_props import (
     Main_Props
 )
 
-
-from .Magic_Curve.Ops.Split_Curve_Ops import (
-    MAGICCURVE_OT_create_split_curve
-)
-
 from .Magic_Curve.Ops.Smooth_Curve_Ops import (
     MAGICCURVE_OT_create_smooth_curve
 )
-
+from .Magic_Curve.Ops.Split_Curve_Ops import (
+    MAGICCURVE_OT_create_split_curve
+)
 from .Magic_Curve.Ops.Switch_Direction_Ops import (
     MAGICCURVE_OT_switch_direction
 )
-
+from .Magic_Curve.Ops.Togle_Cyclic_Ops import (
+    MAGICCURVE_OT_togle_cyclic
+)
 from .Magic_Curve.Panels.Main_Panel import (
     MAGICCURVE_PT_panel
 )

@@ -1,7 +1,7 @@
 import bpy  # type: ignore
 from ..Engine.Errors import CancelError, ShowMessageBox
-from ..Engine.Switch_Direction import (
-    recalculate_curve_manager
+from ..Engine.Togle_Cyclic import (
+    togle_cyclic_manager
 )
 
 
@@ -15,7 +15,7 @@ class MAGICCURVE_OT_togle_cyclic(bpy.types.Operator):
 
         try:
 
-            recalculate_curve_manager()
+            togle_cyclic_manager()
 
             return {'FINISHED'}
 
