@@ -16,6 +16,10 @@ from .Split_Curve_Functions import (
     ext_vec,
     tilt_correction,
 )
+from .Switch_Direction_Functions import (
+    duplicate,
+    convert_to_mesh,
+)
 
 
 def split_curve_manager():
@@ -28,25 +32,36 @@ def split_curve_manager():
 
     bm = bmesh.from_edit_mesh(active_mesh)
 
+    # Получаем активную вершину
     act_vert = active_vertex(bm)
 
+    # Получаем последовательность выбранных пользователем вершин
     vert_sequence_array, curve_data = verts_sequence(active_mesh.total_vert_sel, act_vert, curve_data, True)
+
+    # Проверяем последовательность на существование вершин с одинакеовыми координатами
     merged_vertices_check(vert_sequence_array, True, curve_data.get_cyclic())
 
+    # Получаем массив векторов y_vec
     y_vec_arr = y_vec(vert_sequence_array)
 
+    # Получаем массив координат каждой вершины последовательности
     vert_co_arr = vert_co(vert_sequence_array)
 
     bm.free()
     bpy.ops.object.editmode_toggle()
 
+    # Создаем кривую из последовательности вершин
     curve_data = create_curve(vert_co_arr, active_object, curve_data)
 
-    extruded_mesh = create_extruded_mesh(curve_data.get_curve())
+    # Дублируем кривую
+    curve_duplicate = duplicate(curve_data.get_curve())
 
-    ext_vec_arr = ext_vec(extruded_mesh, len(vert_sequence_array)-1)
+    # Конвертируем в меш
+    mesh_curve_duplicate = convert_to_mesh(curve_duplicate)
 
-    bpy.data.objects.remove(extruded_mesh, do_unlink=True)
+    # Полуаем массив ext_vec
+    ext_vec_arr = ext_vec(mesh_curve_duplicate, len(vert_sequence_array)-1)
+    bpy.data.objects.remove(mesh_curve_duplicate, do_unlink=True)
 
     tilt_correction(ext_vec_arr, y_vec_arr, curve_data.get_curve())
 

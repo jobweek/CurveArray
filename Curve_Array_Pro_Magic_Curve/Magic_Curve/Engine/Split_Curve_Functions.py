@@ -223,7 +223,6 @@ def merged_vertices_check(vert_sequence_array, split_curve, cyclic: bool):
         raise CancelError
 
 
-#  Массив усредненных нормалей каждой вершины меша
 def y_vec(vert_sequence_array):
 
     y_vec_arr = np.empty(len(vert_sequence_array), dtype=object)
@@ -394,10 +393,13 @@ def tilt_correction(ext_vec_arr, y_vec_arr, curve):
 
         first_point = curve.data.splines[i].points[0]
         second_point = curve.data.splines[i].points[1]
-        z_vec = z_vector(first_point, second_point)
+
+        z_vec = (second_point.co - first_point.co).to_3d().normalized()
         ext_vec = vec_projection(ext_vec_arr[i], z_vec)
+
         first_y_vec = vec_projection(y_vec_arr[i], z_vec)
         second_y_vec = vec_projection(y_vec_arr[i + 1], z_vec)
+
         first_cross_vec = z_vec.cross(first_y_vec)
         second_cross_vec = z_vec.cross(second_y_vec)
 
