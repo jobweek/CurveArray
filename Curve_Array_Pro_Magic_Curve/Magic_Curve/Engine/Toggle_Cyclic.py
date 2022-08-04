@@ -108,8 +108,7 @@ def toggle_cyclic_manager():
     tilt_correction(angle_y_ext_arr, switched_curve, False)
 
     tilt_twist_ext_arr = tilt_twist_calc(switched_curve)
-    print('tilt_twist_y_arr', tilt_twist_ext_arr)
-    print('tilt_twist_ext_arr', tilt_twist_ext_arr)
+
     # Корректируем твист
     twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, switched_curve)
 
