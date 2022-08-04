@@ -63,9 +63,6 @@ def toggle_cyclic_manager():
     y_vec_arr = ext_vec(mesh_curve_duplicate, curve_duplicate_data.get_curve_data())
     bpy.data.objects.remove(mesh_curve_duplicate, do_unlink=True)
 
-    # Переворачивем массив y_vec
-    y_vec_arr = arr_flip(y_vec_arr)
-
     # Меняем цикличность
     switched_curve = toggle_cyclic(curve)
 

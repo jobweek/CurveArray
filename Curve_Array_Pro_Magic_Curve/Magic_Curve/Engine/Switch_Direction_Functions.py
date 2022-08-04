@@ -527,7 +527,7 @@ def tilt_correction(angle_betw_vec_arr, curve, test: bool):
             if new_angle > 376.992:
 
                 ShowMessageBox("Error",
-                               ('The tilt of point {1} on spline {2} has exceeded the Blender'
+                               ('The tilt of point {0} on spline {1} has exceeded the Blender'
                                 'tolerance of -21600/21600 degrees, the result of the operation will not be correct. '
                                 'Reduce the point tilt on the curve and repeat the operation.').format(i, iterator),
                                'ERROR')
