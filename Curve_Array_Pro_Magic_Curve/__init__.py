@@ -54,11 +54,11 @@ from .props.curve_array_props import (
 
 
 from .Magic_Curve.Ops.Split_Curve_Ops import (
-    MAGICCURVE_OT_Create_Split_Curve
+    MAGICCURVE_OT_create_split_curve
 )
 
 from .Magic_Curve.Ops.Smooth_Curve_Ops import (
-    MAGICCURVE_OT_Create_Smooth_Curve
+    MAGICCURVE_OT_create_smooth_curve
 )
 
 from .Magic_Curve.Ops.Switch_Direction_Ops import (
@@ -93,8 +93,8 @@ classes = (
     CRVARRPRO_OT_Delete_Last_Array,
     CRVARRPRO_OT_Reset_Settings,
     CRVARRPRO_OT_Flip_Curve,
-    MAGICCURVE_OT_Create_Split_Curve,
-    MAGICCURVE_OT_Create_Smooth_Curve,
+    MAGICCURVE_OT_create_split_curve,
+    MAGICCURVE_OT_create_smooth_curve,
     MAGICCURVE_OT_switch_direction,
     MAGICCURVE_PT_panel,
 )

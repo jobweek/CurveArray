@@ -5,7 +5,7 @@ from ..Engine.Split_Curve import (
 )
 
 
-class MAGICCURVE_OT_Create_Split_Curve(bpy.types.Operator):
+class MAGICCURVE_OT_create_split_curve(bpy.types.Operator):
     """Create curve from loop"""
     bl_label = "Curve from loop"
     bl_idname = 'magiccurve.create_split_curve'
