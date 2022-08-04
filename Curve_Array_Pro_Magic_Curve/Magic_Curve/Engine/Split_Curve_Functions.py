@@ -296,23 +296,6 @@ def create_curve(vert_co_array, active_object, curve_data):
     return curve_data
 
 
-def create_extruded_mesh(main_curve):
-    extruded_curve = main_curve.copy()
-    extruded_curve.data = main_curve.data.copy()
-    extruded_curve.name = main_curve.name + '_Duplicate'
-    extruded_curve.data.name = main_curve.data.name + '_Duplicate'
-    extruded_curve.data.extrude = 0.5
-    bpy.context.scene.collection.objects.link(extruded_curve)
-
-    bpy.ops.object.select_all(action='DESELECT')
-    extruded_curve.select_set(True)
-    bpy.context.view_layer.objects.active = extruded_curve
-    bpy.ops.object.convert(target='MESH')
-    extruded_mesh = bpy.context.active_object
-
-    return extruded_mesh
-
-
 def ext_vec(extruded_mesh, array_size):
 
     ext_vec_arr = np.empty(array_size, dtype=object)

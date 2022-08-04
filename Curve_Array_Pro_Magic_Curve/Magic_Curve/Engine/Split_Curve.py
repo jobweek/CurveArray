@@ -1,18 +1,16 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
 import mathutils  # type: ignore
-from .Classes import (
-    CurveData,
-)
+
 from .Split_Curve_Functions import (
     checker,
+    CurveData,
     active_vertex,
     verts_sequence,
     merged_vertices_check,
     y_vec,
     vert_co,
     create_curve,
-    create_extruded_mesh,
     ext_vec,
     tilt_correction,
 )
