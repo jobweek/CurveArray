@@ -62,7 +62,7 @@ from .Magic_Curve.Ops.Switch_Direction_Ops import (
     MAGICCURVE_OT_switch_direction
 )
 from .Magic_Curve.Ops.Toggle_Cyclic_Ops import (
-    MAGICCURVE_OT_togle_cyclic
+    MAGICCURVE_OT_toggle_cyclic
 )
 from .Magic_Curve.Panels.Main_Panel import (
     MAGICCURVE_PT_panel
@@ -95,6 +95,7 @@ classes = (
     MAGICCURVE_OT_create_split_curve,
     MAGICCURVE_OT_create_smooth_curve,
     MAGICCURVE_OT_switch_direction,
+    MAGICCURVE_OT_toggle_cyclic,
     MAGICCURVE_PT_panel,
 )
 

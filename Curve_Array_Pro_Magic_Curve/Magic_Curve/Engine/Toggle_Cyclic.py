@@ -1,6 +1,9 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
 from .Errors import CancelError, ShowMessageBox
+from .Toggle_Cyclic_Functions import (
+    toggle_cyclic
+)
 from .Switch_Direction_Functions import (
     checker,
     merged_points_check,
@@ -9,7 +12,6 @@ from .Switch_Direction_Functions import (
     Curve_Data,
     tilt_twist_calc,
     convert_to_mesh,
-    switch_curve,
     ext_vec,
     arr_flip,
     angle_betw_vec,
@@ -28,7 +30,7 @@ def toggle_cyclic_manager():
 
     if curve.data.twist_mode == 'Z_UP':
 
-        switched_curve = switch_curve(curve)
+        switched_curve = toggle_cyclic(curve)
 
         bpy.ops.object.select_all(action='DESELECT')
         switched_curve.select_set(True)
@@ -41,13 +43,6 @@ def toggle_cyclic_manager():
         ShowMessageBox("Error", "Tangent twist curves are not supported", 'ERROR')
 
         raise CancelError
-
-
-
-
-
-
-
 
     # Дублируем кривую
     curve_duplicate = duplicate(curve)
@@ -71,8 +66,8 @@ def toggle_cyclic_manager():
     # Переворачивем массив y_vec
     y_vec_arr = arr_flip(y_vec_arr)
 
-    # Меняем направление
-    switched_curve = switch_curve(curve)
+    # Меняем цикличность
+    switched_curve = toggle_cyclic(curve)
 
     # Дублируем кривую
     switched_curve_duplicate = duplicate(switched_curve)

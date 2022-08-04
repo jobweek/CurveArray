@@ -5,7 +5,7 @@ from ..Engine.Toggle_Cyclic import (
 )
 
 
-class MAGICCURVE_OT_togle_cyclic(bpy.types.Operator):
+class MAGICCURVE_OT_toggle_cyclic(bpy.types.Operator):
     """Switch curve direction and recalculate to right tilt"""
     bl_label = "Toggle Curve Cyclic"
     bl_idname = 'magiccurve.toggle_cyclic'
