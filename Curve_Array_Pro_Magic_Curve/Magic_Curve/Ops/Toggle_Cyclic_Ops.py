@@ -3,6 +3,7 @@ from ..Engine.Errors import CancelError, ShowMessageBox
 from ..Engine.Toggle_Cyclic import (
     toggle_cyclic_manager
 )
+import traceback
 
 
 class MAGICCURVE_OT_toggle_cyclic(bpy.types.Operator):
@@ -23,8 +24,10 @@ class MAGICCURVE_OT_toggle_cyclic(bpy.types.Operator):
 
             return {'CANCELLED'}
 
-        except Exception as err:
+        finally:
 
-            ShowMessageBox("Unkown Error, Please send me this report:", repr(err), 'ERROR')
+            tr = traceback.format_exc()
+            print(tr)
+            ShowMessageBox('Unknown Error', 'Please, open console and send me report', 'ERROR')
 
             return {'CANCELLED'}

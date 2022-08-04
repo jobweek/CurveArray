@@ -3,6 +3,7 @@ from ..Engine.Errors import CancelError, ShowMessageBox
 from ..Engine.Switch_Direction import (
     recalculate_curve_manager
 )
+import traceback
 
 
 class MAGICCURVE_OT_switch_direction(bpy.types.Operator):
@@ -23,8 +24,10 @@ class MAGICCURVE_OT_switch_direction(bpy.types.Operator):
             
             return {'CANCELLED'}
 
-        except Exception as err:
-            
-            ShowMessageBox("Unkown Error, Please send me this report:", repr(err), 'ERROR')
-            
+        finally:
+
+            tr = traceback.format_exc()
+            print(tr)
+            ShowMessageBox('Unknown Error', 'Please, open console and send me report', 'ERROR')
+
             return {'CANCELLED'}
