@@ -53,9 +53,6 @@ def toggle_cyclic_manager():
     # Полуичм разницу наклонов точек прямой
     tilt_twist_y_arr = tilt_twist_calc(curve_duplicate)
 
-    # Переворачивем массив tilt_twist_arr
-    tilt_twist_y_arr = arr_flip(tilt_twist_y_arr)
-
     # Конвертируем в меш
     mesh_curve_duplicate = convert_to_mesh(curve_duplicate)
 
@@ -107,7 +104,7 @@ def toggle_cyclic_manager():
     tilt_twist_ext_arr = tilt_twist_calc(switched_curve)
 
     # Корректируем твист
-    #twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, switched_curve)
+    twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, switched_curve)
 
     bpy.ops.object.select_all(action='DESELECT')
     switched_curve.select_set(True)
