@@ -17,6 +17,8 @@ class MAGICCURVE_PT_panel(bpy.types.Panel):
         row = layout.row()
         row.operator('magiccurve.create_smooth_curve', text="Smooth Curve")
         row = layout.row()
+        row.operator('magiccurve.switch_twist_method', text="Switch Twist Method")
+        row = layout.row()
         row.operator('magiccurve.switch_direction', text="Switch curve direction")
         row = layout.row()
         row.operator('magiccurve.toggle_cyclic', text="Toggle Cyclic")
