@@ -1,9 +1,8 @@
-import math
-
 import bpy  # type: ignore
 import bmesh  # type: ignore
 import mathutils  # type: ignore
 import numpy as np
+import math
 from .Errors import CancelError, ShowMessageBox
 
 
