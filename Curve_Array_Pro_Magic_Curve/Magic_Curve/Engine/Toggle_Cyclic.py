@@ -66,7 +66,7 @@ def toggle_cyclic_manager():
     # Наполним z_vec_arr
     z_vec_arr = z_vec(z_vec_arr, mesh_curve_duplicate, curve_duplicate_data)
     bpy.data.objects.remove(mesh_curve_duplicate, do_unlink=True)
-
+    print('0:', z_vec_arr)
     # Меняем замкнутость
     toggled_curve = toggle_cyclic(curve)
 
@@ -85,7 +85,7 @@ def toggle_cyclic_manager():
     # Наполним z_vec_arr
     z_vec_arr = z_vec(z_vec_arr, mesh_toggled_curve_duplicate, toggled_curve_duplicate_data)
     bpy.data.objects.remove(mesh_toggled_curve_duplicate, do_unlink=True)
-
+    print('1:', z_vec_arr)
     # Получаем угол между векторами
     angle_y_ext_arr = angle_betw_vec(y_vec_arr, ext_vec_arr, toggled_curve_duplicate_data[0], z_vec_arr)
 

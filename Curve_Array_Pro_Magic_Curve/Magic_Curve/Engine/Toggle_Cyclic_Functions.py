@@ -38,6 +38,15 @@ def create_z_arr(points_count_list):
     return z_vec_arr
 
 
+def midle_point_calc(p_0_ind, verts):
+
+    vec = calc_vec(verts[p_0_ind].co, verts[p_0_ind + 1].co, False)
+
+    midle_point_co = verts[p_0_ind].co + vec/2
+
+    return midle_point_co
+
+
 def z_vec(z_vec_arr, mesh, curve_data):
 
     (
@@ -61,26 +70,23 @@ def z_vec(z_vec_arr, mesh, curve_data):
 
         start_point_index = spline_verts_index_arr[list_iter][0]
         next_point_index = start_point_index + 2
-
-        start_point = verts[start_point_index]
-        next_point = verts[next_point_index]
-
-        z_arr[0] = calc_vec(start_point.co, next_point.co, True)
+        start_mdidle_point_co = midle_point_calc(start_point_index, verts)
+        next_mdidle_point_co = midle_point_calc(next_point_index, verts)
+        z_arr[0] = calc_vec(start_mdidle_point_co, next_mdidle_point_co, True)
 
         end_point_index = spline_verts_index_arr[list_iter][-1]
-        prev_point_index = start_point_index - 2
+        prev_point_index = end_point_index - 2
+        end_mdidle_point_co = midle_point_calc(end_point_index, verts)
+        prev_mdidle_point_co = midle_point_calc(prev_point_index, verts)
 
-        end_point = verts[end_point_index]
-        prev_point = verts[prev_point_index]
-
-        z_arr[1] = calc_vec(prev_point.co, end_point.co, True)
+        z_arr[1] = calc_vec(prev_mdidle_point_co, end_mdidle_point_co, True)
 
         list_iter += 1
 
     return z_vec_arr
 
 
-def angle_betw_vec(y_vec_arr, ext_vec_arr, spline_point_count, z_vec_list):
+def angle_betw_vec(y_vec_arr, ext_vec_arr, spline_point_count, z_vec_arr):
 
     angle_betw_vec_arr = create_arr(spline_point_count)
 
@@ -91,18 +97,19 @@ def angle_betw_vec(y_vec_arr, ext_vec_arr, spline_point_count, z_vec_list):
         angle_arr = angle_betw_vec_arr[list_iter]
         y_arr = y_vec_arr[list_iter]
         ext_arr = ext_vec_arr[list_iter]
+        z_arr = z_vec_arr[list_iter]
 
         spline_point_iter = 0
 
         while spline_point_iter < len(angle_arr):
 
-            if spline_point_iter == 0 or spline_point_iter == len(angle_arr - 1):
+            if spline_point_iter == 0 or spline_point_iter == len(angle_arr) - 1:
 
                 if spline_point_iter == 0:
-                    z_vec = z_vec_list[0]
+                    z_vec = z_arr[0]
 
                 else:
-                    z_vec = z_vec_list[1]
+                    z_vec = z_arr[1]
 
                 y_vec = vec_projection(y_arr[spline_point_iter], z_vec)
                 ext_vec = vec_projection(ext_arr[spline_point_iter], z_vec)
