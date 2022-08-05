@@ -29,13 +29,13 @@ def calc_vec(first_vertex, second_vertex, normalize: bool):
 
 def create_arr(points_count_list):
 
-    arr = []
+    arr = np.empty(len(points_count_list), dtype=object)
 
     i = 0
 
     while i < len(points_count_list):
 
-        arr.append(np.empty(points_count_list[i], dtype=object))
+        arr[i] = np.empty(points_count_list[i], dtype=object)
 
         i += 1
 
@@ -284,52 +284,48 @@ def duplicate(active_curve):
     return switched_curve
 
 
-class Curve_Data:
+def curve_data(curve):
 
-    def __init__(self, curve):
+    splines = curve.data.splines
+    spline_count = len(splines)
 
-        splines = curve.data.splines
-        spline_count = len(splines)
+    spline_point_count_arr = np.empty(spline_count, dtype=int)  # Количество точек на каждом сплайне
+    # Массив индексов вершин меша соответствующих точкам сплайна
+    spline_verts_index_arr = np.empty(spline_count, dtype=object)
+    cyclic_arr = np.empty(spline_count, dtype=bool)  # Cyclic == True; Not_Cyclic == False;
+    spline_type_arr = np.empty(spline_count, dtype=bool)  # Poly == True; Bezier == False;
+    i = 0
+    last_index = -2  # Индекс последней нулевой вершины меша относящегося к сплайну
 
-        self.spline_point_count_arr = np.empty(spline_count, dtype=int)  # Количество точек на каждом сплайне
-        # Массив индексов вершин меша соответствующих точкам сплайна
-        self.spline_verts_index_arr = np.empty(spline_count, dtype=object)
-        self.cyclic_arr = np.empty(spline_count, dtype=bool)  # Cyclic == True; Not_Cyclic == False;
-        self.spline_type_arr = np.empty(spline_count, dtype=bool)  # Poly == True; Bezier == False;
-        i = 0
-        last_index = -2  # Индекс последней нулевой вершины меша относящегося к сплайну
+    while i < len(splines):
 
-        while i < len(splines):
+        if splines[i].type == 'POLY':
 
-            if splines[i].type == 'POLY':
+            points = splines[i].points
+            spline_type = True
 
-                points = splines[i].points
-                spline_type = True
+        else:
 
-            else:
+            points = splines[i].bezier_points
+            spline_type = False
 
-                points = splines[i].bezier_points
-                spline_type = False
+        cyclic = splines[i].use_cyclic_u
+        resolution = splines[i].resolution_u
 
-            cyclic = splines[i].use_cyclic_u
-            resolution = splines[i].resolution_u
+        spline_point_count_arr[i] = len(points)
+        spline_verts_index_arr[i], last_index = \
+            spline_verts_index(points, spline_type, cyclic, resolution, last_index)
+        cyclic_arr[i] = cyclic
+        spline_type_arr[i] = spline_type
 
-            self.spline_point_count_arr[i] = len(points)
-            self.spline_verts_index_arr[i], last_index = \
-                spline_verts_index(points, spline_type, cyclic, resolution, last_index)
-            self.cyclic_arr[i] = cyclic
-            self.spline_type_arr[i] = spline_type
+        i += 1
 
-            i += 1
-
-    def get_curve_data(self):
-
-        return (
-            self.spline_point_count_arr,
-            self.spline_verts_index_arr,
-            self.cyclic_arr,
-            self.spline_type_arr,
-        )
+    return (
+        spline_point_count_arr,
+        spline_verts_index_arr,
+        cyclic_arr,
+        spline_type_arr,
+    )
 
 
 def tilt_twist_calc(curve):
