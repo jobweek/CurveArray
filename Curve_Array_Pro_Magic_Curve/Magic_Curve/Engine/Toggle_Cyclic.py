@@ -31,11 +31,11 @@ def toggle_cyclic_manager():
 
     if curve.data.twist_mode == 'Z_UP':
 
-        switched_curve = toggle_cyclic(curve)
+        toggled_curve = toggle_cyclic(curve)
 
         bpy.ops.object.select_all(action='DESELECT')
-        switched_curve.select_set(True)
-        bpy.context.view_layer.objects.active = switched_curve
+        toggled_curve.select_set(True)
+        bpy.context.view_layer.objects.active = toggled_curve
 
         return
 
