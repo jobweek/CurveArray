@@ -55,18 +55,15 @@ def switch_twist_method_manager():
     # Дублируем кривую
     switched_curve_duplicate = duplicate(switched_curve)
 
-    # Получим информацию о кривой
-    switched_curve_duplicate_data = curve_data(switched_curve_duplicate)
-
     # Конвертируем в меш
     mesh_switched_curve_duplicate = convert_to_mesh(switched_curve_duplicate)
 
     # Получаем массив ext_vec
-    ext_vec_arr = ext_vec(mesh_switched_curve_duplicate, switched_curve_duplicate_data)
+    ext_vec_arr = ext_vec(mesh_switched_curve_duplicate, curve_duplicate_data)
     bpy.data.objects.remove(mesh_switched_curve_duplicate, do_unlink=True)
 
     # Получаем угол между векторами
-    angle_y_ext_arr = angle_betw_vec(y_vec_arr, ext_vec_arr, switched_curve_duplicate_data[0])
+    angle_y_ext_arr = angle_betw_vec(y_vec_arr, ext_vec_arr, curve_duplicate_data[0])
 
     # Дублируем кривую
     test_curve = duplicate(switched_curve)
@@ -78,11 +75,11 @@ def switch_twist_method_manager():
     mesh_test_curve = convert_to_mesh(test_curve)
 
     # Получаем массив test_vec
-    test_vec_arr = ext_vec(mesh_test_curve, switched_curve_duplicate_data)
+    test_vec_arr = ext_vec(mesh_test_curve, curve_duplicate_data)
     bpy.data.objects.remove(mesh_test_curve, do_unlink=True)
 
     # Получаем угол между векторами после поворота
-    angle_y_test_arr = angle_betw_vec(y_vec_arr, test_vec_arr, switched_curve_duplicate_data[0])
+    angle_y_test_arr = angle_betw_vec(y_vec_arr, test_vec_arr, curve_duplicate_data[0])
 
     # Корректируем углы
     angle_y_ext_arr = angle_correction(angle_y_ext_arr, angle_y_test_arr)
