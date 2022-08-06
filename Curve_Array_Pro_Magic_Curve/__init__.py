@@ -19,7 +19,6 @@ Created by JobWeek
 """
 
 import bpy  # type: ignore
-
 from .curve_array_pro_3_0 import (
     CRVARRPRO_PT_CurveArrayPro,
     CRVARRPRO_PT_CurvePanel,
@@ -44,14 +43,15 @@ from .curve_array_pro_3_0 import (
     CRVARRPRO_OT_Reset_Settings,
     CRVARRPRO_OT_Flip_Curve
 )
-
 from .props.curve_array_props import (
     reg_0,
     reg_1,
     reg_2,
     Main_Props
 )
-
+from .Curve_Array.Ops.Curve_Array_By_Offset_Ops import (
+    CURVEARRAY_OT_create_array_by_offset
+)
 from .Magic_Curve.Ops.Smooth_Curve_Ops import (
     MAGICCURVE_OT_create_smooth_curve
 )
