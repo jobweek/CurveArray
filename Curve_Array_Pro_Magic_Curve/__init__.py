@@ -73,6 +73,7 @@ from .Magic_Curve.Panels.Main_Panel import (
 
 classes = (
     Main_Props,
+    CURVEARRAY_OT_create_array_by_offset,
     CRVARRPRO_PT_CurveArrayPro,
     CRVARRPRO_PT_CurvePanel,
     CRVARRPRO_OT_CurvePicker,
