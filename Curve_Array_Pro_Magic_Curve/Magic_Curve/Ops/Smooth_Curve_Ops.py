@@ -1,5 +1,5 @@
 import bpy  # type: ignore
-from ..Engine.Errors import CancelError, ShowMessageBox
+from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, ShowMessageBox
 from ..Engine.Smooth_Curve import (
     smooth_curve_manager,
 )

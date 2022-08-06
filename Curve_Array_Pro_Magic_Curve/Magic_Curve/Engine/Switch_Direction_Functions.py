@@ -3,7 +3,7 @@ import bmesh  # type: ignore
 import mathutils  # type: ignore
 import numpy as np
 import math
-from .Errors import CancelError, ShowMessageBox
+from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, ShowMessageBox
 
 
 def vec_equal(vec_1, vec_2):

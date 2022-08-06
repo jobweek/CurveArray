@@ -1,22 +1,22 @@
 import bpy  # type: ignore
 from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, ShowMessageBox
-from ..Engine.Split_Curve import (
-    split_curve_manager,
+from ..Engine.Curve_Array import (
+    curve_array_manager,
 )
 import traceback
 
 
-class MAGICCURVE_OT_create_split_curve(bpy.types.Operator):
+class MAGICCURVE_OT_create_smooth_curve(bpy.types.Operator):
     """Create curve from loop"""
     bl_label = "Curve from loop"
-    bl_idname = 'magiccurve.create_split_curve'
+    bl_idname = 'magiccurve.create_smooth_curve'
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, _):
 
         try:
 
-            split_curve_manager()
+            curve_array_manager()
 
             return {'FINISHED'}
 

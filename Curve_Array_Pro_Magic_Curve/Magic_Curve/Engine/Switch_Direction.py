@@ -1,6 +1,6 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
-from .Errors import CancelError, ShowMessageBox
+from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, ShowMessageBox
 from .Switch_Direction_Functions import (
     checker,
     merged_points_check,

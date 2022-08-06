@@ -4,7 +4,7 @@ import mathutils  # type: ignore
 import copy
 import math
 import numpy as np
-from .Errors import CancelError, ShowMessageBox
+from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, ShowMessageBox
 
 
 def vec_equal(vec_1, vec_2):

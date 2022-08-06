@@ -1,5 +1,5 @@
 import bpy  # type: ignore
-from ..Engine.Errors import CancelError, ShowMessageBox
+from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, ShowMessageBox
 from ..Engine.Switch_Twist_Method import (
     switch_twist_method_manager
 )
