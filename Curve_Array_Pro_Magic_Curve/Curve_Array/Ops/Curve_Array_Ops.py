@@ -1,22 +1,22 @@
 import bpy  # type: ignore
 from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, ShowMessageBox
-from ..Engine.Curve_Array import (
-    curve_array_manager,
+from ..Engine.Curve_Array_By_Offset import (
+    curve_array_by_offset_manager,
 )
 import traceback
 
 
-class MAGICCURVE_OT_create_smooth_curve(bpy.types.Operator):
+class CURVEARRAY_OT_create_array(bpy.types.Operator):
     """Create curve from loop"""
-    bl_label = "Curve from loop"
-    bl_idname = 'magiccurve.create_smooth_curve'
+    bl_label = "Create Array along Curve"
+    bl_idname = 'curvearray.create_array'
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, _):
 
         try:
 
-            curve_array_manager()
+            curve_array_by_offset_manager(bpy.context.active_object, None, None)
 
             return {'FINISHED'}
 
