@@ -7,14 +7,14 @@ from .Toggle_Cyclic_Functions import (
     z_vec,
     create_z_arr,
 )
-from .Switch_Direction_Functions import (
-    checker,
+from ...Common_Functions.Functions import (
+    duplicate,
+    convert_to_mesh,
+    curve_checker,
     merged_points_check,
     points_select,
-    duplicate,
     curve_data,
     tilt_twist_calc,
-    convert_to_mesh,
     ext_vec,
     angle_correction,
     tilt_correction,
@@ -25,7 +25,7 @@ from .Switch_Direction_Functions import (
 def toggle_cyclic_manager():
 
     curve = bpy.context.active_object
-    checker()
+    curve_checker()
     merged_points_check(curve)
     points_select(curve)
 

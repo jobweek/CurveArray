@@ -4,14 +4,13 @@ from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, ShowMessageBo
 from .Switch_Twist_Method_Functions import (
     switch_twist,
 )
-from .Switch_Direction_Functions import (
-    checker,
-    merged_points_check,
-    points_select,
+from ...Common_Functions.Functions import (
     duplicate,
+    convert_to_mesh,
+    curve_checker,
+    merged_points_check, points_select,
     curve_data,
     tilt_twist_calc,
-    convert_to_mesh,
     ext_vec,
     angle_correction,
     tilt_correction,
@@ -23,7 +22,7 @@ from .Switch_Direction_Functions import (
 def switch_twist_method_manager():
 
     curve = bpy.context.active_object
-    checker()
+    curve_checker()
     merged_points_check(curve)
     points_select(curve)
 

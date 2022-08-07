@@ -2,27 +2,25 @@ import bpy  # type: ignore
 import bmesh  # type: ignore
 from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, ShowMessageBox
 from .Switch_Direction_Functions import (
-    checker,
+    switch_curve,
+    arr_flip,
+)
+from ...Common_Functions.Functions import (
+    duplicate,
+    convert_to_mesh,
+    curve_checker,
     merged_points_check,
     points_select,
-    duplicate,
-    curve_data,
-    tilt_twist_calc,
-    convert_to_mesh,
-    switch_curve,
+    curve_data, tilt_twist_calc,
     ext_vec,
-    arr_flip,
-    angle_betw_vec,
-    angle_correction,
-    tilt_correction,
-    twist_correction,
+    angle_correction, tilt_correction, twist_correction, angle_betw_vec
 )
 
 
 def recalculate_curve_manager():
 
     curve = bpy.context.active_object
-    checker()
+    curve_checker()
     merged_points_check(curve)
     points_select(curve)
 

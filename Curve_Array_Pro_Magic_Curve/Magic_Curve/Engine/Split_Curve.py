@@ -3,20 +3,20 @@ import bmesh  # type: ignore
 import mathutils  # type: ignore
 
 from .Split_Curve_Functions import (
-    checker,
+    create_curve,
+    ext_vec,
+    tilt_correction,
+)
+from ...Common_Functions.Functions import (
     CurveData,
+    object_checker,
     active_vertex,
     verts_sequence,
     merged_vertices_check,
     y_vec,
     vert_co,
-    create_curve,
-    ext_vec,
-    tilt_correction,
-)
-from .Switch_Direction_Functions import (
     duplicate,
-    convert_to_mesh,
+    convert_to_mesh
 )
 
 
@@ -25,7 +25,7 @@ def split_curve_manager():
     active_object = bpy.context.active_object
     active_mesh = active_object.data
 
-    checker()
+    object_checker()
     curve_data = CurveData()
 
     bm = bmesh.from_edit_mesh(active_mesh)
