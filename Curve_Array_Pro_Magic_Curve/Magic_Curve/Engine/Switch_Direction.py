@@ -2,8 +2,8 @@ import bpy  # type: ignore
 import bmesh  # type: ignore
 from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, ShowMessageBox
 from .Switch_Direction_Functions import (
-    switch_curve,
-    arr_flip,
+    switch_curve_direction,
+    arr_flip_direction,
 )
 from ...Common_Functions.Functions import (
     duplicate,
@@ -13,7 +13,11 @@ from ...Common_Functions.Functions import (
     points_select,
     curve_data, tilt_twist_calc,
     ext_vec,
-    angle_correction, tilt_correction, twist_correction, angle_betw_vec
+    angle_correction,
+    tilt_correction,
+    twist_correction,
+    angle_betw_vec,
+    object_select,
 )
 
 
@@ -26,11 +30,8 @@ def recalculate_curve_manager():
 
     if curve.data.twist_mode == 'Z_UP':
 
-        switched_curve = switch_curve(curve)
-
-        bpy.ops.object.select_all(action='DESELECT')
-        switched_curve.select_set(True)
-        bpy.context.view_layer.objects.active = switched_curve
+        switched_curve = switch_curve_direction(curve)
+        object_select(switched_curve)
 
         return
 
@@ -50,7 +51,7 @@ def recalculate_curve_manager():
     tilt_twist_y_arr = tilt_twist_calc(curve_duplicate)
 
     # Переворачивем массив tilt_twist_arr
-    tilt_twist_y_arr = arr_flip(tilt_twist_y_arr)
+    tilt_twist_y_arr = arr_flip_direction(tilt_twist_y_arr)
 
     # Конвертируем в меш
     mesh_curve_duplicate = convert_to_mesh(curve_duplicate)
@@ -60,10 +61,10 @@ def recalculate_curve_manager():
     bpy.data.objects.remove(mesh_curve_duplicate, do_unlink=True)
 
     # Переворачивем массив y_vec
-    y_vec_arr = arr_flip(y_vec_arr)
+    y_vec_arr = arr_flip_direction(y_vec_arr)
 
     # Меняем направление
-    switched_curve = switch_curve(curve)
+    switched_curve = switch_curve_direction(curve)
 
     # Дублируем кривую
     switched_curve_duplicate = duplicate(switched_curve)
@@ -108,6 +109,6 @@ def recalculate_curve_manager():
     # Корректируем твист
     twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, switched_curve)
 
-    bpy.ops.object.select_all(action='DESELECT')
-    switched_curve.select_set(True)
-    bpy.context.view_layer.objects.active = switched_curve
+    # Выделяем объект
+    object_select(switched_curve)
+

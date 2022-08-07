@@ -2,16 +2,14 @@ import bpy  # type: ignore
 import bmesh  # type: ignore
 import mathutils  # type: ignore
 import numpy as np
-from .Switch_Direction_Functions import (
-    create_arr,
+from ...Common_Functions.Functions import (
     calc_vec,
-)
-from .Smooth_Curve_Functions import (
+    create_arr,
     vec_projection,
 )
 
 
-def toggle_cyclic(curve):
+def toggle_curve_cyclic(curve):
 
     bpy.ops.object.select_all(action='DESELECT')
     curve.select_set(True)
@@ -23,7 +21,7 @@ def toggle_cyclic(curve):
     return curve
 
 
-def create_z_arr(points_count_list):
+def create_z_arr_cyclic(points_count_list):
 
     z_vec_arr = np.empty(len(points_count_list), dtype=object)
 
@@ -38,7 +36,7 @@ def create_z_arr(points_count_list):
     return z_vec_arr
 
 
-def midle_point_calc(p_0_ind, verts):
+def midle_point_calc_cyclic(p_0_ind, verts):
 
     vec = calc_vec(verts[p_0_ind].co, verts[p_0_ind + 1].co, False)
 
@@ -47,7 +45,7 @@ def midle_point_calc(p_0_ind, verts):
     return midle_point_co
 
 
-def z_vec(z_vec_arr, mesh, curve_data):
+def z_vec_cyclic(z_vec_arr, mesh, curve_data):
 
     (
         spline_point_count_arr,
@@ -70,14 +68,14 @@ def z_vec(z_vec_arr, mesh, curve_data):
 
         start_point_index = spline_verts_index_arr[list_iter][0]
         next_point_index = start_point_index + 2
-        start_mdidle_point_co = midle_point_calc(start_point_index, verts)
-        next_mdidle_point_co = midle_point_calc(next_point_index, verts)
+        start_mdidle_point_co = midle_point_calc_cyclic(start_point_index, verts)
+        next_mdidle_point_co = midle_point_calc_cyclic(next_point_index, verts)
         z_arr[0] = calc_vec(start_mdidle_point_co, next_mdidle_point_co, True)
 
         end_point_index = spline_verts_index_arr[list_iter][-1]
         prev_point_index = end_point_index - 2
-        end_mdidle_point_co = midle_point_calc(end_point_index, verts)
-        prev_mdidle_point_co = midle_point_calc(prev_point_index, verts)
+        end_mdidle_point_co = midle_point_calc_cyclic(end_point_index, verts)
+        prev_mdidle_point_co = midle_point_calc_cyclic(prev_point_index, verts)
 
         z_arr[1] = calc_vec(prev_mdidle_point_co, end_mdidle_point_co, True)
 
@@ -86,7 +84,7 @@ def z_vec(z_vec_arr, mesh, curve_data):
     return z_vec_arr
 
 
-def angle_betw_vec(y_vec_arr, ext_vec_arr, spline_point_count, z_vec_arr):
+def angle_betw_vec_cyclic(y_vec_arr, ext_vec_arr, spline_point_count, z_vec_arr):
 
     angle_betw_vec_arr = create_arr(spline_point_count)
 

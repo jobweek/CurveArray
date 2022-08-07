@@ -2,7 +2,7 @@ import bpy  # type: ignore
 import bmesh  # type: ignore
 from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, ShowMessageBox
 from .Switch_Twist_Method_Functions import (
-    switch_twist,
+    switch_curve_twist,
 )
 from ...Common_Functions.Functions import (
     duplicate,
@@ -16,6 +16,7 @@ from ...Common_Functions.Functions import (
     tilt_correction,
     twist_correction,
     angle_betw_vec,
+    object_select,
 )
 
 
@@ -49,7 +50,7 @@ def switch_twist_method_manager():
     bpy.data.objects.remove(mesh_curve_duplicate, do_unlink=True)
 
     # Меняем метод скручивания
-    switched_curve = switch_twist(curve)
+    switched_curve = switch_curve_twist(curve)
 
     # Дублируем кривую
     switched_curve_duplicate = duplicate(switched_curve)
@@ -92,6 +93,5 @@ def switch_twist_method_manager():
     # Корректируем твист
     twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, switched_curve)
 
-    bpy.ops.object.select_all(action='DESELECT')
-    switched_curve.select_set(True)
-    bpy.context.view_layer.objects.active = switched_curve
+    # Выделяем объект
+    object_select(switched_curve)

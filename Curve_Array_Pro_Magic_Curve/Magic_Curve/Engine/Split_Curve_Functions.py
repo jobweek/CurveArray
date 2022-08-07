@@ -1,26 +1,16 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
 import mathutils  # type: ignore
-import math
 import numpy as np
 
-
-def calc_vec(first_vertex, second_vertex, normalize: bool):
-
-    vec = second_vertex - first_vertex
-
-    if vec.length < 0.0001:
-
-        return None
-
-    if normalize:
-
-        vec = vec.normalized()
-
-    return vec
+from Curve_Array_Pro_Magic_Curve.Common_Functions.Functions import (
+    vec_projection,
+    angle_calc,
+    calc_vec,
+)
 
 
-def create_curve(vert_co_array, active_object, curve_data):
+def create_curve_split(vert_co_array, active_object, curve_data):
 
     crv_mesh = bpy.data.curves.new('Split_Curve', 'CURVE')
     crv_mesh.dimensions = '3D'
@@ -36,31 +26,17 @@ def create_curve(vert_co_array, active_object, curve_data):
 
     while i < len(vert_co_array)-1:
 
-        mesh_vertex_first_co = vert_co_array[i]
-        mesh_vertex_second_co = vert_co_array[i + 1]
+        points = crv_mesh.splines[i].points
 
-        spline = crv_mesh.splines[i]
-
-        spline.points[0].co[0] = mesh_vertex_first_co[0]
-        spline.points[0].co[1] = mesh_vertex_first_co[1]
-        spline.points[0].co[2] = mesh_vertex_first_co[2]
-        spline.points[0].co[3] = 0
-
-        spline.points[1].co[0] = mesh_vertex_second_co[0]
-        spline.points[1].co[1] = mesh_vertex_second_co[1]
-        spline.points[1].co[2] = mesh_vertex_second_co[2]
-        spline.points[1].co[3] = 0
+        points[0].co = vert_co_array[i].to_4d()
+        points[1].co = vert_co_array[i + 1].to_4d()
 
         i += 1
 
     crv_obj = bpy.data.objects.new('Split_Curve', crv_mesh)
-
     crv_obj.location = active_object.location
-
     crv_obj.rotation_euler = active_object.rotation_euler
-
     crv_obj.scale = active_object.scale
-
     bpy.context.scene.collection.objects.link(crv_obj)
 
     curve_data.set_curve(crv_obj)
@@ -68,7 +44,7 @@ def create_curve(vert_co_array, active_object, curve_data):
     return curve_data
 
 
-def ext_vec(extruded_mesh, array_size):
+def ext_vec_split(extruded_mesh, array_size):
 
     ext_vec_arr = np.empty(array_size, dtype=object)
 
@@ -79,11 +55,7 @@ def ext_vec(extruded_mesh, array_size):
         first_point = extruded_mesh.data.vertices[0 + i*4]
         second_point = extruded_mesh.data.vertices[1 + i*4]
 
-        vector = mathutils.Vector((
-            second_point.co[0] - first_point.co[0],
-            second_point.co[1] - first_point.co[1],
-            second_point.co[2] - first_point.co[2]
-        ))
+        vector = calc_vec(first_point.co, second_point.co, True)
 
         ext_vec_arr[i] = vector
 
@@ -92,45 +64,7 @@ def ext_vec(extruded_mesh, array_size):
     return ext_vec_arr
 
 
-def tilt_correction(ext_vec_arr, y_vec_arr, curve):
-
-    def vec_projection(vec, z_vec):
-
-        projection = (vec - vec.project(z_vec)).normalized()
-
-        return projection
-
-    def angle_calc(ext_vec, y_vec, cross_vec):
-
-        try:
-
-            angle = ext_vec.angle(y_vec)
-
-        except ValueError:
-
-            angle = 0
-
-        #  Определяем позитивное вращение или негативное
-        if ext_vec.dot(cross_vec) > 0:
-
-            angle = -angle
-
-        elif ext_vec.dot(cross_vec) == 0:
-
-            angle = 0
-
-        #  Предотвращение перекрещивания
-        if ext_vec.dot(y_vec) < 0:
-
-            if angle < 0:
-
-                angle = math.radians(180) + (math.radians(180) + angle)
-
-            elif angle > 0:
-
-                angle = math.radians(180) - (math.radians(180) - angle)
-
-        return angle
+def tilt_correction_split(ext_vec_arr, y_vec_arr, curve):
 
     i = 0
 

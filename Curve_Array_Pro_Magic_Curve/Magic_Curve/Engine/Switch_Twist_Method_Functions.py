@@ -3,7 +3,7 @@ import bmesh  # type: ignore
 import mathutils  # type: ignore
 
 
-def switch_twist(curve):
+def switch_curve_twist(curve):
 
     if curve.data.twist_mode == 'Z_UP':
 

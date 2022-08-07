@@ -8,8 +8,13 @@ from Curve_Array_Pro_Magic_Curve.Errors.Errors import (
     ShowMessageBox,
     CancelError,
 )
-from Curve_Array_Pro_Magic_Curve.Magic_Curve.Engine.Switch_Direction_Functions import vec_equal, spline_verts_index, \
-    create_arr, calc_vec
+
+
+def object_select(obj):
+
+    bpy.ops.object.select_all(action='DESELECT')
+    obj.select_set(True)
+    bpy.context.view_layer.objects.active = obj
 
 
 class CurveData:
@@ -233,11 +238,6 @@ def vert_co(vert_sequence_array):
     vert_co_array = vert_co_array(vert_sequence_array)
 
     return vert_co_array
-
-
-def vec_equal(vec_1, vec_2):
-
-    return vec_1.to_tuple(4) == vec_2.to_tuple(4)
 
 
 def duplicate(active_curve):
@@ -649,3 +649,115 @@ def angle_betw_vec(y_vec_arr, ext_vec_arr, spline_point_count):
         list_iter += 1
 
     return angle_betw_vec_arr
+
+
+def vec_equal(vec_1, vec_2):
+
+    return vec_1.to_tuple(4) == vec_2.to_tuple(4)
+
+
+def spline_verts_index(points, spline_type, cyclic, resolution, last_index):
+
+    arr = np.empty(len(points), dtype=object)
+
+    vert_index = last_index + 2
+    i = 0
+
+    if cyclic and not spline_type:
+
+        if points[-1].handle_right_type != 'VECTOR' or points[0].handle_left_type != 'VECTOR':
+
+            vert_index += 2 * resolution
+
+        else:
+
+            vert_index += 2
+
+    while i < len(points) - 1:
+
+        arr[i] = vert_index
+
+        if spline_type or (points[i].handle_right_type == 'VECTOR' and points[i + 1].handle_left_type == 'VECTOR'):
+
+            vert_index += 2
+
+        else:
+
+            vert_index += 2 * resolution
+
+        i += 1
+
+    if cyclic and not spline_type:
+
+        arr[i] = last_index + 2
+        last_index = vert_index - 2
+
+    else:
+        arr[i] = vert_index
+        last_index = vert_index
+
+    return arr, last_index
+
+
+def calc_vec(first_co, second_co, normalize: bool):
+
+    vec = second_co - first_co
+
+    if vec.length < 0.0001:
+
+        return None
+
+    if normalize:
+
+        vec = vec.normalized()
+
+    return vec
+
+
+def create_arr(points_count_list):
+
+    arr = np.empty(len(points_count_list), dtype=object)
+
+    i = 0
+
+    while i < len(points_count_list):
+
+        arr[i] = np.empty(points_count_list[i], dtype=object)
+
+        i += 1
+
+    return arr
+
+
+def vec_projection(vec, z_vec):
+
+    projection = (vec - vec.project(z_vec)).normalized()
+
+    return projection
+
+
+def angle_calc(ext_vec, y_vec, cross_vec):
+
+    angle = ext_vec.angle(y_vec)
+
+    #  Определяем позитивное вращение или негативное
+    if ext_vec.dot(cross_vec) > 0:
+
+        angle = -angle
+
+    elif ext_vec.dot(cross_vec) == 0:
+
+        angle = 0
+
+    #  Предотвращение перекрещивания
+    if ext_vec.dot(y_vec) < 0:
+
+        if angle < 0:
+
+            angle = math.radians(180) + (math.radians(180) + angle)
+
+        elif angle > 0:
+
+            angle = math.radians(180) - (math.radians(180) - angle)
+
+    return angle
