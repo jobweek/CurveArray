@@ -2,6 +2,7 @@ import bpy  # type: ignore
 import bmesh  # type: ignore
 from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, ShowMessageBox
 from .Toggle_Cyclic_Functions import (
+    end_start_point_type_correction_cyclic,
     toggle_curve_cyclic,
     angle_betw_vec_cyclic,
     z_vec_cyclic,
@@ -30,6 +31,9 @@ def toggle_cyclic_manager():
     merged_points_check(curve)
     points_select(curve)
 
+    # Корректируем тип ручек начлаьной и конченой вершины
+    end_start_point_type_correction_cyclic(curve)
+
     if curve.data.twist_mode == 'Z_UP':
 
         toggled_curve = toggle_curve_cyclic(curve)
@@ -42,6 +46,10 @@ def toggle_cyclic_manager():
         ShowMessageBox("Error", "Tangent twist curves are not supported", 'ERROR')
 
         raise CancelError
+
+    else:
+
+        curve.data.twist_smooth = 100
 
     # Дублируем кривую
     curve_duplicate = duplicate(curve)

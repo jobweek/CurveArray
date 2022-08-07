@@ -398,11 +398,18 @@ def curve_data(curve):
     splines = curve.data.splines
     spline_count = len(splines)
 
-    spline_point_count_arr = np.empty(spline_count, dtype=int)  # Количество точек на каждом сплайне
+    # Количество точек на каждом сплайне
+    spline_point_count_arr = np.empty(spline_count, dtype=int)
+
     # Массив индексов вершин меша соответствующих точкам сплайна
     spline_verts_index_arr = np.empty(spline_count, dtype=object)
-    cyclic_arr = np.empty(spline_count, dtype=bool)  # Cyclic == True; Not_Cyclic == False;
-    spline_type_arr = np.empty(spline_count, dtype=bool)  # Poly == True; Bezier == False;
+
+    # Cyclic == True; Not_Cyclic == False;
+    cyclic_arr = np.empty(spline_count, dtype=bool)
+
+    # Poly == True; Bezier == False;
+    spline_type_arr = np.empty(spline_count, dtype=bool)
+
     i = 0
     last_index = -2  # Индекс последней нулевой вершины меша относящегося к сплайну
 

@@ -9,6 +9,33 @@ from ...Common_Functions.Functions import (
 )
 
 
+def end_start_point_type_correction_cyclic(curve):
+
+    iterator = 0
+
+    while iterator < len(curve.data.splines):
+
+        s = curve.data.splines[iterator]
+
+        if s.type == 'POLY':
+
+            points = s.points
+
+        else:
+
+            points = s.bezier_points
+
+        if points[0].handle_left_type == 'AUTO':
+
+            points[0].handle_left_type = 'FREE'
+
+        if points[-1].handle_left_type == 'AUTO':
+
+            points[-1].handle_left_type = 'FREE'
+
+        iterator += 1
+
+
 def toggle_curve_cyclic(curve):
 
     bpy.ops.object.select_all(action='DESELECT')

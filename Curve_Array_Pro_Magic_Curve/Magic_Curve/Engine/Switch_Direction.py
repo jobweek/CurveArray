@@ -41,6 +41,10 @@ def recalculate_curve_manager():
 
         raise CancelError
 
+    else:
+
+        curve.data.twist_smooth = 100
+
     # Дублируем кривую
     curve_duplicate = duplicate(curve)
 
