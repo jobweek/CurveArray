@@ -575,7 +575,13 @@ def tilt_correction(angle_betw_vec_arr, curve, test: bool):
 
             if test:
 
-                angle = angle * 0.5
+                if angle > math.pi/2:
+
+                    angle = (math.pi - angle) * 0.5
+
+                else:
+
+                    angle = angle * 0.5
 
             new_angle = points[i].tilt + angle
 
