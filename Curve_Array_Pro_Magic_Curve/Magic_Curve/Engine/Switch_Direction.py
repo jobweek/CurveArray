@@ -116,3 +116,4 @@ def recalculate_curve_manager():
     # Выделяем объект
     object_select(switched_curve)
 
+
