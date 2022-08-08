@@ -17,19 +17,6 @@ def object_select(obj):
     bpy.context.view_layer.objects.active = obj
 
 
-def spline_resolution_downgrade(curve):
-
-    for s in curve.data.splines:
-
-        s.resolution_u = 1
-
-
-def spline_resolution_upgrade(curve, res):
-
-    for s in curve.data.splines:
-        s.resolution_u = res
-
-
 class CurveData:
 
     def __init__(self):
@@ -484,11 +471,11 @@ def tilt_twist_calc(curve):
 
             if points[i].tilt > points[i+1].tilt:
 
-                twist = -(abs(twist) // (math.pi * 2)) - 1
+                twist = -(abs(twist) // (math.pi * 2))
 
             elif points[i].tilt < points[i+1].tilt:
 
-                twist = twist // (math.pi * 2) + 1
+                twist = twist // (math.pi * 2)
 
             else:
 
@@ -613,6 +600,7 @@ def twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, curve):
 
     splines = curve.data.splines
     spline_iter = 0
+    spline_diff = 0
 
     while spline_iter < len(splines):
 
@@ -628,15 +616,11 @@ def twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, curve):
 
         while i < len(tilt_twist_y_arr[spline_iter]):
 
-            diff = +(tilt_twist_y_arr[spline_iter][i] - tilt_twist_ext_arr[spline_iter][i]) - 1
+            diff = tilt_twist_y_arr[spline_iter][i] - tilt_twist_ext_arr[spline_iter][i]
 
-            if tilt_twist_ext_arr[spline_iter][i] < tilt_twist_y_arr[spline_iter][i]:
+            points[i+1].tilt += math.pi * 2 * diff * spline_diff
 
-                points[i+1].tilt += math.pi * 2 * diff
-
-            elif tilt_twist_ext_arr[spline_iter][i] > tilt_twist_y_arr[spline_iter][i]:
-
-                points[i+1].tilt -= math.pi * 2 * diff
+            spline_diff += diff
 
             i += 1
 
