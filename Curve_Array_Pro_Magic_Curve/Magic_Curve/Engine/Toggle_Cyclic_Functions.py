@@ -28,10 +28,12 @@ def end_start_point_type_correction_cyclic(curve):
         if points[0].handle_left_type == 'AUTO':
 
             points[0].handle_left_type = 'FREE'
+            points[0].handle_right_type = 'FREE'
 
         if points[-1].handle_left_type == 'AUTO':
 
             points[-1].handle_left_type = 'FREE'
+            points[-1].handle_right_type = 'FREE'
 
         iterator += 1
 

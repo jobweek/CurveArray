@@ -17,6 +17,19 @@ def object_select(obj):
     bpy.context.view_layer.objects.active = obj
 
 
+def spline_resolution_downgrade(curve):
+
+    for s in curve.data.splines:
+
+        s.resolution_u = 1
+
+
+def spline_resolution_upgrade(curve, res):
+
+    for s in curve.data.splines:
+        s.resolution_u = res
+
+
 class CurveData:
 
     def __init__(self):
