@@ -12,7 +12,7 @@ def switch_curve_twist(curve):
 
     else:
 
-        curve.data.twist_smooth = 100
+        curve.data.twist_smooth = 0
         curve.data.twist_mode = 'Z_UP'
 
     return curve

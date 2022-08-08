@@ -92,7 +92,7 @@ def switch_twist_method_manager():
     print(tilt_twist_y_arr)
     print(tilt_twist_ext_arr)
     # Корректируем твист
-    twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, switched_curve)
+    # twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, switched_curve)
 
     # Выделяем объект
     object_select(switched_curve)
