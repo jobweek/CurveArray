@@ -64,7 +64,7 @@ def switch_twist_method_manager():
 
     # Получаем угол между векторами
     angle_y_ext_arr = angle_betw_vec(y_vec_arr, ext_vec_arr, curve_duplicate_data[0])
-    print(f'y_vec_arr: {y_vec_arr}\next_vec_arr: {ext_vec_arr}\nangle: {angle_y_ext_arr}')
+
     # Дублируем кривую
     test_curve = duplicate(switched_curve)
 
@@ -83,7 +83,7 @@ def switch_twist_method_manager():
 
     # Корректируем углы
     angle_y_ext_arr = angle_correction(angle_y_ext_arr, angle_y_test_arr)
-    print(f'angle: {angle_y_ext_arr}\nangle_test: {angle_y_test_arr}')
+
     # Корректируем тильт
     tilt_correction(angle_y_ext_arr, switched_curve, False)
 
@@ -91,7 +91,7 @@ def switch_twist_method_manager():
     tilt_twist_ext_arr = tilt_twist_calc(switched_curve)
 
     # Корректируем твист
-    # twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, switched_curve)
+    twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, switched_curve)
 
     # Выделяем объект
     object_select(switched_curve)
