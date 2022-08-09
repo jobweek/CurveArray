@@ -606,7 +606,6 @@ def twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, curve):
 
     splines = curve.data.splines
     spline_iter = 0
-    spline_diff = 0
 
     while spline_iter < len(splines):
 
@@ -624,10 +623,8 @@ def twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, curve):
 
             diff = (tilt_twist_y_arr[spline_iter][i] - tilt_twist_ext_arr[spline_iter][i]) * math.pi * 2
 
-            points[i+1].tilt += diff + spline_diff
-            print(f'point: {i+1}, diff: {diff}, spline_diff: {spline_diff}')
-            spline_diff += diff
-
+            points[i+1].tilt += diff
+            # print(f'point: {i+1}, diff: {diff}, spline_diff: {spline_diff}')
             i += 1
 
         spline_iter += 1
