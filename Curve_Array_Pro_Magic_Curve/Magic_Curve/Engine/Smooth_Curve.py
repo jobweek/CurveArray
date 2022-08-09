@@ -63,10 +63,10 @@ def smooth_curve_manager():
     ext_vec_arr = ext_vec_smooth(mesh_curve_duplicate, len(vert_sequence_array))
     bpy.data.objects.remove(mesh_curve_duplicate, do_unlink=True)
 
-    # Если кривая замкнута, сдвигаем массив на 1
+    # Если кривая замкнута, сдвигаем массив на -1
     if curve_data.get_cyclic():
 
-        ext_vec_arr = np.roll(ext_vec_arr, 1)
+        ext_vec_arr = np.roll(ext_vec_arr, -1)
 
     # Получаем массив z_vec
     z_vec_arr = z_vec_smooth(curve_data.get_curve(), len(vert_sequence_array))
