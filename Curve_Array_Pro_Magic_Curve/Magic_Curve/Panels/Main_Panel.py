@@ -9,7 +9,9 @@ class MAGICCURVE_PT_panel(bpy.types.Panel):
     bl_category = 'CrvArrPro' 
     
     def draw(self, _):
-                
+
+        props = bpy.context.scene.magic_curve_properties
+
         layout = self.layout
                             
         row = layout.row()
@@ -22,3 +24,5 @@ class MAGICCURVE_PT_panel(bpy.types.Panel):
         row.operator('magiccurve.switch_direction', text="Switch Сurve direction")
         row = layout.row()
         row.operator('magiccurve.toggle_cyclic', text="Toggle Cyclic")
+        row = layout.row()
+        row.prop(props, "precision", text="Precision")

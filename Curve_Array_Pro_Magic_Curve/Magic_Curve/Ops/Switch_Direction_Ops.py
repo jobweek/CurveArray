@@ -1,5 +1,5 @@
 import bpy  # type: ignore
-from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, ShowMessageBox
+from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, show_message_box
 from ..Engine.Switch_Direction import (
     recalculate_curve_manager
 )
@@ -16,7 +16,7 @@ class MAGICCURVE_OT_switch_direction(bpy.types.Operator):
  
         try:
             
-            recalculate_curve_manager()
+            recalculate_curve_manager(0)
         
             return {'FINISHED'}
         
@@ -27,6 +27,6 @@ class MAGICCURVE_OT_switch_direction(bpy.types.Operator):
         except (Exception,):
 
             print(traceback.format_exc())
-            ShowMessageBox('Unknown Error', 'Please, open console and send me report', 'ERROR')
+            show_message_box('Unknown Error', 'Please, open console and send me report', 'ERROR')
 
             return {'CANCELLED'}

@@ -1,5 +1,5 @@
 import bpy  # type: ignore
-from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, ShowMessageBox
+from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, show_message_box
 from ..Engine.Switch_Twist_Method import (
     switch_twist_method_manager
 )
@@ -27,6 +27,6 @@ class MAGICCURVE_OT_switch_twist_method(bpy.types.Operator):
         except (Exception,):
 
             print(traceback.format_exc())
-            ShowMessageBox('Unknown Error', 'Please, open console and send me report', 'ERROR')
+            show_message_box('Unknown Error', 'Please, open console and send me report', 'ERROR')
 
             return {'CANCELLED'}

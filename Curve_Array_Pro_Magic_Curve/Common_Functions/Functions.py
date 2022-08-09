@@ -5,7 +5,7 @@ import mathutils  # type: ignore
 import math
 import numpy as np
 from Curve_Array_Pro_Magic_Curve.Errors.Errors import (
-    ShowMessageBox,
+    show_message_box,
     CancelError,
 )
 
@@ -42,19 +42,19 @@ def object_checker():
 
     if len(objects) == 0:
 
-        ShowMessageBox("Error", "Select object", 'ERROR')
+        show_message_box("Error", "Select object", 'ERROR')
 
         raise CancelError
 
     elif len(objects) > 1:
 
-        ShowMessageBox("Error", "Select only one object", 'ERROR')
+        show_message_box("Error", "Select only one object", 'ERROR')
 
         raise CancelError
 
     if objects[0].type != 'MESH':
 
-        ShowMessageBox("Error", "Object should be mesh", 'ERROR')
+        show_message_box("Error", "Object should be mesh", 'ERROR')
 
         raise CancelError
 
@@ -62,7 +62,7 @@ def object_checker():
 
     if mode != 'EDIT':
 
-        ShowMessageBox("Error", "Go to Edit Mode", 'ERROR')
+        show_message_box("Error", "Go to Edit Mode", 'ERROR')
 
         raise CancelError
 
@@ -74,7 +74,7 @@ def active_vertex(bm):
 
         if act_vert is None:
 
-            ShowMessageBox("Error", "The active vertex must be selected", 'ERROR')
+            show_message_box("Error", "The active vertex must be selected", 'ERROR')
 
             raise CancelError
 
@@ -82,7 +82,7 @@ def active_vertex(bm):
 
     except CancelError:
 
-        ShowMessageBox("Error", "The active vertex must be selected", 'ERROR')
+        show_message_box("Error", "The active vertex must be selected", 'ERROR')
 
         raise CancelError
 
@@ -108,7 +108,7 @@ def verts_sequence(verts_count, act_vert, curve_data, split_curve: bool):
 
     if len(selected_linked_edges_buffer) == 0:
 
-        ShowMessageBox("Error",
+        show_message_box("Error",
                        "No existing edges at selected vertex",
                        'ERROR')
 
@@ -124,7 +124,7 @@ def verts_sequence(verts_count, act_vert, curve_data, split_curve: bool):
 
     else:
 
-        ShowMessageBox("Error",
+        show_message_box("Error",
                        "The sequence of vertices must not overlap or branch",
                        'ERROR')
 
@@ -155,7 +155,7 @@ def verts_sequence(verts_count, act_vert, curve_data, split_curve: bool):
         selected_linked_edges_buffer = selected_linked_edges(searched_vertex)
 
         if len(selected_linked_edges_buffer) != 2:
-            ShowMessageBox("Error",
+            show_message_box("Error",
                            "Make sure that the sequence of vertices does not intersect or branch, and that the vertex "
                            "at the beginning of the sequence is selected",
                            'ERROR')
@@ -206,7 +206,7 @@ def merged_vertices_check(vert_sequence_array, split_curve, cyclic: bool):
 
             verts_str += "({0},{1}) ".format(v[0], v[1])
 
-        ShowMessageBox("Error",
+        show_message_box("Error",
                        "In the sequence you have chosen, there are vertices in the same coordinates."
                        " You can merge it."
                        " Their indices: " + verts_str,
@@ -277,26 +277,26 @@ def curve_checker():
 
     if len(objects) == 0:
 
-        ShowMessageBox("Error", "Select object", 'ERROR')
+        show_message_box("Error", "Select object", 'ERROR')
 
         raise CancelError
 
     elif len(objects) > 1:
 
-        ShowMessageBox("Error", "Select only one object", 'ERROR')
+        show_message_box("Error", "Select only one object", 'ERROR')
 
         raise CancelError
 
     if objects[0].type != 'CURVE':
 
-        ShowMessageBox("Error", "Object should be curve", 'ERROR')
+        show_message_box("Error", "Object should be curve", 'ERROR')
 
         raise CancelError
 
     mode = bpy.context.active_object.mode
 
     if mode != 'OBJECT':
-        ShowMessageBox("Error", "Go to Object Mode", 'ERROR')
+        show_message_box("Error", "Go to Object Mode", 'ERROR')
 
         raise CancelError
 
@@ -319,7 +319,7 @@ def merged_points_check(curve):
 
         else:
 
-            ShowMessageBox("Error", "Nurbs curves are not supported", 'ERROR')
+            show_message_box("Error", "Nurbs curves are not supported", 'ERROR')
 
             raise CancelError
 
@@ -361,7 +361,7 @@ def merged_points_check(curve):
 
             i += 1
 
-        ShowMessageBox("Error",
+        show_message_box("Error",
                        "In the curve you have chosen, there are points in the same coordinates."
                        " You can remove it."
                        " Their place: " + verts_str,
@@ -388,7 +388,7 @@ def points_select(curve):
 
         else:
 
-            ShowMessageBox("Error", "Nurbs curves are not supported", 'ERROR')
+            show_message_box("Error", "Nurbs curves are not supported", 'ERROR')
 
             raise CancelError
 
@@ -587,8 +587,8 @@ def tilt_correction(angle_betw_vec_arr, curve, test: bool):
 
             if new_angle > 376.992:
 
-                ShowMessageBox("Error",
-                               ('The tilt of point {0} on spline {1} has exceeded the Blender'
+                show_message_box("Error",
+                                 ('The tilt of point {0} on spline {1} has exceeded the Blender'
                                 'tolerance of -21600/21600 degrees, the result of the operation will not be correct. '
                                 'Reduce the point tilt on the curve and repeat the operation.').format(i, iterator),
                                'ERROR')

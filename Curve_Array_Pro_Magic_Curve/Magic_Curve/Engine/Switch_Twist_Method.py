@@ -1,6 +1,6 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
-from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, ShowMessageBox
+from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, show_message_box
 from .Switch_Twist_Method_Functions import (
     switch_curve_twist,
 )
@@ -29,7 +29,7 @@ def switch_twist_method_manager():
 
     if curve.data.twist_mode == 'TANGENT':
 
-        ShowMessageBox("Error", "Tangent twist curves are not supported", 'ERROR')
+        show_message_box("Error", "Tangent twist curves are not supported", 'ERROR')
 
         raise CancelError
 

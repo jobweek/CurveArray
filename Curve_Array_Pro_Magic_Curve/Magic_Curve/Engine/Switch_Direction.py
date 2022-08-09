@@ -1,6 +1,6 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
-from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, ShowMessageBox
+from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, show_message_box
 from .Switch_Direction_Functions import (
     switch_curve_direction,
     arr_flip_direction,
@@ -21,7 +21,7 @@ from ...Common_Functions.Functions import (
 )
 
 
-def recalculate_curve_manager():
+def recalculate_curve_manager(precision):
 
     curve = bpy.context.active_object
     curve_checker()
@@ -37,13 +37,13 @@ def recalculate_curve_manager():
 
     elif curve.data.twist_mode == 'TANGENT':
 
-        ShowMessageBox("Error", "Tangent twist curves are not supported", 'ERROR')
+        show_message_box("Error", "Tangent twist curves are not supported", 'ERROR')
 
         raise CancelError
 
     else:
 
-        curve.data.twist_smooth = 100
+        curve.data.twist_smooth = precision
 
     # Дублируем кривую
     curve_duplicate = duplicate(curve)
@@ -104,7 +104,7 @@ def recalculate_curve_manager():
 
     # Корректируем углы
     angle_y_ext_arr = angle_correction(angle_y_ext_arr, angle_y_test_arr)
-
+    print(f'angle_y_ext_arr: {angle_y_ext_arr}')
     # Корректируем тильт
     tilt_correction(angle_y_ext_arr, switched_curve, False)
 
