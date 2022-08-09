@@ -12,13 +12,11 @@ class MAGICCURVE_OT_toggle_cyclic(bpy.types.Operator):
     bl_idname = 'magiccurve.toggle_cyclic'
     bl_options = {'REGISTER', 'UNDO'}
 
-    precision: bpy.props.IntProperty(name="Precision")
-
     def execute(self, _):
 
         try:
 
-            toggle_cyclic_manager(self.precision)
+            toggle_cyclic_manager()
 
             return {'FINISHED'}
 

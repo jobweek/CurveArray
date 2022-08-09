@@ -22,15 +22,12 @@ class MAGICCURVE_PT_panel(bpy.types.Panel):
 
         row = layout.row()
         ops = row.operator('magiccurve.switch_twist_method', text="Switch Twist Method")
-        ops.precision = props.precision
 
         row = layout.row()
         ops = row.operator('magiccurve.switch_direction', text="Switch Сurve direction")
-        ops.precision = props.precision
 
         row = layout.row()
         ops = row.operator('magiccurve.toggle_cyclic', text="Toggle Cyclic")
-        ops.precision = props.precision
 
         row = layout.row()
         row.prop(props, "precision", text="Precision")

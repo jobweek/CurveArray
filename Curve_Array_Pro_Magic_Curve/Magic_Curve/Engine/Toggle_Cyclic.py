@@ -24,7 +24,7 @@ from ...Common_Functions.Functions import (
 )
 
 
-def toggle_cyclic_manager(precision):
+def toggle_cyclic_manager():
 
     curve = bpy.context.active_object
     curve_checker()
@@ -46,10 +46,6 @@ def toggle_cyclic_manager(precision):
         show_message_box("Error", "Tangent twist curves are not supported", 'ERROR')
 
         raise CancelError
-
-    else:
-
-        curve.data.twist_smooth = precision
 
     # Дублируем кривую
     curve_duplicate = duplicate(curve)

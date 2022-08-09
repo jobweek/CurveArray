@@ -12,13 +12,11 @@ class MAGICCURVE_OT_switch_direction(bpy.types.Operator):
     bl_idname = 'magiccurve.switch_direction'
     bl_options = {'REGISTER', 'UNDO'}
 
-    precision: bpy.props.IntProperty(name="Precision")
-
     def execute(self, _):
  
         try:
             
-            recalculate_curve_manager(self.precision)
+            recalculate_curve_manager()
         
             return {'FINISHED'}
         

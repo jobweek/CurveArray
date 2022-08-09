@@ -21,14 +21,14 @@ from ...Common_Functions.Functions import (
 )
 
 
-def recalculate_curve_manager(precision):
+def recalculate_curve_manager():
 
     curve = bpy.context.active_object
     curve_checker()
     merged_points_check(curve)
     points_select(curve)
 
-    if curve.data.twist_mode == 'Z_UP':
+    if curve.data.twist_mode == 'Z_UP' and curve.data.twist_smooth == 0:
 
         switched_curve = switch_curve_direction(curve)
         object_select(switched_curve)
@@ -40,10 +40,6 @@ def recalculate_curve_manager(precision):
         show_message_box("Error", "Tangent twist curves are not supported", 'ERROR')
 
         raise CancelError
-
-    else:
-
-        curve.data.twist_smooth = precision
 
     # Дублируем кривую
     curve_duplicate = duplicate(curve)
@@ -104,7 +100,7 @@ def recalculate_curve_manager(precision):
 
     # Корректируем углы
     angle_y_ext_arr = angle_correction(angle_y_ext_arr, angle_y_test_arr)
-    print(f'angle_y_ext_arr: {angle_y_ext_arr}')
+
     # Корректируем тильт
     tilt_correction(angle_y_ext_arr, switched_curve, False)
 
