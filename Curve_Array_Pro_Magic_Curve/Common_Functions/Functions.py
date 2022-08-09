@@ -108,9 +108,11 @@ def verts_sequence(verts_count, act_vert, curve_data, split_curve: bool):
 
     if len(selected_linked_edges_buffer) == 0:
 
-        show_message_box("Error",
-                       "No existing edges at selected vertex",
-                       'ERROR')
+        show_message_box(
+            "Error",
+            "No existing edges at selected vertex",
+            'ERROR'
+        )
 
         raise CancelError
 
@@ -124,9 +126,11 @@ def verts_sequence(verts_count, act_vert, curve_data, split_curve: bool):
 
     else:
 
-        show_message_box("Error",
-                       "The sequence of vertices must not overlap or branch",
-                       'ERROR')
+        show_message_box(
+            "Error",
+            "No existing edges at selected vertex",
+            'ERROR'
+        )
 
         raise CancelError
 
@@ -155,10 +159,12 @@ def verts_sequence(verts_count, act_vert, curve_data, split_curve: bool):
         selected_linked_edges_buffer = selected_linked_edges(searched_vertex)
 
         if len(selected_linked_edges_buffer) != 2:
-            show_message_box("Error",
-                           "Make sure that the sequence of vertices does not intersect or branch, and that the vertex "
-                           "at the beginning of the sequence is selected",
-                           'ERROR')
+            show_message_box(
+                "Error",
+                "Make sure that the sequence of vertices does not intersect or branch, and that the vertex "
+                "at the beginning of the sequence is selected",
+                'ERROR'
+            )
 
             raise CancelError
 
@@ -206,11 +212,13 @@ def merged_vertices_check(vert_sequence_array, split_curve, cyclic: bool):
 
             verts_str += "({0},{1}) ".format(v[0], v[1])
 
-        show_message_box("Error",
-                       "In the sequence you have chosen, there are vertices in the same coordinates."
-                       " You can merge it."
-                       " Their indices: " + verts_str,
-                       'ERROR')
+        show_message_box(
+            "Error",
+            "In the sequence you have chosen, there are vertices in the same coordinates."
+            " You can merge it."
+            " Their indices: " + verts_str,
+            'ERROR'
+        )
 
         raise CancelError
 
@@ -361,11 +369,13 @@ def merged_points_check(curve):
 
             i += 1
 
-        show_message_box("Error",
-                       "In the curve you have chosen, there are points in the same coordinates."
-                       " You can remove it."
-                       " Their place: " + verts_str,
-                       'ERROR')
+        show_message_box(
+            "Error",
+            "In the curve you have chosen, there are points in the same coordinates."
+            " You can remove it."
+            " Their place: " + verts_str,
+            'ERROR'
+        )
 
         raise CancelError
 
@@ -587,11 +597,15 @@ def tilt_correction(angle_betw_vec_arr, curve, test: bool):
 
             if new_angle > 376.992:
 
-                show_message_box("Error",
-                                 ('The tilt of point {0} on spline {1} has exceeded the Blender'
-                                'tolerance of -21600/21600 degrees, the result of the operation will not be correct. '
-                                'Reduce the point tilt on the curve and repeat the operation.').format(i, iterator),
-                               'ERROR')
+                show_message_box(
+                    "Error",
+                    (
+                        'The tilt of point {0} on spline {1} has exceeded the Blender'
+                        'tolerance of -21600/21600 degrees, the result of the operation will not be correct.'
+                        'Reduce the point tilt on the curve and repeat the operation.'
+                    ).format(i, iterator),
+                    'ERROR'
+                )
 
                 raise CancelError
 
@@ -621,10 +635,16 @@ def twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, curve):
 
         while i < len(tilt_twist_y_arr[spline_iter]):
 
-            diff = (tilt_twist_y_arr[spline_iter][i] - tilt_twist_ext_arr[spline_iter][i]) * math.pi * 2
+            diff = tilt_twist_y_arr[spline_iter][i] - tilt_twist_ext_arr[spline_iter][i]
 
-            points[i+1].tilt += diff
-            # print(f'point: {i+1}, diff: {diff}, spline_diff: {spline_diff}')
+            rad_diff = diff * math.pi * 2
+
+            if i != len(tilt_twist_y_arr[spline_iter]) - 1:
+
+                tilt_twist_y_arr[spline_iter][i+1] += diff
+
+            points[i+1].tilt += rad_diff
+
             i += 1
 
         spline_iter += 1
