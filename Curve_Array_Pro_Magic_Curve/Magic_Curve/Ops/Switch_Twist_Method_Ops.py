@@ -12,11 +12,13 @@ class MAGICCURVE_OT_switch_twist_method(bpy.types.Operator):
     bl_idname = 'magiccurve.switch_twist_method'
     bl_options = {'REGISTER', 'UNDO'}
 
+    precision: bpy.props.IntProperty(name="Precision")
+
     def execute(self, _):
 
         try:
 
-            switch_twist_method_manager()
+            switch_twist_method_manager(self.precision)
 
             return {'FINISHED'}
 

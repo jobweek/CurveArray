@@ -24,7 +24,7 @@ from ...Common_Functions.Functions import (
 )
 
 
-def toggle_cyclic_manager():
+def toggle_cyclic_manager(precision):
 
     curve = bpy.context.active_object
     curve_checker()
@@ -49,7 +49,7 @@ def toggle_cyclic_manager():
 
     else:
 
-        curve.data.twist_smooth = 100
+        curve.data.twist_smooth = precision
 
     # Дублируем кривую
     curve_duplicate = duplicate(curve)

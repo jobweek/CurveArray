@@ -7,7 +7,7 @@ class MAGICCURVE_PT_panel(bpy.types.Panel):
     bl_space_type = 'VIEW_3D' 
     bl_region_type = 'UI'
     bl_category = 'CrvArrPro' 
-    
+
     def draw(self, _):
 
         props = bpy.context.scene.magic_curve_properties
@@ -16,13 +16,21 @@ class MAGICCURVE_PT_panel(bpy.types.Panel):
                             
         row = layout.row()
         row.operator('magiccurve.create_split_curve', text="Split Curve")
+
         row = layout.row()
         row.operator('magiccurve.create_smooth_curve', text="Smooth Curve")
+
         row = layout.row()
-        row.operator('magiccurve.switch_twist_method', text="Switch Twist Method")
+        ops = row.operator('magiccurve.switch_twist_method', text="Switch Twist Method")
+        ops.precision = props.precision
+
         row = layout.row()
-        row.operator('magiccurve.switch_direction', text="Switch Сurve direction")
+        ops = row.operator('magiccurve.switch_direction', text="Switch Сurve direction")
+        ops.precision = props.precision
+
         row = layout.row()
-        row.operator('magiccurve.toggle_cyclic', text="Toggle Cyclic")
+        ops = row.operator('magiccurve.toggle_cyclic', text="Toggle Cyclic")
+        ops.precision = props.precision
+
         row = layout.row()
         row.prop(props, "precision", text="Precision")

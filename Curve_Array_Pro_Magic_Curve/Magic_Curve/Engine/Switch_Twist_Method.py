@@ -20,7 +20,7 @@ from ...Common_Functions.Functions import (
 )
 
 
-def switch_twist_method_manager():
+def switch_twist_method_manager(precision):
 
     curve = bpy.context.active_object
     curve_checker()
@@ -50,7 +50,7 @@ def switch_twist_method_manager():
     bpy.data.objects.remove(mesh_curve_duplicate, do_unlink=True)
 
     # Меняем метод скручивания
-    switched_curve = switch_curve_twist(curve)
+    switched_curve = switch_curve_twist(curve, precision)
 
     # Дублируем кривую
     switched_curve_duplicate = duplicate(switched_curve)

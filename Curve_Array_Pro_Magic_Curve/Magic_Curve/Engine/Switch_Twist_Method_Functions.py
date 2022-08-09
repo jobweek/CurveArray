@@ -3,11 +3,11 @@ import bmesh  # type: ignore
 import mathutils  # type: ignore
 
 
-def switch_curve_twist(curve):
+def switch_curve_twist(curve, precision):
 
     if curve.data.twist_mode == 'Z_UP':
 
-        curve.data.twist_smooth = 100
+        curve.data.twist_smooth = precision
         curve.data.twist_mode = 'MINIMUM'
 
     else:
