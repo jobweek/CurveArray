@@ -22,7 +22,7 @@ from ...Common_Functions.Functions import (
 )
 
 
-def recalculate_curve_manager():
+def switch_curve_direction_manager():
 
     curve = bpy.context.active_object
     curve_checker()

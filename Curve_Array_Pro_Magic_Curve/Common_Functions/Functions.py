@@ -421,7 +421,7 @@ def curve_data(curve):
     spline_type_arr = np.empty(spline_count, dtype=bool)
 
     # Координаты правого хэндла для нулевой точки и левого для последней
-    spline_start_end_handle_arr = np.empty(spline_count, dtype=bool)
+    spline_start_end_handle_arr = np.empty(spline_count, dtype=object)
 
     i = 0
     last_index = -2  # Индекс последней нулевой вершины меша относящегося к сплайну
@@ -437,6 +437,10 @@ def curve_data(curve):
 
             points = splines[i].bezier_points
             spline_type = False
+            spline_start_end_handle_arr[i] = [
+                copy.deepcopy(points[0].handle_right),
+                copy.deepcopy(points[-1].handle_left)
+            ]
 
         cyclic = splines[i].use_cyclic_u
         resolution = splines[i].resolution_u
@@ -446,7 +450,6 @@ def curve_data(curve):
             spline_verts_index(points, spline_type, cyclic, resolution, last_index)
         spline_cyclic_arr[i] = cyclic
         spline_type_arr[i] = spline_type
-        spline_start_end_handle_arr[i] = [points[0].handle_right, points[-1].handle_left]
 
         i += 1
 
@@ -842,7 +845,21 @@ def z_vec(mesh, curve_data):
 
             point_index = spline_verts_index_arr[list_iter][spline_point_iter]
 
-            z_arr[spline_point_iter] = calc_vec(verts[point_index].co, spline_start_end_handle_arr[list_iter][0], True)
+            if not spline_type_arr[list_iter]:
+
+                z_arr[spline_point_iter] = calc_vec(
+                    verts[point_index].co,
+                    spline_start_end_handle_arr[list_iter][0],
+                    True
+                )
+
+            else:
+
+                z_arr[spline_point_iter] = calc_vec(
+                    verts[point_index].co,
+                    verts[point_index + 2].co,
+                    True
+                )
 
             spline_point_iter = 1
 
@@ -865,7 +882,21 @@ def z_vec(mesh, curve_data):
 
             point_index = spline_verts_index_arr[list_iter][spline_point_iter]
 
-            z_arr[spline_point_iter] = calc_vec(verts[point_index].co, spline_start_end_handle_arr[list_iter][1], True)
+            if not spline_type_arr[list_iter]:
+
+                z_arr[spline_point_iter] = calc_vec(
+                    verts[point_index].co,
+                    spline_start_end_handle_arr[list_iter][1],
+                    True
+                )
+
+            else:
+
+                z_arr[spline_point_iter] = calc_vec(
+                    verts[point_index - 2].co,
+                    verts[point_index].co,
+                    True
+                )
 
         else:
 

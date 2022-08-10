@@ -1,7 +1,7 @@
 import bpy  # type: ignore
 from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, show_message_box
 from ..Engine.Switch_Direction import (
-    recalculate_curve_manager
+    switch_curve_direction_manager
 )
 import traceback
 
@@ -16,7 +16,7 @@ class MAGICCURVE_OT_switch_direction(bpy.types.Operator):
  
         try:
             
-            recalculate_curve_manager()
+            switch_curve_direction_manager()
         
             return {'FINISHED'}
         
