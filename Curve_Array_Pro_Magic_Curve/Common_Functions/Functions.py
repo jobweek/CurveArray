@@ -844,7 +844,7 @@ def z_vec(mesh, curve_data):
         if not cyclic_arr[list_iter]:
 
             point_index = spline_verts_index_arr[list_iter][spline_point_iter]
-            mid_point = midle_point_calc(verts[point_index].co, verts)
+            mid_point = midle_point_calc(point_index, verts)
 
             if not spline_type_arr[list_iter]:
 
@@ -856,7 +856,7 @@ def z_vec(mesh, curve_data):
 
             else:
 
-                next_mid_point = midle_point_calc(verts[point_index + 2].co, verts)
+                next_mid_point = midle_point_calc(point_index+2, verts)
 
                 z_arr[spline_point_iter] = calc_vec(
                     mid_point,
@@ -884,7 +884,7 @@ def z_vec(mesh, curve_data):
         if not cyclic_arr[list_iter]:
 
             point_index = spline_verts_index_arr[list_iter][spline_point_iter]
-            mid_point = midle_point_calc(verts[point_index].co, verts)
+            mid_point = midle_point_calc(point_index, verts)
 
             if not spline_type_arr[list_iter]:
 
@@ -896,7 +896,7 @@ def z_vec(mesh, curve_data):
 
             else:
 
-                prev_mid_point = midle_point_calc(verts[point_index + 2].co, verts)
+                prev_mid_point = midle_point_calc(point_index-2, verts)
 
                 z_arr[spline_point_iter] = calc_vec(
                     prev_mid_point,
