@@ -810,10 +810,10 @@ def midle_point_calc(p_0_ind, verts):
 
 def calc_z_vec(p_0_ind, prev_p_0_ind, next_p_0_ind, verts):
 
-    start_mdidle_point_co = midle_point_calc(prev_p_0_ind, verts)
+    prev_mdidle_point_co = midle_point_calc(prev_p_0_ind, verts)
     next_mdidle_point_co = midle_point_calc(next_p_0_ind, verts)
 
-    vec_h_1 = calc_vec(verts[p_0_ind].co, start_mdidle_point_co, True)
+    vec_h_1 = calc_vec(verts[p_0_ind].co, prev_mdidle_point_co, True)
     vec_h_2 = calc_vec(verts[p_0_ind].co, next_mdidle_point_co, True)
 
     z_vec = calc_vec(vec_h_1, vec_h_2, True)
@@ -844,20 +844,23 @@ def z_vec(mesh, curve_data):
         if not cyclic_arr[list_iter]:
 
             point_index = spline_verts_index_arr[list_iter][spline_point_iter]
+            mid_point = midle_point_calc(verts[point_index].co, verts)
 
             if not spline_type_arr[list_iter]:
 
                 z_arr[spline_point_iter] = calc_vec(
-                    verts[point_index].co,
+                    mid_point,
                     spline_start_end_handle_arr[list_iter][0],
                     True
                 )
 
             else:
 
+                next_mid_point = midle_point_calc(verts[point_index + 2].co, verts)
+
                 z_arr[spline_point_iter] = calc_vec(
-                    verts[point_index].co,
-                    verts[point_index + 2].co,
+                    mid_point,
+                    next_mid_point,
                     True
                 )
 
@@ -881,20 +884,23 @@ def z_vec(mesh, curve_data):
         if not cyclic_arr[list_iter]:
 
             point_index = spline_verts_index_arr[list_iter][spline_point_iter]
+            mid_point = midle_point_calc(verts[point_index].co, verts)
 
             if not spline_type_arr[list_iter]:
 
                 z_arr[spline_point_iter] = calc_vec(
-                    verts[point_index].co,
                     spline_start_end_handle_arr[list_iter][1],
+                    mid_point,
                     True
                 )
 
             else:
 
+                prev_mid_point = midle_point_calc(verts[point_index + 2].co, verts)
+
                 z_arr[spline_point_iter] = calc_vec(
-                    verts[point_index - 2].co,
-                    verts[point_index].co,
+                    prev_mid_point,
+                    mid_point,
                     True
                 )
 
