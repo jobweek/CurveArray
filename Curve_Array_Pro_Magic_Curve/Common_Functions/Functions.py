@@ -810,11 +810,12 @@ def midle_point_calc(p_0_ind, verts):
 
 def calc_z_vec(p_0_ind, prev_p_0_ind, next_p_0_ind, verts):
 
+    mdidle_point_co = midle_point_calc(p_0_ind, verts)
     prev_mdidle_point_co = midle_point_calc(prev_p_0_ind, verts)
     next_mdidle_point_co = midle_point_calc(next_p_0_ind, verts)
 
-    vec_h_1 = calc_vec(verts[p_0_ind].co, prev_mdidle_point_co, True)
-    vec_h_2 = calc_vec(verts[p_0_ind].co, next_mdidle_point_co, True)
+    vec_h_1 = calc_vec(mdidle_point_co, prev_mdidle_point_co, True)
+    vec_h_2 = calc_vec(mdidle_point_co, next_mdidle_point_co, True)
 
     z_vec = calc_vec(vec_h_1, vec_h_2, True)
 
