@@ -846,20 +846,15 @@ def z_vec(mesh, curve_data):
 
             spline_point_iter = 1
 
-        elif spline_type_arr[list_iter]:
-
-            point_index = spline_verts_index_arr[list_iter][spline_point_iter]
-            prev_point_index = spline_verts_index_arr[list_iter][-1]
-            next_point_index = point_index + 2
-
-            z_arr[spline_point_iter] = calc_z_vec(point_index, prev_point_index, next_point_index, verts)
-
-            spline_point_iter = 1
-
         while spline_point_iter < len(z_arr) - 1:
 
             point_index = spline_verts_index_arr[list_iter][spline_point_iter]
             prev_point_index = point_index - 2
+
+            if prev_point_index < 0:
+
+                prev_point_index = spline_verts_index_arr[list_iter][-1]
+
             next_point_index = point_index + 2
 
             z_arr[spline_point_iter] = calc_z_vec(point_index, prev_point_index, next_point_index, verts)
