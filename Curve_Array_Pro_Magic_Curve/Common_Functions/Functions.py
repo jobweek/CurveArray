@@ -659,32 +659,41 @@ def twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, curve):
         spline_iter += 1
 
 
-def angle_betw_vec(y_vec_arr, ext_vec_arr, spline_point_count):
+def tilt_correction_1(y_vec_arr, ext_vec_arr, z_vec_arr, curve):
 
-    angle_betw_vec_arr = create_arr(spline_point_count)
+    splines = curve.data.splines
+    spline_iter = 0
 
-    list_iter = 0
+    while spline_iter < len(ext_vec_arr):
 
-    while list_iter < len(ext_vec_arr):
+        if splines[spline_iter].type == 'POLY':
 
-        angle_arr = angle_betw_vec_arr[list_iter]
-        y_arr = y_vec_arr[list_iter]
-        ext_arr = ext_vec_arr[list_iter]
+            points = splines[spline_iter].points
 
-        spline_point_iter = 0
+        else:
 
-        while spline_point_iter < len(angle_arr):
+            points = splines[spline_iter].bezier_points
 
-            y_vec = y_arr[spline_point_iter]
-            ext_vec = ext_arr[spline_point_iter]
+        y_arr = y_vec_arr[spline_iter]
+        ext_arr = ext_vec_arr[spline_iter]
+        z_arr = z_vec_arr[spline_iter]
 
-            angle_arr[spline_point_iter] = ext_vec.angle(y_vec)
+        point_iter = 0
 
-            spline_point_iter += 1
+        while point_iter < len(y_arr):
 
-        list_iter += 1
+            y_vec = y_arr[point_iter]
+            ext_vec = ext_arr[point_iter]
+            z_vec = z_arr[point_iter]
 
-    return angle_betw_vec_arr
+            cross_vec = z_vec.cross(y_vec)
+            angle = angle_calc(ext_vec, y_vec, cross_vec)
+
+            points[point_iter].tilt += angle
+
+            point_iter += 1
+
+        spline_iter += 1
 
 
 def vec_equal(vec_1, vec_2):

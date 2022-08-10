@@ -82,7 +82,7 @@ def switch_curve_direction_manager():
     # Получаем массив z_vec
     z_vec_arr = z_vec(mesh_switched_curve_duplicate, switched_curve_duplicate_data)
     bpy.data.objects.remove(mesh_switched_curve_duplicate, do_unlink=True)
-    print(f'z_vec_arr: {z_vec_arr}')
+
     # Получаем угол между векторами
     angle_y_ext_arr = angle_betw_vec(y_vec_arr, ext_vec_arr, switched_curve_duplicate_data[0])
 
