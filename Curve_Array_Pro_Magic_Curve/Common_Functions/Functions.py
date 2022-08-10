@@ -415,10 +415,13 @@ def curve_data(curve):
     spline_verts_index_arr = np.empty(spline_count, dtype=object)
 
     # Cyclic == True; Not_Cyclic == False;
-    cyclic_arr = np.empty(spline_count, dtype=bool)
+    spline_cyclic_arr = np.empty(spline_count, dtype=bool)
 
     # Poly == True; Bezier == False;
     spline_type_arr = np.empty(spline_count, dtype=bool)
+
+    # Координаты правого хэндла для нулевой точки и левого для последней
+    spline_start_end_handle_arr = np.empty(spline_count, dtype=bool)
 
     i = 0
     last_index = -2  # Индекс последней нулевой вершины меша относящегося к сплайну
@@ -441,16 +444,18 @@ def curve_data(curve):
         spline_point_count_arr[i] = len(points)
         spline_verts_index_arr[i], last_index = \
             spline_verts_index(points, spline_type, cyclic, resolution, last_index)
-        cyclic_arr[i] = cyclic
+        spline_cyclic_arr[i] = cyclic
         spline_type_arr[i] = spline_type
+        spline_start_end_handle_arr[i] = [points[0].handle_right, points[-1].handle_left]
 
         i += 1
 
     return (
         spline_point_count_arr,
         spline_verts_index_arr,
-        cyclic_arr,
+        spline_cyclic_arr,
         spline_type_arr,
+        spline_start_end_handle_arr
     )
 
 
@@ -507,6 +512,7 @@ def ext_vec(mesh, curve_data):
         spline_verts_index_arr,
         cyclic_arr,
         spline_type_arr,
+        spline_start_end_handle_arr,
     ) = curve_data
 
     ext_vec_arr = create_arr(spline_point_count_arr)
@@ -528,7 +534,7 @@ def ext_vec(mesh, curve_data):
 
             ext_vec = calc_vec(first_point.co, second_point.co, True)
 
-            ext_vec_arr[list_iter][spline_point_iter] = ext_vec
+            ext_arr[spline_point_iter] = ext_vec
 
             spline_point_iter += 1
 
@@ -788,3 +794,92 @@ def angle_calc(ext_vec, y_vec, cross_vec):
             angle = math.radians(180) - (math.radians(180) - angle)
 
     return angle
+
+
+def midle_point_calc(p_0_ind, verts):
+
+    vec = calc_vec(verts[p_0_ind].co, verts[p_0_ind + 1].co, False)
+
+    midle_point_co = verts[p_0_ind].co + vec/2
+
+    return midle_point_co
+
+
+def calc_z_vec(p_0_ind, prev_p_0_ind, next_p_0_ind, verts):
+
+    start_mdidle_point_co = midle_point_calc(prev_p_0_ind, verts)
+    next_mdidle_point_co = midle_point_calc(next_p_0_ind, verts)
+
+    vec_h_1 = calc_vec(verts[p_0_ind].co, start_mdidle_point_co, True)
+    vec_h_2 = calc_vec(verts[p_0_ind].co, next_mdidle_point_co, True)
+
+    z_vec = calc_vec(vec_h_1, vec_h_2, True)
+
+    return z_vec
+
+
+def z_vec(mesh, curve_data):
+
+    (
+        spline_point_count_arr,
+        spline_verts_index_arr,
+        cyclic_arr,
+        spline_type_arr,
+        spline_start_end_handle_arr,
+    ) = curve_data
+
+    z_vec_arr = create_arr(spline_point_count_arr)
+    verts = mesh.data.vertices
+    list_iter = 0
+
+    while list_iter < len(z_vec_arr):
+
+        z_arr = z_vec_arr[list_iter]
+
+        spline_point_iter = 0  # Соответствует индексу поинтов одного сплайна
+
+        if not cyclic_arr[list_iter]:
+
+            point_index = spline_verts_index_arr[list_iter][spline_point_iter]
+
+            z_arr[spline_point_iter] = calc_vec(verts[point_index].co, spline_start_end_handle_arr[list_iter][0], True)
+
+            spline_point_iter = 1
+
+        elif spline_type_arr[list_iter]:
+
+            point_index = spline_verts_index_arr[list_iter][spline_point_iter]
+            prev_point_index = spline_verts_index_arr[list_iter][-1]
+            next_point_index = point_index + 2
+
+            z_arr[spline_point_iter] = calc_z_vec(point_index, prev_point_index, next_point_index, verts)
+
+            spline_point_iter = 1
+
+        while spline_point_iter < len(z_arr) - 1:
+
+            point_index = spline_verts_index_arr[list_iter][spline_point_iter]
+            prev_point_index = point_index - 2
+            next_point_index = point_index + 2
+
+            z_arr[spline_point_iter] = calc_z_vec(point_index, prev_point_index, next_point_index, verts)
+
+            spline_point_iter += 1
+
+        if not cyclic_arr[list_iter]:
+
+            point_index = spline_verts_index_arr[list_iter][spline_point_iter]
+
+            z_arr[spline_point_iter] = calc_vec(verts[point_index].co, spline_start_end_handle_arr[list_iter][1], True)
+
+        else:
+
+            point_index = spline_verts_index_arr[list_iter][spline_point_iter]
+            prev_point_index = point_index - 2
+            next_point_index = spline_verts_index_arr[list_iter][0]
+
+            z_arr[spline_point_iter] = calc_z_vec(point_index, prev_point_index, next_point_index, verts)
+
+        list_iter += 1
+
+    return z_vec_arr
