@@ -659,7 +659,7 @@ def twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, curve):
         spline_iter += 1
 
 
-def tilt_correction_1(y_vec_arr, ext_vec_arr, z_vec_arr, curve):
+def tilt_correction(y_vec_arr, ext_vec_arr, z_vec_arr, curve):
 
     splines = curve.data.splines
     spline_iter = 0
@@ -689,7 +689,21 @@ def tilt_correction_1(y_vec_arr, ext_vec_arr, z_vec_arr, curve):
             cross_vec = z_vec.cross(y_vec)
             angle = angle_calc(ext_vec, y_vec, cross_vec)
 
-            points[point_iter].tilt += angle
+            new_angle = points[point_iter].tilt + angle
+
+            if new_angle > 376.992:
+
+                show_message_box(
+                    "Error",
+                    (
+                        'The tilt of point {0} on spline {1} has exceeded the Blender'
+                        'tolerance of -21600/21600 degrees, the result of the operation will not be correct.'
+                        'Reduce the point tilt on the curve and repeat the operation.'
+                    ).format(point_iter, spline_iter),
+                    'ERROR'
+                )
+
+            points[point_iter].tilt = new_angle
 
             point_iter += 1
 
