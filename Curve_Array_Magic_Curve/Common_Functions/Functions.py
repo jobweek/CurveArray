@@ -518,6 +518,7 @@ def point_direction_vec(mesh, curve_data):
     (
         spline_point_count_arr,
         spline_verts_index_arr,
+        spline_verts_range_arr,
         cyclic_arr,
         spline_type_arr,
         spline_start_end_handle_arr,
@@ -844,7 +845,6 @@ def z_vec(mesh, curve_data):
 
                 next_point_index = 0
 
-            print(f'point: {point_iter}point_index: {point_index}')
             z_arr[point_iter] = calc_z_vec(point_index, prev_point_index, next_point_index, verts)
 
             point_iter += 1
