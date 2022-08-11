@@ -3,7 +3,7 @@ import random
 import math
 import mathutils
 
-from Curve_Array_Pro_Magic_Curve.props.curve_array_props import (
+from Curve_Array_Magic_Curve.props.curve_array_props import (
 Edit_Stor_Draw_Count,
 Ran_Gr_LinkToObj,
 Ran_Gr_Count,

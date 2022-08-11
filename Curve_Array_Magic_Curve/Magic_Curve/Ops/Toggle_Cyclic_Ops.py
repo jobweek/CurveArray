@@ -1,22 +1,22 @@
 import bpy  # type: ignore
-from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, show_message_box
-from ..Engine.Split_Curve import (
-    split_curve_manager,
+from Curve_Array_Magic_Curve.Errors.Errors import CancelError, show_message_box
+from ..Engine.Toggle_Cyclic import (
+    toggle_cyclic_manager
 )
 import traceback
 
 
-class MAGICCURVE_OT_create_split_curve(bpy.types.Operator):
-    """Create curve from loop"""
-    bl_label = "Curve from loop"
-    bl_idname = 'magiccurve.create_split_curve'
+class MAGICCURVE_OT_toggle_cyclic(bpy.types.Operator):
+    """Switch curve direction and recalculate to right tilt"""
+    bl_label = "Toggle Curve Cyclic"
+    bl_idname = 'magiccurve.toggle_cyclic'
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, _):
 
         try:
 
-            split_curve_manager()
+            toggle_cyclic_manager()
 
             return {'FINISHED'}
 

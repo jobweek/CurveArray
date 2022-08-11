@@ -1,9 +1,10 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
-from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, show_message_box
-from .Switch_Direction_Functions import (
-    switch_curve_direction,
-    arr_flip_direction,
+from Curve_Array_Magic_Curve.Errors.Errors import CancelError, show_message_box
+from .Toggle_Cyclic_Functions import (
+    end_start_point_type_correction_cyclic,
+    toggle_curve_cyclic,
+    tilt_correction_cyclic,
 )
 from ...Common_Functions.Functions import (
     duplicate,
@@ -14,24 +15,26 @@ from ...Common_Functions.Functions import (
     curve_data,
     tilt_twist_calc,
     point_direction_vec,
-    tilt_correction,
+    z_vec,
     twist_correction,
     object_select,
-    z_vec,
 )
 
 
-def switch_curve_direction_manager():
+def toggle_cyclic_manager():
 
     curve = bpy.context.active_object
     curve_checker()
     merged_points_check(curve)
     points_select(curve)
 
-    if curve.data.twist_mode == 'Z_UP' and curve.data.twist_smooth == 0:
+    # Корректируем тип ручек начлаьной и конченой вершины
+    end_start_point_type_correction_cyclic(curve)
 
-        switched_curve = switch_curve_direction(curve)
-        object_select(switched_curve)
+    if curve.data.twist_mode == 'Z_UP':
+
+        toggled_curve = toggle_curve_cyclic(curve)
+        object_select(toggled_curve)
 
         return
 
@@ -50,9 +53,6 @@ def switch_curve_direction_manager():
     # Полуичм разницу наклонов точек прямой
     tilt_twist_y_arr = tilt_twist_calc(curve_duplicate)
 
-    # Переворачивем массив tilt_twist_arr
-    tilt_twist_y_arr = arr_flip_direction(tilt_twist_y_arr)
-
     # Конвертируем в меш
     mesh_curve_duplicate = convert_to_mesh(curve_duplicate)
 
@@ -60,36 +60,33 @@ def switch_curve_direction_manager():
     y_vec_arr = point_direction_vec(mesh_curve_duplicate, curve_duplicate_data)
     bpy.data.objects.remove(mesh_curve_duplicate, do_unlink=True)
 
-    # Переворачивем массив y_vec
-    y_vec_arr = arr_flip_direction(y_vec_arr)
-
-    # Меняем направление
-    switched_curve = switch_curve_direction(curve)
+    # Меняем замкнутость
+    toggled_curve = toggle_curve_cyclic(curve)
 
     # Дублируем кривую
-    switched_curve_duplicate = duplicate(switched_curve)
+    toggled_curve_duplicate = duplicate(toggled_curve)
 
     # Получим информацию о кривой
-    switched_curve_duplicate_data = curve_data(switched_curve_duplicate)
+    toggled_curve_duplicate_data = curve_data(toggled_curve_duplicate)
 
     # Конвертируем в меш
-    mesh_switched_curve_duplicate = convert_to_mesh(switched_curve_duplicate)
+    mesh_toggled_curve_duplicate = convert_to_mesh(toggled_curve_duplicate)
 
     # Получаем массив ext_vec
-    ext_vec_arr = point_direction_vec(mesh_switched_curve_duplicate, switched_curve_duplicate_data)
+    ext_vec_arr = point_direction_vec(mesh_toggled_curve_duplicate, toggled_curve_duplicate_data)
 
     # Получаем массив z_vec
-    z_vec_arr = z_vec(mesh_switched_curve_duplicate, switched_curve_duplicate_data)
-    bpy.data.objects.remove(mesh_switched_curve_duplicate, do_unlink=True)
+    z_vec_arr = z_vec(mesh_toggled_curve_duplicate, toggled_curve_duplicate_data)
+    bpy.data.objects.remove(mesh_toggled_curve_duplicate, do_unlink=True)
 
     # Корректируем тильт
-    tilt_correction(y_vec_arr, ext_vec_arr, z_vec_arr, switched_curve)
+    tilt_correction_cyclic(y_vec_arr, ext_vec_arr, z_vec_arr, toggled_curve)
 
     # Получаем твист точек
-    tilt_twist_ext_arr = tilt_twist_calc(switched_curve)
+    tilt_twist_ext_arr = tilt_twist_calc(toggled_curve)
 
     # Корректируем твист
-    twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, switched_curve)
+    twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, toggled_curve)
 
     # Выделяем объект
-    object_select(switched_curve)
+    object_select(toggled_curve)

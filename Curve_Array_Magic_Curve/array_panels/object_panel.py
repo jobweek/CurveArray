@@ -1,6 +1,6 @@
 import bpy
 
-from Curve_Array_Pro_Magic_Curve.props.curve_array_props import (
+from Curve_Array_Magic_Curve.props.curve_array_props import (
 Obj_Stor_Draw_Count,
 Obj_Stor_Draw_ObjName
 )

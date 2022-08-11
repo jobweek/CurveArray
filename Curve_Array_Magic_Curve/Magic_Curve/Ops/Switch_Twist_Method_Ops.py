@@ -1,22 +1,22 @@
 import bpy  # type: ignore
-from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, show_message_box
-from ..Engine.Smooth_Curve import (
-    smooth_curve_manager,
+from Curve_Array_Magic_Curve.Errors.Errors import CancelError, show_message_box
+from ..Engine.Switch_Twist_Method import (
+    switch_twist_method_manager
 )
 import traceback
 
 
-class MAGICCURVE_OT_create_smooth_curve(bpy.types.Operator):
-    """Create curve from loop"""
-    bl_label = "Curve from loop"
-    bl_idname = 'magiccurve.create_smooth_curve'
+class MAGICCURVE_OT_switch_twist_method(bpy.types.Operator):
+    """Switch curve direction and recalculate to right tilt"""
+    bl_label = "Toggle Curve Cyclic"
+    bl_idname = 'magiccurve.switch_twist_method'
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, _):
 
         try:
 
-            smooth_curve_manager()
+            switch_twist_method_manager()
 
             return {'FINISHED'}
 

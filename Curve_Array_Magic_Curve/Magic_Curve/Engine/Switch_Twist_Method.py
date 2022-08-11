@@ -1,6 +1,6 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
-from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, show_message_box
+from Curve_Array_Magic_Curve.Errors.Errors import CancelError, show_message_box
 from .Switch_Twist_Method_Functions import (
     switch_curve_twist,
 )
