@@ -4,6 +4,7 @@ from Curve_Array_Pro_Magic_Curve.Errors.Errors import CancelError, show_message_
 from .Toggle_Cyclic_Functions import (
     end_start_point_type_correction_cyclic,
     toggle_curve_cyclic,
+    tilt_correction_cyclic,
 )
 from ...Common_Functions.Functions import (
     duplicate,
@@ -13,9 +14,8 @@ from ...Common_Functions.Functions import (
     points_select,
     curve_data,
     tilt_twist_calc,
-    ext_vec,
+    point_direction_vec,
     z_vec,
-    tilt_correction,
     twist_correction,
     object_select,
 )
@@ -57,7 +57,7 @@ def toggle_cyclic_manager():
     mesh_curve_duplicate = convert_to_mesh(curve_duplicate)
 
     # Получаем массив y_vec
-    y_vec_arr = ext_vec(mesh_curve_duplicate, curve_duplicate_data)
+    y_vec_arr = point_direction_vec(mesh_curve_duplicate, curve_duplicate_data)
     bpy.data.objects.remove(mesh_curve_duplicate, do_unlink=True)
 
     # Меняем замкнутость
@@ -73,14 +73,14 @@ def toggle_cyclic_manager():
     mesh_toggled_curve_duplicate = convert_to_mesh(toggled_curve_duplicate)
 
     # Получаем массив ext_vec
-    ext_vec_arr = ext_vec(mesh_toggled_curve_duplicate, toggled_curve_duplicate_data)
+    ext_vec_arr = point_direction_vec(mesh_toggled_curve_duplicate, toggled_curve_duplicate_data)
 
     # Получаем массив z_vec
     z_vec_arr = z_vec(mesh_toggled_curve_duplicate, toggled_curve_duplicate_data)
     bpy.data.objects.remove(mesh_toggled_curve_duplicate, do_unlink=True)
 
     # Корректируем тильт
-    tilt_correction(y_vec_arr, ext_vec_arr, z_vec_arr, toggled_curve)
+    tilt_correction_cyclic(y_vec_arr, ext_vec_arr, z_vec_arr, toggled_curve)
 
     # Получаем твист точек
     tilt_twist_ext_arr = tilt_twist_calc(toggled_curve)

@@ -11,7 +11,7 @@ from ...Common_Functions.Functions import (
     merged_points_check, points_select,
     curve_data,
     tilt_twist_calc,
-    ext_vec,
+    point_direction_vec,
     tilt_correction,
     twist_correction,
     z_vec,
@@ -45,7 +45,7 @@ def switch_twist_method_manager():
     mesh_curve_duplicate = convert_to_mesh(curve_duplicate)
 
     # Получаем массив y_vec
-    y_vec_arr = ext_vec(mesh_curve_duplicate, curve_duplicate_data)
+    y_vec_arr = point_direction_vec(mesh_curve_duplicate, curve_duplicate_data)
     bpy.data.objects.remove(mesh_curve_duplicate, do_unlink=True)
 
     # Меняем метод скручивания
@@ -58,7 +58,7 @@ def switch_twist_method_manager():
     mesh_switched_curve_duplicate = convert_to_mesh(switched_curve_duplicate)
 
     # Получаем массив ext_vec
-    ext_vec_arr = ext_vec(mesh_switched_curve_duplicate, curve_duplicate_data)
+    ext_vec_arr = point_direction_vec(mesh_switched_curve_duplicate, curve_duplicate_data)
 
     # Получаем массив z_vec
     z_vec_arr = z_vec(mesh_switched_curve_duplicate, curve_duplicate_data)

@@ -508,7 +508,7 @@ def tilt_twist_calc(curve):
     return tilt_twist_arr
 
 
-def ext_vec(mesh, curve_data):
+def point_direction_vec(mesh, curve_data):
 
     (
         spline_point_count_arr,
@@ -606,16 +606,6 @@ def tilt_correction(y_vec_arr, ext_vec_arr, z_vec_arr, curve):
             y_vec = y_arr[point_iter]
             ext_vec = ext_arr[point_iter]
             z_vec = z_arr[point_iter]
-
-            if point_iter == 0 or point_iter == len(y_arr) - 1:
-
-                y_vec = vec_projection(y_arr[point_iter], z_vec)
-
-                if y_vec is None:
-
-                    point_iter += 1
-
-                    continue
 
             cross_vec = z_vec.cross(y_vec)
             angle = angle_calc(ext_vec, y_vec, cross_vec)
@@ -721,17 +711,21 @@ def create_arr(points_count_list):
 
 def vec_projection(vec, z_vec):
 
-    if vec.dot(z_vec) == 1:
+    dot = vec.dot(z_vec)
+
+    if dot > 0.9999 or dot < -0.9999:
 
         return None
 
-    elif vec.dot(z_vec) == 0:
+    elif 0.0001 < dot > -0.0001:
 
-        return vec.normalized()
+        return vec
 
-    res = (vec - vec.project(z_vec)).normalized()
+    else:
 
-    return res
+        res = (vec - vec.project(z_vec)).normalized()
+
+        return res
 
 
 def angle_calc(ext_vec, y_vec, cross_vec):
