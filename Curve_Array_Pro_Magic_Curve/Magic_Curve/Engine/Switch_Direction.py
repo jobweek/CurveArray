@@ -11,7 +11,8 @@ from ...Common_Functions.Functions import (
     curve_checker,
     merged_points_check,
     points_select,
-    curve_data, tilt_twist_calc,
+    curve_data,
+    tilt_twist_calc,
     ext_vec,
     tilt_correction,
     twist_correction,
@@ -82,8 +83,9 @@ def switch_curve_direction_manager():
     bpy.data.objects.remove(mesh_switched_curve_duplicate, do_unlink=True)
 
     # Корректируем тильт
-    tilt_correction(y_vec_arr, ext_vec_arr, z_vec_arr, curve)
+    tilt_correction(y_vec_arr, ext_vec_arr, z_vec_arr, switched_curve)
 
+    # Получаем твист точек
     tilt_twist_ext_arr = tilt_twist_calc(switched_curve)
 
     # Корректируем твист

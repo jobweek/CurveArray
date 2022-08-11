@@ -546,30 +546,6 @@ def ext_vec(mesh, curve_data):
     return ext_vec_arr
 
 
-def angle_correction(angle_y_ext_arr, angle_y_test_arr):
-
-    list_iter = 0
-
-    while list_iter < len(angle_y_ext_arr):
-
-        y_ext_arr = angle_y_ext_arr[list_iter]
-        y_test_arr = angle_y_test_arr[list_iter]
-
-        i = 0
-
-        while i < len(y_ext_arr):
-
-            if y_ext_arr[i] < y_test_arr[i]:
-
-                y_ext_arr[i] = -y_ext_arr[i]
-
-            i += 1
-
-        list_iter += 1
-
-    return angle_y_ext_arr
-
-
 def twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, curve):
 
     splines = curve.data.splines

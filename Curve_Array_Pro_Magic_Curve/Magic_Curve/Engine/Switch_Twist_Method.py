@@ -12,10 +12,9 @@ from ...Common_Functions.Functions import (
     curve_data,
     tilt_twist_calc,
     ext_vec,
-    angle_correction,
     tilt_correction,
     twist_correction,
-    angle_betw_vec,
+    z_vec,
     object_select,
 )
 
@@ -60,34 +59,15 @@ def switch_twist_method_manager():
 
     # Получаем массив ext_vec
     ext_vec_arr = ext_vec(mesh_switched_curve_duplicate, curve_duplicate_data)
+
+    # Получаем массив z_vec
+    z_vec_arr = z_vec(mesh_switched_curve_duplicate, curve_duplicate_data)
     bpy.data.objects.remove(mesh_switched_curve_duplicate, do_unlink=True)
 
-    # Получаем угол между векторами
-    angle_y_ext_arr = angle_betw_vec(y_vec_arr, ext_vec_arr, curve_duplicate_data[0])
-
-    # Дублируем кривую
-    test_curve = duplicate(switched_curve)
-
-    # Тестово поворачиваем точки на половину угла
-    tilt_correction(angle_y_ext_arr, test_curve, True)
-
-    # Конвертируем в меш
-    mesh_test_curve = convert_to_mesh(test_curve)
-
-    # Получаем массив test_vec
-    test_vec_arr = ext_vec(mesh_test_curve, curve_duplicate_data)
-    bpy.data.objects.remove(mesh_test_curve, do_unlink=True)
-
-    # Получаем угол между векторами после поворота
-    angle_y_test_arr = angle_betw_vec(y_vec_arr, test_vec_arr, curve_duplicate_data[0])
-
-    # Корректируем углы
-    angle_y_ext_arr = angle_correction(angle_y_ext_arr, angle_y_test_arr)
-
     # Корректируем тильт
-    tilt_correction(angle_y_ext_arr, switched_curve, False)
+    tilt_correction(y_vec_arr, ext_vec_arr, z_vec_arr, switched_curve)
 
-    # Корректируем направление вращения
+    # Получаем твист точек
     tilt_twist_ext_arr = tilt_twist_calc(switched_curve)
 
     # Корректируем твист
