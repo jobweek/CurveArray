@@ -3,7 +3,7 @@ import bmesh  # type: ignore
 import mathutils  # type: ignore
 import numpy as np
 
-from Curve_Array_Magic_Curve.Common_Functions.Functions import (
+from ...Common_Functions.Functions import (
     vec_projection,
     angle_calc,
     calc_vec,

@@ -1,6 +1,6 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
-from Curve_Array_Magic_Curve.Errors.Errors import CancelError, show_message_box
+from ...Errors.Errors import CancelError, show_message_box
 from .Toggle_Cyclic_Functions import (
     end_start_point_type_correction_cyclic,
     toggle_curve_cyclic,

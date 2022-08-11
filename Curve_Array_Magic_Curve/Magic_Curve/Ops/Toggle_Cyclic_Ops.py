@@ -1,5 +1,5 @@
 import bpy  # type: ignore
-from Curve_Array_Magic_Curve.Errors.Errors import CancelError, show_message_box
+from ...Errors.Errors import CancelError, show_message_box
 from ..Engine.Toggle_Cyclic import (
     toggle_cyclic_manager
 )

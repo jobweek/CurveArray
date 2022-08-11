@@ -1,5 +1,5 @@
 import bpy  # type: ignore
-from Curve_Array_Magic_Curve.Errors.Errors import CancelError, show_message_box
+from ...Errors.Errors import CancelError, show_message_box
 from ..Engine.Switch_Direction import (
     switch_curve_direction_manager
 )
