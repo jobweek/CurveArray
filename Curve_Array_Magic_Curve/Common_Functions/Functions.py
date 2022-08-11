@@ -414,9 +414,6 @@ def curve_data(curve):
     # Массив индексов вершин меша соответствующих точкам сплайна
     spline_verts_index_arr = np.empty(spline_count, dtype=object)
 
-    # Массив индексов вершин меша соответствующих точкам сплайна
-    spline_verts_range_arr = np.empty(spline_count, dtype=object)
-
     # Cyclic == True; Not_Cyclic == False;
     spline_cyclic_arr = np.empty(spline_count, dtype=bool)
 
@@ -451,7 +448,6 @@ def curve_data(curve):
         spline_point_count_arr[i] = len(points)
         spline_verts_index_arr[i], last_index = \
             spline_verts_index(points, spline_type, cyclic, resolution, last_index)
-        spline_verts_range_arr[i] = np.amax(spline_verts_index_arr[i])
         spline_cyclic_arr[i] = cyclic
         spline_type_arr[i] = spline_type
 
@@ -460,7 +456,6 @@ def curve_data(curve):
     return (
         spline_point_count_arr,
         spline_verts_index_arr,
-        spline_verts_range_arr,
         spline_cyclic_arr,
         spline_type_arr,
         spline_start_end_handle_arr
@@ -518,7 +513,6 @@ def point_direction_vec(mesh, curve_data):
     (
         spline_point_count_arr,
         spline_verts_index_arr,
-        spline_verts_range_arr,
         cyclic_arr,
         spline_type_arr,
         spline_start_end_handle_arr,
@@ -789,7 +783,6 @@ def z_vec(mesh, curve_data):
     (
         spline_point_count_arr,
         spline_verts_index_arr,
-        spline_verts_range_arr,
         cyclic_arr,
         spline_type_arr,
         spline_start_end_handle_arr,
@@ -802,7 +795,8 @@ def z_vec(mesh, curve_data):
     while spline_iter < len(z_vec_arr):
 
         z_arr = z_vec_arr[spline_iter]
-        max_index = spline_verts_range_arr[spline_iter]
+        max_index = np.amax(spline_verts_index_arr[spline_iter])
+        min_index = np.amin(spline_verts_index_arr[spline_iter])
 
         point_iter = 0  # Соответствует индексу поинтов одного сплайна
 
@@ -836,14 +830,12 @@ def z_vec(mesh, curve_data):
             point_index = spline_verts_index_arr[spline_iter][point_iter]
 
             prev_point_index = point_index - 2
-            if prev_point_index < 0:
-
+            if prev_point_index < min_index:
                 prev_point_index = max_index
 
             next_point_index = point_index + 2
             if next_point_index > max_index:
-
-                next_point_index = 0
+                next_point_index = min_index
 
             z_arr[point_iter] = calc_z_vec(point_index, prev_point_index, next_point_index, verts)
 
@@ -877,14 +869,12 @@ def z_vec(mesh, curve_data):
             point_index = spline_verts_index_arr[spline_iter][point_iter]
 
             prev_point_index = point_index - 2
-            if prev_point_index < 0:
-
+            if prev_point_index < min_index:
                 prev_point_index = max_index
 
             next_point_index = point_index + 2
             if next_point_index > max_index:
-
-                next_point_index = 0
+                next_point_index = min_index
 
             z_arr[point_iter] = calc_z_vec(point_index, prev_point_index, next_point_index, verts)
 
