@@ -611,6 +611,12 @@ def tilt_correction(y_vec_arr, ext_vec_arr, z_vec_arr, curve):
 
                 y_vec = vec_projection(y_arr[point_iter], z_vec)
 
+                if y_vec is None:
+
+                    point_iter += 1
+
+                    continue
+
             cross_vec = z_vec.cross(y_vec)
             angle = angle_calc(ext_vec, y_vec, cross_vec)
 
@@ -715,9 +721,17 @@ def create_arr(points_count_list):
 
 def vec_projection(vec, z_vec):
 
-    projection = (vec - vec.project(z_vec)).normalized()
+    if vec.dot(z_vec) == 1:
 
-    return projection
+        return None
+
+    elif vec.dot(z_vec) == 0:
+
+        return vec.normalized()
+
+    res = (vec - vec.project(z_vec)).normalized()
+
+    return res
 
 
 def angle_calc(ext_vec, y_vec, cross_vec):
