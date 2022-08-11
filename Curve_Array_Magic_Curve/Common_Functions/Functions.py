@@ -717,7 +717,7 @@ def vec_projection(vec, z_vec):
 
         return None
 
-    elif 0.0001 < dot > -0.0001:
+    elif 0.0001 > dot < -0.0001:
 
         return vec
 
