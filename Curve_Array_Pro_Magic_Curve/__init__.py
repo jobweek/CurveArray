@@ -52,9 +52,6 @@ from .props.curve_array_props import (
 from .Curve_Array.Ops.Curve_Array_By_Offset_Ops import (
     CURVEARRAY_OT_create_array_by_offset
 )
-from .Magic_Curve.Properties.Magic_Curve_Props import (
-    Magic_Curve_Props
-)
 from .Magic_Curve.Ops.Smooth_Curve_Ops import (
     MAGICCURVE_OT_create_smooth_curve
 )
@@ -99,7 +96,6 @@ classes = (
     CRVARRPRO_OT_Delete_Last_Array,
     CRVARRPRO_OT_Reset_Settings,
     CRVARRPRO_OT_Flip_Curve,
-    Magic_Curve_Props,
     MAGICCURVE_OT_create_split_curve,
     MAGICCURVE_OT_create_smooth_curve,
     MAGICCURVE_OT_switch_twist_method,
@@ -137,10 +133,6 @@ def register():
     bpy.types.Scene.curve_array_properties = bpy.props.PointerProperty(
         type=Main_Props,
         name='Curve Array Properties'
-    )
-    bpy.types.Scene.magic_curve_properties = bpy.props.PointerProperty(
-        type=Magic_Curve_Props,
-        name='Magic Curve Properties'
     )
 
 
