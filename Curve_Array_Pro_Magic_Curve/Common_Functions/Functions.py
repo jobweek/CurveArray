@@ -570,61 +570,6 @@ def angle_correction(angle_y_ext_arr, angle_y_test_arr):
     return angle_y_ext_arr
 
 
-def tilt_correction(angle_betw_vec_arr, curve, test: bool):
-
-    iterator = 0
-
-    while iterator < len(curve.data.splines):
-
-        s = curve.data.splines[iterator]
-
-        if s.type == 'POLY':
-
-            points = s.points
-
-        else:
-
-            points = s.bezier_points
-
-        i = 0
-
-        while i < len(points):
-
-            angle = angle_betw_vec_arr[iterator][i]
-
-            if test:
-
-                if angle > math.pi/2:
-
-                    angle = (math.pi - angle) * 0.5
-
-                else:
-
-                    angle = angle * 0.5
-
-            new_angle = points[i].tilt + angle
-
-            if new_angle > 376.992:
-
-                show_message_box(
-                    "Error",
-                    (
-                        'The tilt of point {0} on spline {1} has exceeded the Blender'
-                        'tolerance of -21600/21600 degrees, the result of the operation will not be correct.'
-                        'Reduce the point tilt on the curve and repeat the operation.'
-                    ).format(i, iterator),
-                    'ERROR'
-                )
-
-                raise CancelError
-
-            points[i].tilt = new_angle
-
-            i += 1
-
-        iterator += 1
-
-
 def twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, curve):
 
     splines = curve.data.splines
@@ -686,6 +631,10 @@ def tilt_correction(y_vec_arr, ext_vec_arr, z_vec_arr, curve):
             ext_vec = ext_arr[point_iter]
             z_vec = z_arr[point_iter]
 
+            if point_iter == 0 or point_iter == len(y_arr) - 1:
+
+                y_vec = vec_projection(y_arr[point_iter], z_vec)
+
             cross_vec = z_vec.cross(y_vec)
             angle = angle_calc(ext_vec, y_vec, cross_vec)
 
@@ -697,7 +646,7 @@ def tilt_correction(y_vec_arr, ext_vec_arr, z_vec_arr, curve):
                     "Error",
                     (
                         'The tilt of point {0} on spline {1} has exceeded the Blender'
-                        'tolerance of -21600/21600 degrees, the result of the operation will not be correct.'
+                        'tolerance of -21600|+21600 degrees, the result of the operation will not be correct.'
                         'Reduce the point tilt on the curve and repeat the operation.'
                     ).format(point_iter, spline_iter),
                     'ERROR'
