@@ -548,14 +548,14 @@ def point_direction_vec(mesh, curve_data):
 
 def twist_levelling(points_tilt_arr):
 
-    min_tilt = np.amin(points_tilt_arr)
-    max_tilt = np.amax(points_tilt_arr)
+    min_tilt = int(np.amin(points_tilt_arr)/(math.pi * 2))
+    max_tilt = int(np.amax(points_tilt_arr)/(math.pi * 2))
 
-    tilt_range_diff = (max_tilt - min_tilt)/math.pi * 2
+    tilt_range_diff = (max_tilt - min_tilt)
 
     if tilt_range_diff > 1:
 
-        min_range = -int(tilt_range_diff/2)
+        min_range = -tilt_range_diff//2
 
         global_tilt_diff = min_range - min_tilt
 
@@ -563,7 +563,7 @@ def twist_levelling(points_tilt_arr):
 
         while i < len(points_tilt_arr):
 
-            points_tilt_arr[i] -= global_tilt_diff * math.pi * 2
+            points_tilt_arr[i] += global_tilt_diff * math.pi * 2
 
             i += 1
 
