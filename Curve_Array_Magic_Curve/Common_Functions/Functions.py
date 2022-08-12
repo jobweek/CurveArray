@@ -546,6 +546,30 @@ def point_direction_vec(mesh, curve_data):
     return ext_vec_arr
 
 
+def twist_levelling(points_tilt_arr):
+
+    min_tilt = np.amin(points_tilt_arr)
+    max_tilt = np.amax(points_tilt_arr)
+
+    tilt_range_diff = (max_tilt - min_tilt)/math.pi * 2
+
+    if tilt_range_diff > 1:
+
+        min_range = -int(tilt_range_diff/2)
+
+        global_tilt_diff = min_range - min_tilt
+
+        i = 0
+
+        while i < len(points_tilt_arr):
+
+            points_tilt_arr[i] -= global_tilt_diff * math.pi * 2
+
+            i += 1
+
+    return points_tilt_arr
+
+
 def twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, curve):
 
     splines = curve.data.splines
@@ -563,6 +587,9 @@ def twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, curve):
 
         i = 0
 
+        points_tilt_arr = np.empty(len(points), dtype=float)
+        points_tilt_arr[0] = points[0].tilt
+
         while i < len(tilt_twist_y_arr[spline_iter]):
 
             diff = tilt_twist_y_arr[spline_iter][i] - tilt_twist_ext_arr[spline_iter][i]
@@ -573,7 +600,17 @@ def twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, curve):
 
                 tilt_twist_y_arr[spline_iter][i+1] += diff
 
-            points[i+1].tilt += rad_diff
+            points_tilt_arr[i+1] = points[i+1].tilt + rad_diff
+
+            i += 1
+
+        points_tilt_arr = twist_levelling(points_tilt_arr)
+
+        i = 0
+
+        while i < len(points):
+
+            points[i].tilt = points_tilt_arr[i]
 
             i += 1
 
