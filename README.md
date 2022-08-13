@@ -8,7 +8,7 @@ In Blender, there is only one way to create a curve from the mesh edges. This is
 
   1. Let's create a primitive plane and unfold it randomly in space.
   ![Plane](/documentation_resources/1.png)
-  2. We then have to separate the selected edges and create a separate object from them.
+  2. We then have to detach the selected edges and create a separate object from them.
   ![Edges](/documentation_resources/2.png) 
   3. Only now will we be able to call the 'Convert' operator. Let's have a look at the result:
   ![Curve](/documentation_resources/3.png) 
@@ -16,3 +16,11 @@ In Blender, there is only one way to create a curve from the mesh edges. This is
   4. Yes, we got the curve geometry right. But note the tilt of its points. It clearly doesn't match the normals of the mesh vertices. Using built-in blender method 'Convert' we can't create a curve with each of its points directed to corresponding normals of mesh vertices. But you can  do it with curve creation functions of the Magic Curve module !
   ![Smooth Curve](/documentation_resources/5.png) 
   ![Smooth Curve vs Convert](/documentation_resources/6.png) 
+
+To create a curve with the Smooth Curve or Split Curve operators, you need to do two things:
+
+  Select a sequence of vertices and.
+  Сlick the operator call button with the corresponding name.
+
+
+### Smooth Curve operator
