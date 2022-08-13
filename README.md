@@ -48,7 +48,7 @@ There are a number of conditions which, if not met, will result in known error:
 
         > Go to Edit Mode.    
 
-4. 
+4. The sequence must contain more than one vertex, thereby creating at least one selected edge.
 
     ![Smooth Curve vs Convert](/documentation_resources/7.png)
     
