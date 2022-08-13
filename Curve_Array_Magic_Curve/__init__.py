@@ -68,7 +68,13 @@ from .Magic_Curve.Ops.Toggle_Cyclic_Ops import (
     MAGICCURVE_OT_toggle_cyclic
 )
 from .Magic_Curve.Panels.Main_Panel import (
-    MAGICCURVE_PT_panel
+    MAGICCURVE_PT_main_panel
+)
+from .Magic_Curve.Panels.Create_Curve_Panel import (
+    MAGICCURVE_PT_create_curve_panel
+)
+from .Magic_Curve.Panels.Curve_Operators_Panel import (
+    MAGICCURVE_PT_curve_methods_panel
 )
 
 classes = (
@@ -101,7 +107,9 @@ classes = (
     MAGICCURVE_OT_switch_twist_method,
     MAGICCURVE_OT_switch_direction,
     MAGICCURVE_OT_toggle_cyclic,
-    MAGICCURVE_PT_panel,
+    MAGICCURVE_PT_main_panel,
+    MAGICCURVE_PT_create_curve_panel,
+    MAGICCURVE_PT_curve_methods_panel,
 )
 
 bl_info = {
@@ -151,7 +159,6 @@ def unregister():
         bpy.utils.unregister_class(cls)
 
     del bpy.types.Scene.curve_array_properties
-    del bpy.types.Scene.magic_curve_properties
 
 
 if __name__ == "__main__":
