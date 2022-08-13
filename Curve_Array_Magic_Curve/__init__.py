@@ -73,7 +73,7 @@ from .Magic_Curve.Panels.Main_Panel import (
 from .Magic_Curve.Panels.Create_Curve_Panel import (
     MAGICCURVE_PT_create_curve_panel
 )
-from .Magic_Curve.Panels.Curve_Operators_Panel import (
+from .Magic_Curve.Panels.Curve_Methods_Panel import (
     MAGICCURVE_PT_curve_methods_panel
 )
 
