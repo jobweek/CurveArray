@@ -15,3 +15,4 @@ In Blender, there is only one way to create a curve from the mesh edges. This is
   ![Curve](/documentation_resources/4.png) 
   4. Yes, we got the curve geometry right. But note the tilt of its points. It clearly doesn't match the normals of the mesh vertices. Using built-in blender method 'Convert' we can't create a curve with each of its points directed to corresponding normals of mesh vertices. But you can  do it with curve creation functions of the Magic Curve module !
   ![Smooth Curve](/documentation_resources/5.png) 
+  ![Smooth Curve vs Convert](/documentation_resources/6.png) 
