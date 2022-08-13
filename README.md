@@ -22,7 +22,7 @@ To create a curve with the Smooth Curve or Split Curve operators, you need to do
   1. Select a sequence of vertices.
   2. Сlick the operator call button with the corresponding name.
 
-**Select a sequence of vertices.**
+## Rules and Errors
 
 There are a number of conditions which, if not met, will result in known error:
 
@@ -58,5 +58,17 @@ There are a number of conditions which, if not met, will result in known error:
 
         > Make sure that the sequence of vertices does not intersect or branch, 
         > and that the vertex at the beginning of the sequence is selected.
+
+4. The selected sequence of vertices must not have any vertices with same coordinates.
+  
+   _The error output will tell you the indices of such vertices. You can enable the display of their indices in Blender._
+
+   ![Smooth Curve vs Convert](/documentation_resources/10.png)
+    
+   Error text:
+
+       > In the sequence you have chosen, there are vertices in the same coordinates.
+       > You can merge it.
+       > Their indices: (8, 25)
 
 ### Smooth Curve operator
