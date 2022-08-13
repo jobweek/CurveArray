@@ -101,7 +101,7 @@ There are a number of conditions which, if not met, will result in known error:
 
    _I would also be very grateful if you could send me the scene where the unknown error occurred and the text from the console. This will help me improve the addon._
 
-It is also worth noting that in the case of an unknown error, the script stops where it originated and everything that has happened since the beginning of the script will be displayed in the scene. 
+It is also worth noting that in the case of an unknown error, the script stops, and everything that has happened since the beginning of the script will be displayed in the scene. 
 You may see an unexpected result. As recommended by the blender developers, for add-on developers, I have not built in a forced undo operation in case of failure, so you can do it yourself by simply pressing 'сtrl+z'
 
 ### Smooth Curve operator
