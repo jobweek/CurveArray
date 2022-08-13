@@ -74,7 +74,7 @@ def active_vertex(bm):
 
         if act_vert is None:
 
-            show_message_box("Error", "The active vertex must be selected", 'ERROR')
+            show_message_box("Error", "The active vertex must be selected.", 'ERROR')
 
             raise CancelError
 
@@ -82,7 +82,7 @@ def active_vertex(bm):
 
     except CancelError:
 
-        show_message_box("Error", "The active vertex must be selected", 'ERROR')
+        show_message_box("Error", "The active vertex must be selected.", 'ERROR')
 
         raise CancelError
 
@@ -128,7 +128,7 @@ def verts_sequence(verts_count, act_vert, curve_data, split_curve: bool):
 
         show_message_box(
             "Error",
-            "No existing edges at selected vertex",
+            "Make sure that the sequence of vertices does not intersect or branch.",
             'ERROR'
         )
 
@@ -161,8 +161,8 @@ def verts_sequence(verts_count, act_vert, curve_data, split_curve: bool):
         if len(selected_linked_edges_buffer) != 2:
             show_message_box(
                 "Error",
-                "Make sure that the sequence of vertices does not intersect or branch, and that the vertex "
-                "at the beginning of the sequence is selected",
+                "Make sure that the sequence of vertices does not intersect or branch, "
+                "and that the vertex at the beginning of the sequence is selected.",
                 'ERROR'
             )
 

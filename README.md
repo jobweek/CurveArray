@@ -27,16 +27,34 @@ To create a curve with the Smooth Curve or Split Curve operators, you need to do
 There are a number of conditions which, if not met, will result in known error:
 
 1. The number of vertices selected must be greater than 1.
+![Smooth Curve vs Convert](/documentation_resources/7.png)
+    
+    Error text:
+
+        > No existing edges at selected sequence.
+
 2. There must be an active vertex among the selected vertices. 
 
     _For non-cyclic curves, either at the very beginning or at the end of the sequence._
   
     _For cyclic - anywhere in the sequence._
-  
-3. The selected sequence of vertices must not have any branches or intersections. Also it must not be interrupted and then continue again.
+
+    ![Smooth Curve vs Convert](/documentation_resources/8.png)
+    
+    Error text:
+
+        > The active vertex must be selected.
+3. The selected sequence of vertices must not have any branches or intersections. Also, it must not be interrupted and then continue again.
 
      _For non-cyclic curves, the first and the last vertex have a connection with only one other vertex, while the others have two connections with the previous and the next one._
      
      _For cyclic curves, all vertices have two connections with the previous and the next one._
+  
+    ![Smooth Curve vs Convert](/documentation_resources/9.png)
+    
+    Error text:
+
+        > Make sure that the sequence of vertices does not intersect or branch, 
+        > and that the vertex at the beginning of the sequence is selected.
 
 ### Smooth Curve operator
