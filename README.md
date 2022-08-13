@@ -1,2 +1,7 @@
-# CurveArray
-![2022-08-13_02-07-50](https://user-images.githubusercontent.com/57871127/184487905-7fe01fdb-ac2b-456c-88ec-a45616be93e4.png)
+# Magic Curve module
+
+The magic curve module includes two methods for creating curves and a couple of methods for changing them.
+
+## Curve Creation
+
+In Blender, there is only one way to create a curve from the mesh edges. This is the "Convert" operator. Let's take a look at how it works. 
