@@ -110,7 +110,7 @@ def verts_sequence(verts_count, act_vert, curve_data, split_curve: bool):
 
         show_message_box(
             "Error",
-            "No existing edges at selected vertex",
+            "No existing edges at selected sequence.",
             'ERROR'
         )
 
