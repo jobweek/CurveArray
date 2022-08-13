@@ -26,7 +26,29 @@ To create a curve with the Smooth Curve or Split Curve operators, you need to do
 
 There are a number of conditions which, if not met, will result in known error:
 
-1. The number of vertices selected must be greater than 1.
+1. In a scene, only one object must be selected from whose mesh you want to obtain the curve.
+
+    Error text:
+
+        > Select object.
+    or
+
+        > Select only one object.
+
+2. The object type must be a mesh.
+    
+    Error text:
+
+        > Object should be mesh.
+
+
+3. The operator's start-up must be in edit mode.        
+
+    Error text:
+
+        > Go to Edit Mode.    
+
+4. 
 
     ![Smooth Curve vs Convert](/documentation_resources/7.png)
     
@@ -34,7 +56,7 @@ There are a number of conditions which, if not met, will result in known error:
 
         > No existing edges at selected sequence.
 
-2. There must be an active vertex among the selected vertices. 
+5. There must be an active vertex among the selected vertices. 
 
     _For non-cyclic curves, either at the very beginning or at the end of the sequence._
   
@@ -46,7 +68,7 @@ There are a number of conditions which, if not met, will result in known error:
 
         > The active vertex must be selected.
 
-3. The selected sequence of vertices must not have any branches or intersections. Also, it must not be interrupted and then continue again.
+6. The selected sequence of vertices must not have any branches or intersections. Also, it must not be interrupted and then continue again.
 
      _For non-cyclic curves, the first and the last vertex have a connection with only one other vertex, while the others have two connections with the previous and the next one._
      
@@ -59,9 +81,9 @@ There are a number of conditions which, if not met, will result in known error:
         > Make sure that the sequence of vertices does not intersect or branch, 
         > and that the vertex at the beginning of the sequence is selected.
 
-4. The selected sequence of vertices must not have any vertices with same coordinates.
+7. The selected sequence of vertices must not have any vertices with same coordinates.
   
-   _The error output will tell you the indices of such vertices. You can enable the display of their indices in Blender._
+   _The error output will tell you the indices of such vertices. You can enable the display of mesh verts indices in Blender._
 
    ![Smooth Curve vs Convert](/documentation_resources/10.png)
     
@@ -70,5 +92,13 @@ There are a number of conditions which, if not met, will result in known error:
        > In the sequence you have chosen, there are vertices in the same coordinates.
        > You can merge it.
        > Their indices: (8, 25)
+
+8. In the event of an unknown error, caused by a bug in the program code, blender or for other reasons, you will see the following message:
+   
+    Error text:
+
+       > Unknown Error. Please, open console and send me report.
+
+   _I would also be very grateful if you could send me the scene where the unknown error occurred and the text from the console. This will help me improve the addon._
 
 ### Smooth Curve operator

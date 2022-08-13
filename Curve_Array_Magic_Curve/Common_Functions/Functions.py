@@ -42,19 +42,19 @@ def object_checker():
 
     if len(objects) == 0:
 
-        show_message_box("Error", "Select object", 'ERROR')
+        show_message_box("Error", "Select object.", 'ERROR')
 
         raise CancelError
 
     elif len(objects) > 1:
 
-        show_message_box("Error", "Select only one object", 'ERROR')
+        show_message_box("Error", "Select only one object.", 'ERROR')
 
         raise CancelError
 
     if objects[0].type != 'MESH':
 
-        show_message_box("Error", "Object should be mesh", 'ERROR')
+        show_message_box("Error", "Object should be mesh.", 'ERROR')
 
         raise CancelError
 
