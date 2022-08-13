@@ -12,3 +12,5 @@ In Blender, there is only one way to create a curve from the mesh edges. This is
   ![Edges](/documentation_resources/2.png) 
   3. Only now will we be able to call the 'Convert' operator. Let's have a look at the result:
   ![Curve](/documentation_resources/3.png) 
+  ![Curve](/documentation_resources/4.png) 
+  Yes, we got the curve geometry right. But note the tilt of its points. It clearly doesn't match the normals of the mesh vertices. Using built-in blender method 'Convert' we can't create a curve with each of its points directed to corresponding normals of mesh vertices. But you can  do it with curve creation functions of the Magic Curve module !
