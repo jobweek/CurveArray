@@ -113,4 +113,45 @@ There are a number of conditions which, if not met, will result in known error:
 It is also worth noting that in the case of an unknown error, the script stops, and everything that has happened since the beginning of the script will be applied to the scene. 
 You may see an unexpected result. As recommended by the blender developers, for add-on developers, I have not built in a forced undo operation in case of failure, so you can do it yourself by simply pressing 'сtrl+z'
 
+**Example of a correct vertex selection**
+
+   _Cyclic curve_
+
+   ![Smooth Curve vs Convert](/documentation_resources/11.png)
+   ![Smooth Curve vs Convert](/documentation_resources/12.png)
+
+   _Non-cyclic curve_
+
+   ![Smooth Curve vs Convert](/documentation_resources/13.png)
+   ![Smooth Curve vs Convert](/documentation_resources/14.png)
+
 ### Smooth Curve operator
+
+The Smooth Curve operator creates a curve with a single spline, each point of which has the same coordinates as the corresponding vertex of the mesh. 
+The tilt of each spline point corresponds to the normal vector of the mesh vertex.
+
+   _Spline type - Bezier_
+
+   _Point handle type - Vector_
+   
+   _Curve twist method - Minimum_
+
+**Example of usage**
+
+   ![Smooth Curve vs Convert](/documentation_resources/15.png)
+
+   ![Smooth Curve vs Convert](/documentation_resources/16.png)
+   
+**An unexpected result**
+
+This happens when Smooth Curve works with geometry that has obvious bends in all three axes, as well as strong changing the direction of the curve.
+
+   _Example_
+   
+   ![Smooth Curve vs Convert](/documentation_resources/17.png)
+   ![Smooth Curve vs Convert](/documentation_resources/18.png)
+   ![Smooth Curve vs Convert](/documentation_resources/19.png)
+
+If you extruded the resulting curve and turned on the meshes' vertex normals display (blue bars), you will see that at the point of the strongest bend, the curve is not extruded along the normal. 
+It's not a bug, it's the way curves work in Blender. In fact, in this case, there is no curve that matches the vertex norals completely, and the result we have is the closest one. 
+Nevertheless, if you need extreme precision, I suggest you look at the Strong Curve operator.
