@@ -8,7 +8,7 @@ import traceback
 
 class MAGICCURVE_OT_switch_twist_method(bpy.types.Operator):
     """Switch curve direction and recalculate to right tilt"""
-    bl_label = "Toggle Curve Cyclic"
+    bl_label = "Switch Twist Method"
     bl_idname = 'magiccurve.switch_twist_method'
     bl_options = {'REGISTER', 'UNDO'}
 
