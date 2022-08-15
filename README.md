@@ -151,7 +151,31 @@ This happens when Smooth Curve works with geometry that has obvious bends in all
    ![Smooth Curve vs Convert](/documentation_resources/17.png)
    ![Smooth Curve vs Convert](/documentation_resources/18.png)
    ![Smooth Curve vs Convert](/documentation_resources/19.png)
+   ![Smooth Curve vs Convert](/documentation_resources/20.png)
 
 If you extruded the resulting curve and turned on the meshes' vertex normals display (blue bars), you will see that at the point of the strongest bend, the curve is not extruded along the normal. 
 It's not a bug, it's the way curves work in Blender. In fact, in this case, there is no curve that matches the vertex norals completely, and the result we have is the closest one. 
-Nevertheless, if you need extreme precision, I suggest you look at the Strong Curve operator.
+Nevertheless, if you need extreme precision, I suggest you look at the Split Curve operator.
+
+### Split Curve operator
+
+The Split Curve operator creates a curve in which each spline consists of two points and corresponds to one highlighted mesh edge.
+The coordinates of the points forming the spline correspond to the coordinates of the points forming the corresponding edge on the mesh.  
+  
+   _Spline type - Bezier_
+
+   _Point handle type - Vector_
+   
+   _Curve twist method - Minimum_
+
+**Example of usage**
+
+   ![Smooth Curve vs Convert](/documentation_resources/21.png)
+
+   ![Smooth Curve vs Convert](/documentation_resources/22.png)
+   
+**Difference to Smooth Curve**
+   
+   ![Smooth Curve vs Convert](/documentation_resources/23.png)
+
+   ![Smooth Curve vs Convert](/documentation_resources/24.png)
