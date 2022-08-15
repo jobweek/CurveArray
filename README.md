@@ -139,7 +139,6 @@ The tilt of each spline point corresponds to the normal vector of the mesh verte
 **Example of usage**
 
    ![Smooth Curve vs Convert](/documentation_resources/15.png)
-
    ![Smooth Curve vs Convert](/documentation_resources/16.png)
    
 **An unexpected result**
@@ -171,11 +170,9 @@ The coordinates of the points forming the spline correspond to the coordinates o
 **Example of usage**
 
    ![Smooth Curve vs Convert](/documentation_resources/21.png)
-
    ![Smooth Curve vs Convert](/documentation_resources/22.png)
    
 **Difference to Smooth Curve**
    
    ![Smooth Curve vs Convert](/documentation_resources/23.png)
-
    ![Smooth Curve vs Convert](/documentation_resources/24.png)
