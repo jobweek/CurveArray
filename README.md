@@ -159,7 +159,7 @@ Nevertheless, if you need extreme precision, I suggest you look at the Split Cur
 ### Split Curve operator
 
 The Split Curve operator creates a curve in which each spline consists of two points and corresponds to one highlighted mesh edge.
-The coordinates of the points forming the spline correspond to the coordinates of the points forming the corresponding edge on the mesh.  
+The coordinates and normals of the points forming the spline correspond to the coordinates of the points forming the corresponding edge on the mesh.  
   
    _Spline type - Bezier_
 
