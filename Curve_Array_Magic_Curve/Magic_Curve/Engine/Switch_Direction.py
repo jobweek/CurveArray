@@ -16,7 +16,7 @@ from ...Common_Functions.Functions import (
     point_direction_vec,
     tilt_correction,
     twist_correction,
-    object_select,
+    main_object_select,
     z_vec,
 )
 
@@ -31,7 +31,7 @@ def switch_curve_direction_manager():
     if curve.data.twist_mode == 'Z_UP' and curve.data.twist_smooth == 0:
 
         switched_curve = switch_curve_direction(curve)
-        object_select(switched_curve)
+        main_object_select(switched_curve)
 
         return
 
@@ -92,4 +92,4 @@ def switch_curve_direction_manager():
     twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, switched_curve)
 
     # Выделяем объект
-    object_select(switched_curve)
+    main_object_select(switched_curve)

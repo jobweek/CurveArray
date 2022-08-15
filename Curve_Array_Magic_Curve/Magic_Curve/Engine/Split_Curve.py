@@ -8,16 +8,16 @@ from .Split_Curve_Functions import (
     tilt_correction_split,
 )
 from ...Common_Functions.Functions import (
-    CurveData,
-    object_checker,
+    CreationCurveData,
+    curve_creation_start_check,
     active_vertex,
     verts_sequence,
     merged_vertices_check,
-    y_vec,
+    vertex_normal_vec,
     vert_co,
     duplicate,
     convert_to_mesh,
-    object_select,
+    main_object_select,
 )
 
 
@@ -26,8 +26,8 @@ def split_curve_manager():
     active_object = bpy.context.active_object
     active_mesh = active_object.data
 
-    object_checker()
-    curve_data = CurveData()
+    curve_creation_start_check()
+    curve_data = CreationCurveData()
 
     bm = bmesh.from_edit_mesh(active_mesh)
 
@@ -41,7 +41,7 @@ def split_curve_manager():
     merged_vertices_check(vert_sequence_array, True, curve_data.get_cyclic())
 
     # Получаем массив векторов y_vec
-    y_vec_arr = y_vec(vert_sequence_array)
+    y_vec_arr = vertex_normal_vec(vert_sequence_array)
 
     # Получаем массив координат каждой вершины последовательности
     vert_co_arr = vert_co(vert_sequence_array)
@@ -65,4 +65,4 @@ def split_curve_manager():
     tilt_correction_split(ext_vec_arr, y_vec_arr, curve_data.get_curve())
 
     # Выделяем объект
-    object_select(curve_data.get_curve())
+    main_object_select(curve_data.get_curve())

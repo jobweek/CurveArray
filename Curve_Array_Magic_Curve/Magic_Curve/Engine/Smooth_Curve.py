@@ -9,26 +9,24 @@ from .Smooth_Curve_Functions import (
     tilt_correction_smooth,
 )
 from ...Common_Functions.Functions import (
-    CurveData,
-    object_checker,
+    curve_creation_start_check,
     active_vertex,
     verts_sequence,
-    merged_vertices_check,
-    y_vec,
+    vertex_normal_vec,
     vert_co,
     duplicate,
     convert_to_mesh,
-    object_select,
+    main_object_select,
 )
 
 
 def smooth_curve_manager():
 
+    # Проверям стартовые условия вызова оператора
+    curve_creation_start_check()
+
     active_object = bpy.context.active_object
     active_mesh = active_object.data
-
-    object_checker()
-    curve_data = CurveData()
 
     bm = bmesh.from_edit_mesh(active_mesh)
 
@@ -36,20 +34,17 @@ def smooth_curve_manager():
     act_vert = active_vertex(bm)
 
     # Получаем последовательность выбранных пользователем вершин
-    vert_sequence_array, curve_data = verts_sequence(active_mesh.total_vert_sel, act_vert, curve_data, False)
-
-    # Проверяем последовательность на существование вершин с одинакеовыми координатами
-    merged_vertices_check(vert_sequence_array, False, curve_data.get_cyclic())
+    vert_sequence_array, curve_data = verts_sequence(active_mesh.total_vert_sel, act_vert, False)
 
     # Получаем массив векторов y_vec
-    y_vec_arr = y_vec(vert_sequence_array)
+    y_vec_arr = vertex_normal_vec(vert_sequence_array)
 
     # Получаем массив координат каждой вершины последовательности
     vert_co_arr = vert_co(vert_sequence_array)
 
     bm.free()
     bpy.ops.object.editmode_toggle()
-
+    # Good
     # Создаем кривую из последовательности вершин
     curve_data = create_curve_smooth(vert_co_arr, active_object, curve_data)
 
@@ -75,4 +70,4 @@ def smooth_curve_manager():
     tilt_correction_smooth(ext_vec_arr, y_vec_arr, z_vec_arr, curve_data.get_curve())
 
     # Выделяем объект
-    object_select(curve_data.get_curve())
+    main_object_select(curve_data.get_curve())

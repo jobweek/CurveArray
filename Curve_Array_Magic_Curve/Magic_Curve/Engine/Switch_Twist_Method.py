@@ -15,7 +15,7 @@ from ...Common_Functions.Functions import (
     tilt_correction,
     twist_correction,
     z_vec,
-    object_select,
+    main_object_select,
 )
 
 
@@ -74,4 +74,4 @@ def switch_twist_method_manager():
     twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, switched_curve)
 
     # Выделяем объект
-    object_select(switched_curve)
+    main_object_select(switched_curve)

@@ -17,7 +17,7 @@ from ...Common_Functions.Functions import (
     point_direction_vec,
     z_vec,
     twist_correction,
-    object_select,
+    main_object_select,
 )
 
 
@@ -34,7 +34,7 @@ def toggle_cyclic_manager():
     if curve.data.twist_mode == 'Z_UP':
 
         toggled_curve = toggle_curve_cyclic(curve)
-        object_select(toggled_curve)
+        main_object_select(toggled_curve)
 
         return
 
@@ -89,4 +89,4 @@ def toggle_cyclic_manager():
     twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, toggled_curve)
 
     # Выделяем объект
-    object_select(toggled_curve)
+    main_object_select(toggled_curve)

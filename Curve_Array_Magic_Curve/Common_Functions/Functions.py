@@ -10,18 +10,14 @@ from ..Errors.Errors import (
 )
 
 
-def object_select(obj):
-
-    bpy.ops.object.select_all(action='DESELECT')
-    obj.select_set(True)
-    bpy.context.view_layer.objects.active = obj
-
-
-class CurveData:
+class CreationCurveData:
 
     def __init__(self):
         self.__curve = None
         self.__cyclic = None
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}{self.__curve!r}, {self.__cyclic!r}'
 
     def set_curve(self, curve):
         self.__curve = curve
@@ -36,7 +32,7 @@ class CurveData:
         return self.__cyclic
 
 
-def object_checker():
+def curve_creation_start_check():
 
     objects = bpy.context.selected_objects
 
@@ -58,9 +54,7 @@ def object_checker():
 
         raise CancelError
 
-    mode = bpy.context.active_object.mode
-
-    if mode != 'EDIT':
+    if bpy.context.active_object.mode != 'EDIT':
 
         show_message_box("Error", "Go to Edit Mode", 'ERROR')
 
@@ -68,43 +62,58 @@ def object_checker():
 
 
 def active_vertex(bm):
-    try:
 
-        act_vert = bm.select_history.active
+    act_vert = bm.select_history.active
 
-        if act_vert is None:
-
-            show_message_box("Error", "The active vertex must be selected.", 'ERROR')
-
-            raise CancelError
-
-        return act_vert
-
-    except CancelError:
+    if act_vert is None:
 
         show_message_box("Error", "The active vertex must be selected.", 'ERROR')
 
         raise CancelError
 
+    return act_vert
 
-def verts_sequence(verts_count, act_vert, curve_data, split_curve: bool):
 
-    # Функция извлечения выделенных ребер из всех принадлежащих вершине
-    def selected_linked_edges(searched_vertex):
+def _merged_vertices_check(selected_linked_edges_buffer, searched_vertex):
 
-        linked_edges = searched_vertex.link_edges
+    for edge in selected_linked_edges_buffer:
 
-        selected_linked_edges_buffer = []
+        if vec_equal(edge.other_vert(searched_vertex).co, searched_vertex.co):
 
-        for edge in linked_edges:
+            show_message_box(
+                "Error",
+                "In the sequence you have chosen, there are vertices in the same coordinates."
+                " You can merge it. Their indices: "
+                f"({edge.other_vert(searched_vertex).index}, {searched_vertex.index})",
+                'ERROR'
+            )
 
-            if edge.select:
-                selected_linked_edges_buffer.append(edge)
+            raise CancelError
 
-        return selected_linked_edges_buffer
+
+def _selected_linked_edges(searched_vertex):
+
+    linked_edges = searched_vertex.link_edges
+
+    selected_linked_edges_buffer = []
+
+    for edge in linked_edges:
+
+        if edge.select:
+            selected_linked_edges_buffer.append(edge)
+
+    _merged_vertices_check(selected_linked_edges_buffer, searched_vertex)
+
+    return selected_linked_edges_buffer
+
+
+def verts_sequence(verts_count: int, act_vert, split_curve: bool):
+
+    # Класс содержащий информацию о кривой
+    curve_data = CreationCurveData()
 
     # Определим циклична ли последовательность
-    selected_linked_edges_buffer = selected_linked_edges(act_vert)
+    selected_linked_edges_buffer = _selected_linked_edges(act_vert)
 
     if len(selected_linked_edges_buffer) == 0:
 
@@ -156,7 +165,7 @@ def verts_sequence(verts_count, act_vert, curve_data, split_curve: bool):
 
         vert_sequence_array[i] = searched_vertex
 
-        selected_linked_edges_buffer = selected_linked_edges(searched_vertex)
+        selected_linked_edges_buffer = _selected_linked_edges(searched_vertex)
 
         if len(selected_linked_edges_buffer) != 2:
             show_message_box(
@@ -185,63 +194,18 @@ def verts_sequence(verts_count, act_vert, curve_data, split_curve: bool):
     return vert_sequence_array, curve_data
 
 
-def merged_vertices_check(vert_sequence_array, split_curve, cyclic: bool):
+def vertex_normal_vec(vert_sequence_array):
 
-    i = 0
-    merged_vertices_buffer = []
+    y_vec_arr = np.frompyfunc(lambda v: copy.deepcopy(v.normal), 1, 1)
 
-    while i < len(vert_sequence_array)-1:
-
-        if vec_equal(vert_sequence_array[i].co, vert_sequence_array[i+1].co):
-
-            merged_vertices_buffer.append([vert_sequence_array[i].index, vert_sequence_array[i+1].index])
-
-        i += 1
-
-    if not split_curve or (split_curve and not cyclic):
-
-        if vec_equal(vert_sequence_array[i].co, vert_sequence_array[0].co):
-
-            merged_vertices_buffer.append([vert_sequence_array[i].index, vert_sequence_array[0].index])
-
-    if len(merged_vertices_buffer) != 0:
-
-        verts_str = ""
-
-        for v in merged_vertices_buffer:
-
-            verts_str += "({0},{1}) ".format(v[0], v[1])
-
-        show_message_box(
-            "Error",
-            "In the sequence you have chosen, there are vertices in the same coordinates."
-            " You can merge it."
-            " Their indices: " + verts_str,
-            'ERROR'
-        )
-
-        raise CancelError
-
-
-def y_vec(vert_sequence_array):
-
-    y_vec_arr = np.empty(len(vert_sequence_array), dtype=object)
-
-    i = 0
-
-    while i < len(vert_sequence_array):
-
-        vertex_normal = copy.deepcopy(vert_sequence_array[i].normal)
-        y_vec_arr[i] = vertex_normal
-
-        i += 1
+    y_vec_arr = y_vec_arr(vert_sequence_array)
 
     return y_vec_arr
 
 
 def vert_co(vert_sequence_array):
 
-    vert_co_array = np.frompyfunc(lambda a: copy.deepcopy(a.co), 1, 1)
+    vert_co_array = np.frompyfunc(lambda v: copy.deepcopy(v.co), 1, 1)
 
     vert_co_array = vert_co_array(vert_sequence_array)
 
@@ -918,3 +882,10 @@ def z_vec(mesh, curve_data):
         spline_iter += 1
 
     return z_vec_arr
+
+
+def main_object_select(obj):
+
+    bpy.ops.object.select_all(action='DESELECT')
+    obj.select_set(True)
+    bpy.context.view_layer.objects.active = obj
