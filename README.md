@@ -125,7 +125,7 @@ You may see an unexpected result. As recommended by the blender developers, for 
    ![Smooth Curve vs Convert](/documentation_resources/13.png)
    ![Smooth Curve vs Convert](/documentation_resources/14.png)
 
-#### Smooth Curve operator
+### Smooth Curve operator
 
 The Smooth Curve operator creates a curve with a single spline, each point of which has the same coordinates as the corresponding vertex of the mesh. 
 The tilt of each spline point corresponds to the normal vector of the mesh vertex.
@@ -156,7 +156,7 @@ If you extruded the resulting curve and turned on the meshes' vertex normals dis
 It's not a bug, it's the way curves work in Blender. In fact, in this case, there is no curve that matches the vertex norals completely, and the result we have is the closest one. 
 Nevertheless, if you need extreme precision, I suggest you look at the Split Curve operator.
 
-#### Split Curve operator
+### Split Curve operator
 
 The Split Curve operator creates a curve in which each spline consists of two points and corresponds to one highlighted mesh edge.
 The coordinates of the points forming the spline correspond to the coordinates of the points forming the corresponding edge on the mesh.  
