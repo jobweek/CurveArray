@@ -255,7 +255,7 @@ def ext_vec_curve_creation(extruded_mesh, array_size: int, step: int):
         return vector
 
     ext_vec_arr = np.frompyfunc(__func, 1, 1)
-    ext_vec_arr = ext_vec_arr(range(0, array_size, step))
+    ext_vec_arr = ext_vec_arr(range(0, array_size*step, step))
 
     return ext_vec_arr
 
@@ -701,13 +701,13 @@ def calc_vec(first_co, second_co, normalize: bool):
 
     vec = second_co - first_co
 
-    if vec.length < 0.0001:
+    if vec.length < 0.00002:
 
         return None
 
     if normalize:
 
-        vec = vec.normalize()
+        vec = vec.normalized()
 
     return vec
 
@@ -731,19 +731,17 @@ def vec_projection(vec, z_vec):
 
     dot = vec.dot(z_vec)
 
-    if dot > 0.9999 or dot < -0.9999:
+    if dot > 0.99998 or dot < -0.99998:
 
         return None
 
-    elif 0.0001 > dot > -0.0001:
+    elif 0.00002 > dot > -0.00002:
 
         return vec
 
     else:
 
-        res = (vec - vec.project(z_vec)).normalized()
-
-        return res
+        return (vec - vec.project(z_vec)).normalized()
 
 
 def angle_calc(ext_vec, y_vec, cross_vec):

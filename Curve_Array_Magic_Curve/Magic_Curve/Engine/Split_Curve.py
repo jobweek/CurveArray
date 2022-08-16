@@ -54,7 +54,7 @@ def split_curve_manager():
     mesh_curve_duplicate = convert_to_mesh(curve_duplicate)
 
     # Полуаем массив ext_vec
-    ext_vec_arr = ext_vec_curve_creation(mesh_curve_duplicate, len(vert_sequence_array) - 1, 4)
+    ext_vec_arr = ext_vec_curve_creation(mesh_curve_duplicate, len(vert_sequence_array)-1, 4)
     bpy.data.objects.remove(mesh_curve_duplicate, do_unlink=True)
 
     tilt_correction_split(ext_vec_arr, y_vec_arr, curve_data.get_curve())

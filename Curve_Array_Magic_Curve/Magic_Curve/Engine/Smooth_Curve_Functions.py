@@ -51,10 +51,10 @@ def z_vec_smooth(curve, array_size):
         h_1 = points[i].handle_left
         h_2 = points[i].handle_right
 
-        vec_h_1 = calc_vec(h_1, points[i].co, True)
-        vec_h_2 = calc_vec(h_2, points[i].co, True)
+        vec_h_1 = calc_vec(points[i].co.to_3d(), h_1, True)
+        vec_h_2 = calc_vec(points[i].co.to_3d(), h_2, True)
 
-        z_vec = calc_vec(vec_h_2, vec_h_1, True)
+        z_vec = calc_vec(vec_h_1, vec_h_2, True)
         assert z_vec is not None, 'z_vec is None'
 
         return z_vec
@@ -74,6 +74,7 @@ def tilt_correction_smooth(ext_vec_arr, y_vec_arr, z_vec_arr, curve):
         z_vec = z_vec_arr[i]
         ext_vec = vec_projection(ext_vec_arr[i], z_vec)
         y_vec = vec_projection(y_vec_arr[i], z_vec)
+
         cross_vec = z_vec.cross(y_vec)
         angle = angle_calc(ext_vec, y_vec, cross_vec)
 
