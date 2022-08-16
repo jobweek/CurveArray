@@ -121,6 +121,21 @@ You may see an unexpected result. As recommended by the blender developers, for 
    ![Smooth Curve vs Convert](/documentation_resources/13.png)
    ![Smooth Curve vs Convert](/documentation_resources/14.png)
 
+**Performance test**
+
+   _Cpu: Ryzen5 5600x_
+
+   _Ram: ddr4 16 gb_
+
+   _Gpu: gtx 1050 ti_
+
+   Simple changing object mode to edit mode: 3.118032500031404 seconds. (XD Lmao)
+
+   Calling the Smooth Curve operator: 1.987318843654276 seconds.
+
+   ![Smooth Curve vs Convert](/documentation_resources/25.png)
+   ![Smooth Curve vs Convert](/documentation_resources/26.png)
+
 ### Smooth Curve operator
 
 The Smooth Curve operator creates a curve with a single spline, each point of which has the same coordinates as the corresponding vertex of the mesh. 
@@ -151,21 +166,6 @@ This happens when Smooth Curve works with geometry that has obvious bends in all
 If you extruded the resulting curve and turned on the meshes' vertex normals display (blue bars), you will see that at the point of the strongest bend, the curve is not extruded along the normal. 
 It's not a bug, it's the way curves work in Blender. In fact, in this case, there is no curve that matches the vertex norals completely, and the result we have is the closest one. 
 Nevertheless, if you need extreme precision, I suggest you look at the Split Curve operator.
-
-**Performance test**
-
-   _Cpu: Ryzen5 5600x_
-
-   _Ram: ddr4 16 gb_
-
-   _Gpu: gtx 1050 ti_
-
-   Simple changing object mode to edit mode: 3.118032500031404 seconds
-
-   Calling the Smooth Curve operator: 1.987318843654276 seconds
-
-   ![Smooth Curve vs Convert](/documentation_resources/25.png)
-   ![Smooth Curve vs Convert](/documentation_resources/26.png)
 
 ### Split Curve operator
 
