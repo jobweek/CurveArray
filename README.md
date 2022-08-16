@@ -8,8 +8,8 @@ In Blender, there is only one way to create a curve from the mesh edges. This is
 
 1. Let's create a primitive plane and unfold it randomly in space and detach the selected edges and create a separate object from them.
   
-    ![Plane](/documentation_resources/1.png)
-    ![Edges](/documentation_resources/2.png) 
+![Plane](/documentation_resources/1.png)
+![Edges](/documentation_resources/2.png) 
 
 2. Only now will we be able to call the 'Convert' operator. Let's have a look at the result:
   
