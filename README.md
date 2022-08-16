@@ -16,6 +16,8 @@ In Blender, there is only one way to create a curve from the mesh edges. This is
 ![Curve](/documentation_resources/3.png)
 ![Curve](/documentation_resources/4.png) 
 
+**Example of the difference between Magic Curve and Blender Convert**
+
 ![Smooth Curve vs Convert](/documentation_resources/6.png) 
 
 To create a curve with the Smooth Curve or Split Curve operators, you need to do two things:
