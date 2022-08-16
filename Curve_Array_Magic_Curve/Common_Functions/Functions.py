@@ -214,17 +214,17 @@ def vert_co(vert_sequence_array):
 
 def duplicate(active_curve):
 
-    switched_curve = active_curve.copy()
-    switched_curve.data = active_curve.data.copy()
+    duplicate_curve = active_curve.copy()
+    duplicate_curve.data = active_curve.data.copy()
 
     if active_curve.animation_data:
-        switched_curve.animation_data.action = active_curve.animation_data.action.copy()
+        duplicate_curve.animation_data.action = active_curve.animation_data.action.copy()
 
     for i in active_curve.users_collection:
 
-        i.objects.link(switched_curve)
+        i.objects.link(duplicate_curve)
 
-    return switched_curve
+    return duplicate_curve
 
 
 def convert_to_mesh(curve):

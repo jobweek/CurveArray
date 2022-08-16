@@ -44,7 +44,7 @@ def smooth_curve_manager():
 
     bm.free()
     bpy.ops.object.editmode_toggle()
-    # Good
+
     # Создаем кривую из последовательности вершин
     curve_data = create_curve_smooth(vert_co_arr, active_object, curve_data)
 

@@ -44,32 +44,28 @@ def create_curve_smooth(vert_co_array, active_object, curve_data):
 
 def ext_vec_smooth(extruded_mesh, array_size):
 
-    ext_vec_arr = np.empty(array_size, dtype=object)
+    def __func(i):
 
-    i = 0
-
-    while i < array_size:
-
-        first_point = extruded_mesh.data.vertices[0 + i*2]
-        second_point = extruded_mesh.data.vertices[1 + i*2]
+        first_point = extruded_mesh.data.vertices[i]
+        second_point = extruded_mesh.data.vertices[i + 1]
 
         vector = calc_vec(first_point.co, second_point.co, True)
 
-        ext_vec_arr[i] = vector
+        assert vector is None, 'ext_vec is None'
 
-        i += 1
+        return vector
+
+    ext_vec_arr = np.frompyfunc(__func, 1, 1)
+    ext_vec_arr = ext_vec_arr(range(0, array_size, 2))
 
     return ext_vec_arr
 
 
 def z_vec_smooth(curve, array_size):
 
-    z_vec_arr = np.empty(array_size, dtype=object)
     points = curve.data.splines[0].bezier_points
 
-    i = 0
-
-    while i < len(z_vec_arr):
+    def __func(i):
 
         h_1 = points[i].handle_left
         h_2 = points[i].handle_right
@@ -77,21 +73,25 @@ def z_vec_smooth(curve, array_size):
         vec_h_1 = calc_vec(h_1, points[i].co, True)
         vec_h_2 = calc_vec(h_2, points[i].co, True)
 
-        vec = calc_vec(vec_h_2, vec_h_1, True)
+        assert vec_h_1 is None or vec_h_2 is None, 'Handle vector in z_vec_arr is None'
 
-        z_vec_arr[i] = vec
+        z_vec = calc_vec(vec_h_2, vec_h_1, True)
 
-        i += 1
+        assert z_vec is None, 'z_vec is None'
+
+        return z_vec
+
+    z_vec_arr = np.frompyfunc(__func, 1, 1)
+    z_vec_arr = z_vec_arr(range(array_size))
 
     return z_vec_arr
 
 
 def tilt_correction_smooth(ext_vec_arr, y_vec_arr, z_vec_arr, curve):
 
-    i = 0
     points = curve.data.splines[0].bezier_points
 
-    while i < len(ext_vec_arr):
+    for i in range(len(ext_vec_arr)):
 
         z_vec = z_vec_arr[i]
         ext_vec = vec_projection(ext_vec_arr[i], z_vec)
@@ -100,5 +100,3 @@ def tilt_correction_smooth(ext_vec_arr, y_vec_arr, z_vec_arr, curve):
         angle = angle_calc(ext_vec, y_vec, cross_vec)
 
         points[i].tilt = angle
-
-        i += 1
