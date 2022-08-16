@@ -141,11 +141,11 @@ You may see an unexpected result. As recommended by the blender developers, for 
 The Smooth Curve operator creates a curve with a single spline, each point of which has the same coordinates as the corresponding vertex of the mesh. 
 The tilt of each spline point corresponds to the normal vector of the mesh vertex.
 
-   _Spline type - Bezier_
+   _Spline type: Bezier_
 
-   _Point handle type - Vector_
+   _Point handle type: Vector_
    
-   _Curve twist method - Minimum_
+   _Curve twist method: Z-UP_
 
 **Example of usage**
 
@@ -172,11 +172,11 @@ Nevertheless, if you need extreme precision, I suggest you look at the Split Cur
 The Split Curve operator creates a curve in which each spline consists of two points and corresponds to one highlighted mesh edge.
 The coordinates and normals of the points forming the spline correspond to the coordinates and normals of the points forming the corresponding edge on the mesh.  
   
-   _Spline type - Bezier_
+   _Spline type: Bezier_
 
-   _Point handle type - Vector_
+   _Point handle type: Vector_
    
-   _Curve twist method - Minimum_
+   _Curve twist method: Z-UP_
 
 **Example of usage**
 

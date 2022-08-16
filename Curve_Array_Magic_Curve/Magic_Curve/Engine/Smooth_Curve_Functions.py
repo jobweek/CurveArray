@@ -13,7 +13,7 @@ def create_curve_smooth(vert_co_array, active_object, curve_data):
 
     crv_mesh = bpy.data.curves.new('Smooth_Curve', 'CURVE')
     crv_mesh.dimensions = '3D'
-    crv_mesh.twist_mode = 'MINIMUM'
+    crv_mesh.twist_mode = 'Z_UP'
     spline = crv_mesh.splines.new(type='POLY')
 
     spline.points.add(len(vert_co_array) - 1)

@@ -12,7 +12,7 @@ from ...Common_Functions.Functions import (
 def create_curve_split(vert_co_array, active_object, curve_data):
 
     crv_mesh = bpy.data.curves.new('Split_Curve', 'CURVE')
-    crv_mesh.dimensions = '3D'
+    crv_mesh.dimensions = 'Z_UP'
     crv_mesh.twist_mode = 'MINIMUM'
 
     for i in range(len(vert_co_array)-1):
