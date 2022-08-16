@@ -252,8 +252,6 @@ def ext_vec_curve_creation(extruded_mesh, array_size: int, step: int):
 
         vector = calc_vec(first_point.co, second_point.co, True)
 
-        assert vector is None, 'ext_vec is None'
-
         return vector
 
     ext_vec_arr = np.frompyfunc(__func, 1, 1)
