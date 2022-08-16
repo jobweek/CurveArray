@@ -152,6 +152,18 @@ If you extruded the resulting curve and turned on the meshes' vertex normals dis
 It's not a bug, it's the way curves work in Blender. In fact, in this case, there is no curve that matches the vertex norals completely, and the result we have is the closest one. 
 Nevertheless, if you need extreme precision, I suggest you look at the Split Curve operator.
 
+**Performance test**
+
+   _Cpu: Ryzen5 5600x_
+   _Ram: ddr4 16 gb_
+   _Gpu: gtx 1050 ti_
+
+   Simple changing object mode to edit mode: 3.118032500031404 seconds
+   Calling the Smooth Curve operator: 1.987318843654276 seconds
+
+   ![Smooth Curve vs Convert](/documentation_resources/25.png)
+   ![Smooth Curve vs Convert](/documentation_resources/26.png)
+
 ### Split Curve operator
 
 The Split Curve operator creates a curve in which each spline consists of two points and corresponds to one highlighted mesh edge.
@@ -172,3 +184,4 @@ The coordinates and normals of the points forming the spline correspond to the c
    
    ![Smooth Curve vs Convert](/documentation_resources/23.png)
    ![Smooth Curve vs Convert](/documentation_resources/24.png)
+   
