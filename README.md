@@ -11,7 +11,7 @@ In Blender, there is only one way to create a curve from the mesh edges. This is
 ![Plane](/documentation_resources/1.png)
 ![Edges](/documentation_resources/2.png) 
 
-2. Only now will we be able to call the 'Convert' operator. Let's have a look at the result:
+2. Now will we be able to call the 'Convert' operator. Let's have a look at the result:
   
 ![Curve](/documentation_resources/3.png)
 ![Curve](/documentation_resources/4.png) 
