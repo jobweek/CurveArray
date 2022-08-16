@@ -4,7 +4,6 @@ import mathutils  # type: ignore
 import numpy as np
 from .Smooth_Curve_Functions import (
     create_curve_smooth,
-    ext_vec_smooth,
     z_vec_smooth,
     tilt_correction_smooth,
 )
@@ -16,6 +15,7 @@ from ...Common_Functions.Functions import (
     vert_co,
     duplicate,
     convert_to_mesh,
+    ext_vec_curve_creation,
     main_object_select,
 )
 
@@ -55,7 +55,7 @@ def smooth_curve_manager():
     mesh_curve_duplicate = convert_to_mesh(curve_duplicate)
 
     # Полуаем массив ext_vec
-    ext_vec_arr = ext_vec_smooth(mesh_curve_duplicate, len(vert_sequence_array))
+    ext_vec_arr = ext_vec_curve_creation(mesh_curve_duplicate, len(vert_sequence_array), 2)
     bpy.data.objects.remove(mesh_curve_duplicate, do_unlink=True)
 
     # Если кривая замкнута, сдвигаем массив на -1

@@ -42,25 +42,6 @@ def create_curve_smooth(vert_co_array, active_object, curve_data):
     return curve_data
 
 
-def ext_vec_smooth(extruded_mesh, array_size):
-
-    def __func(i):
-
-        first_point = extruded_mesh.data.vertices[i]
-        second_point = extruded_mesh.data.vertices[i + 1]
-
-        vector = calc_vec(first_point.co, second_point.co, True)
-
-        assert vector is None, 'ext_vec is None'
-
-        return vector
-
-    ext_vec_arr = np.frompyfunc(__func, 1, 1)
-    ext_vec_arr = ext_vec_arr(range(0, array_size, 2))
-
-    return ext_vec_arr
-
-
 def z_vec_smooth(curve, array_size):
 
     points = curve.data.splines[0].bezier_points
@@ -73,11 +54,8 @@ def z_vec_smooth(curve, array_size):
         vec_h_1 = calc_vec(h_1, points[i].co, True)
         vec_h_2 = calc_vec(h_2, points[i].co, True)
 
-        assert vec_h_1 is None or vec_h_2 is None, 'Handle vector in z_vec_arr is None'
-
         z_vec = calc_vec(vec_h_2, vec_h_1, True)
-
-        assert z_vec is None, 'z_vec is None'
+        assert z_vec is not None, 'z_vec is None'
 
         return z_vec
 

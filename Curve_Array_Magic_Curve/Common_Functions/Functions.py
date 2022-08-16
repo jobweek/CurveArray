@@ -243,6 +243,25 @@ def convert_to_mesh(curve):
     return mesh
 
 
+def ext_vec_curve_creation(extruded_mesh, array_size: int, step: int):
+
+    def __func(i):
+
+        first_point = extruded_mesh.data.vertices[i]
+        second_point = extruded_mesh.data.vertices[i + 1]
+
+        vector = calc_vec(first_point.co, second_point.co, True)
+
+        assert vector is None, 'ext_vec is None'
+
+        return vector
+
+    ext_vec_arr = np.frompyfunc(__func, 1, 1)
+    ext_vec_arr = ext_vec_arr(range(0, array_size, step))
+
+    return ext_vec_arr
+
+
 def curve_checker():
 
     objects = bpy.context.selected_objects
@@ -690,7 +709,7 @@ def calc_vec(first_co, second_co, normalize: bool):
 
     if normalize:
 
-        vec = vec.normalized()
+        vec = vec.normalize()
 
     return vec
 

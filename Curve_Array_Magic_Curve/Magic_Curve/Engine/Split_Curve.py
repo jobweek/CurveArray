@@ -4,30 +4,28 @@ import mathutils  # type: ignore
 
 from .Split_Curve_Functions import (
     create_curve_split,
-    ext_vec_split,
     tilt_correction_split,
 )
 from ...Common_Functions.Functions import (
-    CreationCurveData,
     curve_creation_start_check,
     active_vertex,
     verts_sequence,
-    merged_vertices_check,
     vertex_normal_vec,
     vert_co,
     duplicate,
     convert_to_mesh,
+    ext_vec_curve_creation,
     main_object_select,
 )
 
 
 def split_curve_manager():
 
+    # Проверям стартовые условия вызова оператора
+    curve_creation_start_check()
+
     active_object = bpy.context.active_object
     active_mesh = active_object.data
-
-    curve_creation_start_check()
-    curve_data = CreationCurveData()
 
     bm = bmesh.from_edit_mesh(active_mesh)
 
@@ -35,10 +33,7 @@ def split_curve_manager():
     act_vert = active_vertex(bm)
 
     # Получаем последовательность выбранных пользователем вершин
-    vert_sequence_array, curve_data = verts_sequence(active_mesh.total_vert_sel, act_vert, curve_data, True)
-
-    # Проверяем последовательность на существование вершин с одинакеовыми координатами
-    merged_vertices_check(vert_sequence_array, True, curve_data.get_cyclic())
+    vert_sequence_array, curve_data = verts_sequence(active_mesh.total_vert_sel, act_vert, True)
 
     # Получаем массив векторов y_vec
     y_vec_arr = vertex_normal_vec(vert_sequence_array)
@@ -59,7 +54,7 @@ def split_curve_manager():
     mesh_curve_duplicate = convert_to_mesh(curve_duplicate)
 
     # Полуаем массив ext_vec
-    ext_vec_arr = ext_vec_split(mesh_curve_duplicate, len(vert_sequence_array) - 1)
+    ext_vec_arr = ext_vec_curve_creation(mesh_curve_duplicate, len(vert_sequence_array) - 1, 4)
     bpy.data.objects.remove(mesh_curve_duplicate, do_unlink=True)
 
     tilt_correction_split(ext_vec_arr, y_vec_arr, curve_data.get_curve())
