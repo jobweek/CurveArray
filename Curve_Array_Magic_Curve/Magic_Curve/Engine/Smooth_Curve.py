@@ -5,7 +5,7 @@ import numpy as np
 from .Smooth_Curve_Functions import (
     create_curve_smooth,
     z_vec_smooth,
-    tilt_correction_smooth,
+    angle_arr_calc_smooth,
 )
 from ...Common_Functions.Functions import (
     curve_creation_start_check,
@@ -17,6 +17,7 @@ from ...Common_Functions.Functions import (
     convert_to_mesh,
     ext_vec_curve_creation,
     main_object_select,
+    twist_correction_curve_creation,
 )
 
 
@@ -66,8 +67,14 @@ def smooth_curve_manager():
     # Получаем массив z_vec
     z_vec_arr = z_vec_smooth(curve_data.get_curve(), len(vert_sequence_array))
 
+    # Получаем массив углов поврота
+    angle_arr = angle_arr_calc_smooth(ext_vec_arr, y_vec_arr, z_vec_arr)
+
+    # Предотвращаем перекручивание
+    angle_arr = twist_correction_curve_creation(angle_arr)
+
     # Корректируем тильт
-    tilt_correction_smooth(ext_vec_arr, y_vec_arr, z_vec_arr, curve_data.get_curve())
+    tilt_correction_curve_creation(angle_arr, curve_data.get_curve())
 
     # Выделяем объект
     main_object_select(curve_data.get_curve())

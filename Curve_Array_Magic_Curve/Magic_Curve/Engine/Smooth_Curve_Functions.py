@@ -65,11 +65,9 @@ def z_vec_smooth(curve, array_size):
     return z_vec_arr
 
 
-def tilt_correction_smooth(ext_vec_arr, y_vec_arr, z_vec_arr, curve):
+def angle_arr_calc_smooth(ext_vec_arr, y_vec_arr, z_vec_arr):
 
-    points = curve.data.splines[0].bezier_points
-
-    for i in range(len(ext_vec_arr)):
+    def __func(i):
 
         z_vec = z_vec_arr[i]
         ext_vec = vec_projection(ext_vec_arr[i], z_vec)
@@ -78,4 +76,10 @@ def tilt_correction_smooth(ext_vec_arr, y_vec_arr, z_vec_arr, curve):
         cross_vec = z_vec.cross(y_vec)
         angle = angle_calc(ext_vec, y_vec, cross_vec)
 
-        points[i].tilt = angle
+        return angle
+
+    angle_arr = np.frompyfunc(__func, 1, 1)
+
+    angle_arr = angle_arr(len(ext_vec_arr))
+
+    return angle_arr

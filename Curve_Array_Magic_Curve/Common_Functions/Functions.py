@@ -527,7 +527,7 @@ def point_direction_vec(mesh, curve_data):
     return ext_vec_arr
 
 
-def twist_levelling(points_tilt_arr):
+def _twist_levelling(points_tilt_arr):
 
     min_tilt = int(np.amin(points_tilt_arr)/(math.pi * 2))
     max_tilt = int(np.amax(points_tilt_arr)/(math.pi * 2))
@@ -585,7 +585,7 @@ def twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, curve):
 
             i += 1
 
-        points_tilt_arr = twist_levelling(points_tilt_arr)
+        points_tilt_arr = _twist_levelling(points_tilt_arr)
 
         i = 0
 
@@ -753,21 +753,6 @@ def angle_calc(ext_vec, y_vec, cross_vec):
 
         angle = -angle
 
-    elif ext_vec.dot(cross_vec) == 0:
-
-        angle = 0
-
-    #  Предотвращение перекрещивания
-    if ext_vec.dot(y_vec) < 0:
-
-        if angle < 0:
-
-            angle = math.radians(180) + (math.radians(180) + angle)
-
-        elif angle > 0:
-
-            angle = math.radians(180) - (math.radians(180) - angle)
-
     return angle
 
 
@@ -904,3 +889,31 @@ def main_object_select(obj):
     bpy.ops.object.select_all(action='DESELECT')
     obj.select_set(True)
     bpy.context.view_layer.objects.active = obj
+
+
+def twist_correction_curve_creation(angle_arr):
+
+    for i in range(len(angle_arr)-1):
+
+        diff = angle_arr[i+1] - angle_arr[i]
+
+        if abs(diff) > math.pi:
+
+            if diff > 0:
+
+                angle_arr[i+1] -= math.pi * 2
+
+            else:
+
+                angle_arr[i+1] += math.pi * 2
+
+    return angle_arr
+
+
+def tilt_correction_curve_creation(angle_arr, curve):
+
+    points = curve.data.splines[0].points
+
+    for i in range(len(points)):
+
+        points[i].tilt = angle_arr[i]
