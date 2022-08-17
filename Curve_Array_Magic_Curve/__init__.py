@@ -58,7 +58,7 @@ from .Magic_Curve.Ops.Smooth_Curve_Ops import (
 from .Magic_Curve.Ops.Split_Curve_Ops import (
     MAGICCURVE_OT_create_split_curve
 )
-from .Magic_Curve.Ops.Switch_Twist_Method_Ops import (
+from .Magic_Curve.Ops.Change_Twist_Method_Ops import (
     MAGICCURVE_OT_switch_twist_method
 )
 from .Magic_Curve.Ops.Switch_Direction_Ops import (

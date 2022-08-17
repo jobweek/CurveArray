@@ -1,7 +1,7 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
 from ...Errors.Errors import CancelError, show_message_box
-from .Switch_Twist_Method_Functions import (
+from .Change_Twist_Method_Functions import (
     switch_curve_twist,
 )
 from ...Common_Functions.Functions import (

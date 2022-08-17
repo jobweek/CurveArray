@@ -300,3 +300,23 @@ There are a number of conditions which, if not met, will result in known error:
 
 ![Plane](/documentation_resources/40.png)
 ![Edges](/documentation_resources/41.png) 
+
+### Switch Twist Method Operator
+
+   This operator allows you to toggle cyclic of all the splines of the curve, keeping the correct tilt of each point of the splines.
+   
+   _Working with Curves of type: Poly, Bezier._
+
+   _Working with Twist Method of type: Minimum, Z-UP._
+
+**Example of usage**
+
+   _Before:_
+
+![Plane](/documentation_resources/36.png)
+![Edges](/documentation_resources/37.png) 
+
+   _After:_
+
+![Plane](/documentation_resources/40.png)
+![Edges](/documentation_resources/41.png) 

@@ -19,4 +19,4 @@ class MAGICCURVE_PT_curve_methods_panel(bpy.types.Panel):
         row.operator('magiccurve.toggle_cyclic', text="Toggle Cyclic")
 
         row = layout.row()
-        row.operator('magiccurve.switch_twist_method', text="Switch Twist Method")
+        row.operator('magiccurve.change_twist_method', text="Change Twist Method")

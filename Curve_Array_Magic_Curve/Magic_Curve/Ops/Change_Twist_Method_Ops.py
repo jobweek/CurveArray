@@ -1,6 +1,6 @@
 import bpy  # type: ignore
 from ...Errors.Errors import CancelError, show_message_box
-from ..Engine.Switch_Twist_Method import (
+from ..Engine.Change_Twist_Method import (
     switch_twist_method_manager
 )
 import traceback
@@ -8,8 +8,8 @@ import traceback
 
 class MAGICCURVE_OT_switch_twist_method(bpy.types.Operator):
     """Switch curve direction and recalculate to right tilt"""
-    bl_label = "Switch Twist Method"
-    bl_idname = 'magiccurve.switch_twist_method'
+    bl_label = "Change Twist Method"
+    bl_idname = 'magiccurve.change_twist_method'
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, _):
