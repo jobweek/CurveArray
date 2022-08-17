@@ -80,6 +80,6 @@ def angle_arr_calc_smooth(ext_vec_arr, y_vec_arr, z_vec_arr):
 
     angle_arr = np.frompyfunc(__func, 1, 1)
 
-    angle_arr = angle_arr(len(ext_vec_arr))
+    angle_arr = angle_arr(range(len(ext_vec_arr)))
 
     return angle_arr
