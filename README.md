@@ -133,8 +133,8 @@ You may see an unexpected result. As recommended by the blender developers, for 
 
    Calling the Smooth Curve operator: 1.987318843654276 seconds.
 
-   ![Smooth Curve vs Convert](/documentation_resources/25.png)
    ![Smooth Curve vs Convert](/documentation_resources/26.png)
+   ![Smooth Curve vs Convert](/documentation_resources/25.png)
 
 ### Smooth Curve operator
 
@@ -257,4 +257,46 @@ There are a number of conditions which, if not met, will result in known error:
 
    ![Smooth Curve vs Convert](/documentation_resources/35.png)
 
-### Rules and Errors
+   It is worth noting that the Smooth parameter has a huge impact on performance. I will talk about this later, in the 'Unexpected Result' section. 
+   But even now, it is important to understand that high values of this parameter will have a huge impact on the speed of both Blender itself and the magic curve methods. 
+   Therefore, in case of long wait or program crash, I recommend lowering the Smooth value and repeating the operation.
+   
+### Switch Curve Direction Operator
+
+   This operator allows you to switch the direction of all the splines of the curve, keeping the correct tilt of each point of the splines.
+   
+   _Working with Curves of type: Poly, Bezier._
+
+   _Working with Twist Method of type: Minimum, Z-UP._
+
+**Example of usage**
+
+   _Before:_
+
+![Plane](/documentation_resources/36.png)
+![Edges](/documentation_resources/37.png) 
+
+   _After:_
+
+![Plane](/documentation_resources/38.png)
+![Edges](/documentation_resources/39.png) 
+
+### Toggle Cyclic Operator
+
+   This operator allows you to toggle cyclic of all the splines of the curve, keeping the correct tilt of each point of the splines.
+   
+   _Working with Curves of type: Poly, Bezier._
+
+   _Working with Twist Method of type: Minimum, Z-UP._
+
+**Example of usage**
+
+   _Before:_
+
+![Plane](/documentation_resources/36.png)
+![Edges](/documentation_resources/37.png) 
+
+   _After:_
+
+![Plane](/documentation_resources/40.png)
+![Edges](/documentation_resources/41.png) 
