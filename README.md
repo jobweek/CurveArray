@@ -195,7 +195,7 @@ There are three modes of calculating curve twist in Blender: Z-UP, Minimum and T
 
 The Z-UP and Minimum curves are most usefull.  Tangent curves have almost no application and the Magic Curve module does not support working with them.The main application is for curves of type Minimum, but there are useful application cases for Z-Up curves as well. 
 
-   _For convenience, I have extruded the curve so that we can visually see the changes in the slope of the curve normals._
+   _For convenience, I have extruded the curve so that we can visually see the changes in the tilt of the curve normals._
 
 ![Plane](/documentation_resources/27.png)
 ![Edges](/documentation_resources/28.png) 
@@ -301,9 +301,9 @@ There are a number of conditions which, if not met, will result in known error:
 ![Plane](/documentation_resources/40.png)
 ![Edges](/documentation_resources/41.png) 
 
-### Switch Twist Method Operator
+### Change Twist Method Operator
 
-   This operator allows you to toggle cyclic of all the splines of the curve, keeping the correct tilt of each point of the splines.
+   This operator allows you to change the curve calculation type from Minimum to Z-UP or vice versa.
    
    _Working with Curves of type: Poly, Bezier._
 
@@ -313,10 +313,10 @@ There are a number of conditions which, if not met, will result in known error:
 
    _Before:_
 
-![Plane](/documentation_resources/36.png)
-![Edges](/documentation_resources/37.png) 
+![Plane](/documentation_resources/42.png)
+![Edges](/documentation_resources/43.png) 
 
    _After:_
 
-![Plane](/documentation_resources/40.png)
-![Edges](/documentation_resources/41.png) 
+![Plane](/documentation_resources/44.png)
+![Edges](/documentation_resources/45.png) 
