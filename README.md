@@ -188,3 +188,73 @@ The coordinates and normals of the points forming the spline correspond to the c
    ![Smooth Curve vs Convert](/documentation_resources/23.png)
    ![Smooth Curve vs Convert](/documentation_resources/24.png)
    
+
+## Curve Methods
+
+There are three modes of calculating curve twist in Blender: Z-UP, Minimum and Tangent. 
+
+The Z-UP and Minimum curves are most usefull.  Tangent curves have almost no application and the Magic Curve module does not support working with them.The main application is for curves of type Minimum, but there are useful application cases for Z-Up curves as well. 
+
+   _For convenience, I have extruded the curve so that we can visually see the changes in the slope of the curve normals._
+
+![Plane](/documentation_resources/27.png)
+![Edges](/documentation_resources/28.png) 
+
+Let's see what happens to a curve of type Mimimum if we call the default Blender operator - Switch Direction:
+
+![Plane](/documentation_resources/29.png)
+![Edges](/documentation_resources/30.png) 
+
+Let's also look at the result of another standard Blender operator - Toggle Cyclic:
+
+![Plane](/documentation_resources/31.png)
+![Edges](/documentation_resources/32.png) 
+
+Now let's try changing the curve type from Minimum to Z-UP:
+
+![Plane](/documentation_resources/33.png)
+![Edges](/documentation_resources/34.png) 
+
+Each of these operators changes the slope of the curve normals, which forces you to re-do everything manually. Magic Curve Methods is designed to fix this. 
+
+### Rules and Errors
+
+There are a number of conditions which, if not met, will result in known error:
+
+1. In a scene, only one object must be selected from whose mesh you want to obtain the curve.
+
+    Error text:
+
+        > Select object.
+    or
+
+        > Select only one object.
+
+2. The object type must be a curve.
+    
+    Error text:
+
+        > Object should be curve.
+
+
+3. The operator's start-up must be in object mode.        
+
+   _The operator works on all curve splines, so an exit to object mode is required._
+
+    Error text:
+
+        > Go to Object Mode.    
+
+**Performance test**
+
+   _Cpu: Ryzen5 5600x_
+
+   _Ram: ddr4 16 gb_
+
+   _Gpu: gtx 1050 ti_
+
+   Calling the Switch Twist Method (heaviest) operator: 0.2555739999515936 seconds.
+
+   ![Smooth Curve vs Convert](/documentation_resources/35.png)
+
+### Rules and Errors
