@@ -2,10 +2,12 @@ import bpy  # type: ignore
 import bmesh  # type: ignore
 import mathutils  # type: ignore
 import numpy as np
+import math
 from ...Common_Functions.Functions import (
     vec_projection,
     angle_calc,
     calc_vec,
+    rad_circle_const,
 )
 
 
@@ -81,6 +83,25 @@ def angle_arr_calc_smooth(ext_vec_arr, y_vec_arr, z_vec_arr):
     angle_arr = np.frompyfunc(__func, 1, 1)
 
     angle_arr = angle_arr(range(len(ext_vec_arr)))
+
+    return angle_arr
+
+
+def twist_correction_smooth(angle_arr):
+
+    for i in range(len(angle_arr)-1):
+
+        diff = angle_arr[i+1] - angle_arr[i]
+
+        if abs(diff) > math.pi:
+
+            if diff > 0:
+
+                angle_arr[i+1] -= rad_circle_const
+
+            else:
+
+                angle_arr[i+1] += rad_circle_const
 
     return angle_arr
 

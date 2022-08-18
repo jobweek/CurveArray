@@ -9,7 +9,7 @@ from ..Errors.Errors import (
     CancelError,
 )
 
-_rad_circle_const = math.pi * 2
+rad_circle_const = math.pi * 2
 
 
 class CreationCurveData:
@@ -891,22 +891,3 @@ def main_object_select(obj):
     bpy.ops.object.select_all(action='DESELECT')
     obj.select_set(True)
     bpy.context.view_layer.objects.active = obj
-
-
-def twist_correction_curve_creation(angle_arr):
-
-    for i in range(len(angle_arr)-1):
-
-        diff = angle_arr[i+1] - angle_arr[i]
-
-        if abs(diff) > math.pi:
-
-            if diff > 0:
-
-                angle_arr[i+1] -= _rad_circle_const
-
-            else:
-
-                angle_arr[i+1] += _rad_circle_const
-
-    return angle_arr

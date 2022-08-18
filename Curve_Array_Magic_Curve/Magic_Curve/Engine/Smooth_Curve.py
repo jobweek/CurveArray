@@ -7,6 +7,7 @@ from .Smooth_Curve_Functions import (
     z_vec_smooth,
     angle_arr_calc_smooth,
     tilt_correction_smooth,
+    twist_correction_smooth,
 )
 from ...Common_Functions.Functions import (
     curve_creation_start_check,
@@ -18,7 +19,6 @@ from ...Common_Functions.Functions import (
     convert_to_mesh,
     ext_vec_curve_creation,
     main_object_select,
-    twist_correction_curve_creation,
 )
 
 
@@ -72,7 +72,7 @@ def smooth_curve_manager():
     angle_arr = angle_arr_calc_smooth(ext_vec_arr, y_vec_arr, z_vec_arr)
 
     # Предотвращаем перекручивание
-    angle_arr = twist_correction_curve_creation(angle_arr)
+    angle_arr = twist_correction_smooth(angle_arr)
 
     # Корректируем тильт
     tilt_correction_smooth(angle_arr, curve_data.get_curve())

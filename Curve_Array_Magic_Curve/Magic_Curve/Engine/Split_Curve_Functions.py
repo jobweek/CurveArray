@@ -2,10 +2,12 @@ import bpy  # type: ignore
 import bmesh  # type: ignore
 import mathutils  # type: ignore
 import numpy as np
+import math
 from ...Common_Functions.Functions import (
     vec_projection,
     angle_calc,
     calc_vec,
+    rad_circle_const,
 )
 
 
@@ -38,9 +40,7 @@ def create_curve_split(vert_co_array, active_object, curve_data):
 
 def angle_arr_calc_split(ext_vec_arr, y_vec_arr, curve):
 
-    angle_arr = np.empty(len(ext_vec_arr) * 2)
-
-    for i in range(len(ext_vec_arr)):
+    def __func(i):
 
         first_point = curve.data.splines[i].bezier_points[0]
         second_point = curve.data.splines[i].bezier_points[1]
@@ -56,8 +56,33 @@ def angle_arr_calc_split(ext_vec_arr, y_vec_arr, curve):
         first_cross_vec = z_vec.cross(first_y_vec)
         second_cross_vec = z_vec.cross(second_y_vec)
 
-        angle_arr[i*2] = angle_calc(ext_vec, first_y_vec, first_cross_vec)
-        angle_arr[i*2+1] = angle_calc(ext_vec, second_y_vec, second_cross_vec)
+        first_angle = angle_calc(ext_vec, first_y_vec, first_cross_vec)
+        second_angle = angle_calc(ext_vec, second_y_vec, second_cross_vec)
+
+        return first_angle, second_angle
+
+    angle_arr = np.frompyfunc(__func, 1, 2)
+
+    angle_arr = angle_arr(range(len(ext_vec_arr)))
+
+    return angle_arr
+
+
+def twist_correction_split(angle_arr):
+
+    for i in range(len(angle_arr)):
+
+        diff = angle_arr[i][1] - angle_arr[i][0]
+
+        if abs(diff) > math.pi:
+
+            if diff > 0:
+
+                angle_arr[i][1] -= rad_circle_const
+
+            else:
+
+                angle_arr[i][1] += rad_circle_const
 
     return angle_arr
 
@@ -66,5 +91,5 @@ def tilt_correction_split(angle_arr, curve):
 
     for i in range(len(curve.data.splines)):
 
-        curve.data.splines[i].bezier_points[0].tilt = angle_arr[i*2]
-        curve.data.splines[i].bezier_points[1].tilt = angle_arr[i*2+1]
+        curve.data.splines[i].bezier_points[0].tilt = angle_arr[i][0]
+        curve.data.splines[i].bezier_points[1].tilt = angle_arr[i][1]
