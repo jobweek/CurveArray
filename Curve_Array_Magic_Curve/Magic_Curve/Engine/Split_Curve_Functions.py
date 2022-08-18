@@ -23,6 +23,8 @@ def create_curve_split(vert_co_array, active_object, curve_data):
         spline.points[0].co = vert_co_array[i].to_4d()
         spline.points[1].co = vert_co_array[i + 1].to_4d()
 
+        spline.type = 'BEZIER'
+
     crv_obj = bpy.data.objects.new('Split_Curve', crv_mesh)
     crv_obj.location = active_object.location
     crv_obj.rotation_euler = active_object.rotation_euler
@@ -40,8 +42,8 @@ def angle_arr_calc_split(ext_vec_arr, y_vec_arr, curve):
 
     for i in range(len(ext_vec_arr)):
 
-        first_point = curve.data.splines[i].points[0]
-        second_point = curve.data.splines[i].points[1]
+        first_point = curve.data.splines[i].bezier_points[0]
+        second_point = curve.data.splines[i].bezier_points[1]
 
         z_vec = calc_vec(first_point.co.to_3d(), second_point.co.to_3d(), True)
         assert z_vec is not None, 'z_vec is None'
