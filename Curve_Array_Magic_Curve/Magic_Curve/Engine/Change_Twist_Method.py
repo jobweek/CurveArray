@@ -4,16 +4,16 @@ from ...Errors.Errors import CancelError, show_message_box
 from .Change_Twist_Method_Functions import (
     switch_curve_twist,
 )
-from ...Common_Functions.Functions import (
+from ...General_Functions.Functions import (
     duplicate,
     convert_to_mesh,
-    curve_checker,
+    curve_methods_start_checker,
     merged_points_check, points_select,
     curve_data,
-    tilt_twist_calc,
+    angle_arr_get,
     point_direction_vec,
+    angle_arr_calc,
     tilt_correction,
-    twist_correction,
     z_vec,
     main_object_select,
 )
@@ -21,16 +21,21 @@ from ...Common_Functions.Functions import (
 
 def switch_twist_method_manager():
 
-    curve = bpy.context.active_object
-    curve_checker()
-    merged_points_check(curve)
-    points_select(curve)
+    # Проверям стартовые условия вызова оператора
+    curve_methods_start_checker()
 
+    curve = bpy.context.active_object
     if curve.data.twist_mode == 'TANGENT':
 
         show_message_box("Error", "Tangent twist curves are not supported", 'ERROR')
 
         raise CancelError
+
+    # Проверяем кривую на существование слитый точек
+    merged_points_check(curve)
+
+    # Выделяем все точки на кривой
+    points_select(curve)
 
     # Дублируем кривую
     curve_duplicate = duplicate(curve)
@@ -38,8 +43,8 @@ def switch_twist_method_manager():
     # Получим информацию о кривой
     curve_duplicate_data = curve_data(curve_duplicate)
 
-    # Полуичм разницу наклонов точек прямой
-    tilt_twist_y_arr = tilt_twist_calc(curve_duplicate)
+    # Полуичм углы наклона точек кривой
+    angle_arr_curve = angle_arr_get(curve_duplicate)
 
     # Конвертируем в меш
     mesh_curve_duplicate = convert_to_mesh(curve_duplicate)
@@ -64,14 +69,11 @@ def switch_twist_method_manager():
     z_vec_arr = z_vec(mesh_switched_curve_duplicate, curve_duplicate_data)
     bpy.data.objects.remove(mesh_switched_curve_duplicate, do_unlink=True)
 
+    # Получаем массив углов поврота
+    angle_arr_switched_curve = angle_arr_calc(y_vec_arr, ext_vec_arr, z_vec_arr, switched_curve)
+
     # Корректируем тильт
-    tilt_correction(y_vec_arr, ext_vec_arr, z_vec_arr, switched_curve)
-
-    # Получаем твист точек
-    tilt_twist_ext_arr = tilt_twist_calc(switched_curve)
-
-    # Корректируем твист
-    twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, switched_curve)
+    tilt_correction(angle_arr_curve, angle_arr_switched_curve, switched_curve)
 
     # Выделяем объект
     main_object_select(switched_curve)

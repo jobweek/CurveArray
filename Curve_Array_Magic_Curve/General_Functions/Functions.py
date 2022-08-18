@@ -4,12 +4,13 @@ import bmesh  # type: ignore
 import mathutils  # type: ignore
 import math
 import numpy as np
+from typing import Final
 from ..Errors.Errors import (
     show_message_box,
     CancelError,
 )
 
-rad_circle_const = math.pi * 2
+RAD_CIRCLE_CONST: Final = math.pi * 2
 
 
 class CreationCurveData:
@@ -222,9 +223,9 @@ def duplicate(active_curve):
     if active_curve.animation_data:
         duplicate_curve.animation_data.action = active_curve.animation_data.action.copy()
 
-    for i in active_curve.users_collection:
-
-        i.objects.link(duplicate_curve)
+    # for i in active_curve.users_collection:
+    #
+    #     i.objects.link(duplicate_curve)
 
     return duplicate_curve
 
@@ -262,7 +263,7 @@ def ext_vec_curve_creation(extruded_mesh, array_size: int, step: int):
     return ext_vec_arr
 
 
-def curve_checker():
+def curve_methods_start_checker():
 
     objects = bpy.context.selected_objects
 
@@ -397,7 +398,7 @@ def curve_data(curve):
     # Массив индексов вершин меша соответствующих точкам сплайна
     spline_verts_index_arr = np.empty(spline_count, dtype=object)
 
-    # Cyclic == True; Not_Cyclic == False;
+    # Cyclic == True; Non_Cyclic == False;
     spline_cyclic_arr = np.empty(spline_count, dtype=bool)
 
     # Poly == True; Bezier == False;
@@ -406,10 +407,9 @@ def curve_data(curve):
     # Координаты правого хэндла для нулевой точки и левого для последней
     spline_start_end_handle_arr = np.empty(spline_count, dtype=object)
 
-    i = 0
     last_index = -2  # Индекс последней нулевой вершины меша относящегося к сплайну
 
-    while i < len(splines):
+    for i in range(len(splines)):
 
         if splines[i].type == 'POLY':
 
@@ -430,11 +430,9 @@ def curve_data(curve):
 
         spline_point_count_arr[i] = len(points)
         spline_verts_index_arr[i], last_index = \
-            spline_verts_index(points, spline_type, cyclic, resolution, last_index)
+            _spline_verts_index(points, spline_type, cyclic, resolution, last_index)
         spline_cyclic_arr[i] = cyclic
         spline_type_arr[i] = spline_type
-
-        i += 1
 
     return (
         spline_point_count_arr,
@@ -445,14 +443,31 @@ def curve_data(curve):
     )
 
 
-def tilt_twist_calc(curve):
+def _tilt_twist_calc(fist_angle, second_angle):
+
+    twist = second_angle - fist_angle
+
+    if fist_angle > second_angle:
+
+        twist = -(abs(twist) // RAD_CIRCLE_CONST)
+
+    elif fist_angle < second_angle:
+
+        twist = twist // RAD_CIRCLE_CONST
+
+    else:
+
+        twist = 0
+
+    return twist
+
+
+def angle_arr_get(curve):
 
     splines = curve.data.splines
-    tilt_twist_arr = np.empty(len(curve.data.splines), dtype=object)
 
-    spline_iter = 0
-
-    while spline_iter < len(splines):
+    # Возвращает массив содержащий углы поворта кажждой точки для одного сплайна
+    def __func(spline_iter):
 
         if splines[spline_iter].type == 'POLY':
 
@@ -462,33 +477,22 @@ def tilt_twist_calc(curve):
 
             points = splines[spline_iter].bezier_points
 
-        tilt_twist_arr[spline_iter] = np.empty(len(points)-1, dtype=int)
+        # Возвращает угл поворта точки
+        def __under_func(point_iter):
 
-        i = 0
+            angle = points[point_iter].tilt
 
-        while i < len(points)-1:
+            return angle
 
-            twist = points[i+1].tilt - points[i].tilt
+        spline_angle_arr = np.frompyfunc(__under_func, 1, 1)
+        spline_angle_arr = spline_angle_arr(range(len(points)))
 
-            if points[i].tilt > points[i+1].tilt:
+        return spline_angle_arr
 
-                twist = -(abs(twist) // (math.pi * 2))
+    angle_arr = np.frompyfunc(__func, 1, 1)
+    angle_arr = angle_arr(range(len(splines)))
 
-            elif points[i].tilt < points[i+1].tilt:
-
-                twist = twist // (math.pi * 2)
-
-            else:
-
-                twist = 0
-
-            tilt_twist_arr[spline_iter][i] = twist
-
-            i += 1
-
-        spline_iter += 1
-
-    return tilt_twist_arr
+    return angle_arr
 
 
 def point_direction_vec(mesh, curve_data):
@@ -503,28 +507,21 @@ def point_direction_vec(mesh, curve_data):
 
     ext_vec_arr = create_arr(spline_point_count_arr)
     verts = mesh.data.vertices
-    list_iter = 0
 
-    while list_iter < len(ext_vec_arr):
+    for spline_iter in range(len(ext_vec_arr)):
 
-        ext_arr = ext_vec_arr[list_iter]
+        ext_arr = ext_vec_arr[spline_iter]
 
-        spline_point_iter = 0  # Соответствует индексу поинтов одного сплайна
+        for point_iter in range(len(ext_arr)):
 
-        while spline_point_iter < len(ext_arr):
-
-            first_point_index = spline_verts_index_arr[list_iter][spline_point_iter]
+            first_point_index = spline_verts_index_arr[spline_iter][point_iter]
 
             first_point = verts[first_point_index]
             second_point = verts[first_point_index + 1]
 
             ext_vec = calc_vec(first_point.co, second_point.co, True)
 
-            ext_arr[spline_point_iter] = ext_vec
-
-            spline_point_iter += 1
-
-        list_iter += 1
+            ext_arr[point_iter] = ext_vec
 
     return ext_vec_arr
 
@@ -553,12 +550,20 @@ def _twist_levelling(points_tilt_arr):
     return points_tilt_arr
 
 
-def twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, curve):
+def _twist_correction(twist_original, twist_existing):
+
+    diff = twist_original - twist_existing
+
+    rad_diff = diff * RAD_CIRCLE_CONST
+
+    return rad_diff
+
+
+def tilt_correction(angle_arr_curve, angle_arr_switched_curve, curve):
 
     splines = curve.data.splines
-    spline_iter = 0
 
-    while spline_iter < len(splines):
+    for spline_iter in range(len(splines)):
 
         if splines[spline_iter].type == 'POLY':
 
@@ -568,44 +573,29 @@ def twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, curve):
 
             points = splines[spline_iter].bezier_points
 
-        i = 0
+        angle_curve = angle_arr_curve[spline_iter]
+        angle_switched = angle_arr_switched_curve[spline_iter]
 
-        points_tilt_arr = np.empty(len(points), dtype=float)
-        points_tilt_arr[0] = points[0].tilt
+        for i in range(len(points)-1):
 
-        while i < len(tilt_twist_y_arr[spline_iter]):
+            twist_original = _tilt_twist_calc(angle_curve[i], angle_curve[i+1])
+            twist_existing = _tilt_twist_calc(angle_switched[i], angle_switched[i+1])
+            rad_diff = _twist_correction(twist_original, twist_existing)
+            angle_switched[i+1] += rad_diff
 
-            diff = tilt_twist_y_arr[spline_iter][i] - tilt_twist_ext_arr[spline_iter][i]
+        angle_arr_switched_curve[spline_iter] = _twist_levelling(angle_arr_switched_curve[spline_iter])
 
-            rad_diff = diff * math.pi * 2
+        for point_iter in range(len(points)):
 
-            if i != len(tilt_twist_y_arr[spline_iter]) - 1:
-
-                tilt_twist_y_arr[spline_iter][i+1] += diff
-
-            points_tilt_arr[i+1] = points[i+1].tilt + rad_diff
-
-            i += 1
-
-        points_tilt_arr = _twist_levelling(points_tilt_arr)
-
-        i = 0
-
-        while i < len(points):
-
-            points[i].tilt = points_tilt_arr[i]
-
-            i += 1
-
-        spline_iter += 1
+            points[point_iter].tilt = angle_arr_switched_curve[point_iter]
 
 
-def tilt_correction(y_vec_arr, ext_vec_arr, z_vec_arr, curve):
+def angle_arr_calc(y_vec_arr, ext_vec_arr, z_vec_arr, curve):
 
-    splines = curve.data.splines
-    spline_iter = 0
+    # Возвращает массив содержащий углы поворта кажждой точки для одного сплайна
+    def __func(spline_iter):
 
-    while spline_iter < len(ext_vec_arr):
+        splines = curve.data.splines
 
         if splines[spline_iter].type == 'POLY':
 
@@ -619,9 +609,8 @@ def tilt_correction(y_vec_arr, ext_vec_arr, z_vec_arr, curve):
         ext_arr = ext_vec_arr[spline_iter]
         z_arr = z_vec_arr[spline_iter]
 
-        point_iter = 0
-
-        while point_iter < len(y_arr):
+        # Возвращает угл лповорта точки
+        def __under_func(point_iter):
 
             y_vec = y_arr[point_iter]
             ext_vec = ext_arr[point_iter]
@@ -644,11 +633,17 @@ def tilt_correction(y_vec_arr, ext_vec_arr, z_vec_arr, curve):
                     'ERROR'
                 )
 
-            points[point_iter].tilt = new_angle
+            return new_angle
 
-            point_iter += 1
+        spline_angle_arr = np.frompyfunc(__under_func, 1, 1)
+        spline_angle_arr = spline_angle_arr(range(len(y_arr)))
 
-        spline_iter += 1
+        return spline_angle_arr
+
+    angle_arr = np.frompyfunc(__func, 1, 1)
+    angle_arr = angle_arr(range(len(ext_vec_arr)))
+
+    return angle_arr
 
 
 def vec_equal(vec_1, vec_2):
@@ -656,7 +651,7 @@ def vec_equal(vec_1, vec_2):
     return vec_1.to_tuple(4) == vec_2.to_tuple(4)
 
 
-def spline_verts_index(points, spline_type, cyclic, resolution, last_index):
+def _spline_verts_index(points, spline_type, cyclic, resolution, last_index):
 
     arr = np.empty(len(points), dtype=int)
 
@@ -793,9 +788,8 @@ def z_vec(mesh, curve_data):
 
     z_vec_arr = create_arr(spline_point_count_arr)
     verts = mesh.data.vertices
-    spline_iter = 0
 
-    while spline_iter < len(z_vec_arr):
+    for spline_iter in range(len(z_vec_arr)):
 
         z_arr = z_vec_arr[spline_iter]
         max_index = np.amax(spline_verts_index_arr[spline_iter])
@@ -880,8 +874,6 @@ def z_vec(mesh, curve_data):
                 next_point_index = min_index
 
             z_arr[point_iter] = calc_z_vec(point_index, prev_point_index, next_point_index, verts)
-
-        spline_iter += 1
 
     return z_vec_arr
 

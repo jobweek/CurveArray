@@ -6,17 +6,17 @@ from .Toggle_Cyclic_Functions import (
     toggle_curve_cyclic,
     tilt_correction_cyclic,
 )
-from ...Common_Functions.Functions import (
+from ...General_Functions.Functions import (
     duplicate,
     convert_to_mesh,
-    curve_checker,
+    curve_methods_start_checker,
     merged_points_check,
     points_select,
     curve_data,
-    tilt_twist_calc,
+    angle_arr_get,
     point_direction_vec,
     z_vec,
-    twist_correction,
+    tilt_correction,
     main_object_select,
 )
 
@@ -24,7 +24,7 @@ from ...Common_Functions.Functions import (
 def toggle_cyclic_manager():
 
     curve = bpy.context.active_object
-    curve_checker()
+    curve_methods_start_checker()
     merged_points_check(curve)
     points_select(curve)
 
@@ -51,7 +51,7 @@ def toggle_cyclic_manager():
     curve_duplicate_data = curve_data(curve_duplicate)
 
     # Полуичм разницу наклонов точек прямой
-    tilt_twist_y_arr = tilt_twist_calc(curve_duplicate)
+    tilt_twist_y_arr = angle_arr_get(curve_duplicate)
 
     # Конвертируем в меш
     mesh_curve_duplicate = convert_to_mesh(curve_duplicate)
@@ -83,10 +83,10 @@ def toggle_cyclic_manager():
     tilt_correction_cyclic(y_vec_arr, ext_vec_arr, z_vec_arr, toggled_curve)
 
     # Получаем твист точек
-    tilt_twist_ext_arr = tilt_twist_calc(toggled_curve)
+    tilt_twist_ext_arr = angle_arr_get(toggled_curve)
 
     # Корректируем твист
-    twist_correction(tilt_twist_y_arr, tilt_twist_ext_arr, toggled_curve)
+    tilt_correction(tilt_twist_y_arr, tilt_twist_ext_arr, toggled_curve)
 
     # Выделяем объект
     main_object_select(toggled_curve)

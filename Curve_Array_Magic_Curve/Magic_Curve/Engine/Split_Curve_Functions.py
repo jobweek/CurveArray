@@ -3,11 +3,11 @@ import bmesh  # type: ignore
 import mathutils  # type: ignore
 import numpy as np
 import math
-from ...Common_Functions.Functions import (
+from ...General_Functions.Functions import (
     vec_projection,
     angle_calc,
     calc_vec,
-    rad_circle_const,
+    RAD_CIRCLE_CONST,
 )
 
 
@@ -78,11 +78,11 @@ def twist_correction_split(angle_arr):
 
             if diff > 0:
 
-                angle_arr[i][1] -= rad_circle_const
+                angle_arr[i][1] -= RAD_CIRCLE_CONST
 
             else:
 
-                angle_arr[i][1] += rad_circle_const
+                angle_arr[i][1] += RAD_CIRCLE_CONST
 
     return angle_arr
 

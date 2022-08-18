@@ -8,7 +8,7 @@ from .Split_Curve_Functions import (
     tilt_correction_split,
     twist_correction_split,
 )
-from ...Common_Functions.Functions import (
+from ...General_Functions.Functions import (
     curve_creation_start_check,
     active_vertex,
     verts_sequence,

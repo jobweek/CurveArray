@@ -2,7 +2,7 @@ import bpy  # type: ignore
 import bmesh  # type: ignore
 import mathutils  # type: ignore
 from ...Errors.Errors import show_message_box
-from ...Common_Functions.Functions import (
+from ...General_Functions.Functions import (
     vec_projection,
     angle_calc,
 )
