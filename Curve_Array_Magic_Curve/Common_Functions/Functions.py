@@ -910,12 +910,3 @@ def twist_correction_curve_creation(angle_arr):
                 angle_arr[i+1] += _rad_circle_const
 
     return angle_arr
-
-
-def tilt_correction_curve_creation(angle_arr, curve):
-
-    points = curve.data.splines[0].bezier_points
-
-    for i in range(len(points)):
-
-        points[i].tilt = angle_arr[i]

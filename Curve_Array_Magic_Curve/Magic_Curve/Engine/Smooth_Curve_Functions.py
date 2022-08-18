@@ -83,3 +83,12 @@ def angle_arr_calc_smooth(ext_vec_arr, y_vec_arr, z_vec_arr):
     angle_arr = angle_arr(range(len(ext_vec_arr)))
 
     return angle_arr
+
+
+def tilt_correction_smooth(angle_arr, curve):
+
+    points = curve.data.splines[0].bezier_points
+
+    for i in range(len(points)):
+
+        points[i].tilt = angle_arr[i]

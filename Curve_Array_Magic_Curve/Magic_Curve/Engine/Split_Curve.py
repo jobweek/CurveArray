@@ -4,6 +4,7 @@ import mathutils  # type: ignore
 
 from .Split_Curve_Functions import (
     create_curve_split,
+    angle_arr_calc_split,
     tilt_correction_split,
 )
 from ...Common_Functions.Functions import (
@@ -16,6 +17,7 @@ from ...Common_Functions.Functions import (
     convert_to_mesh,
     ext_vec_curve_creation,
     main_object_select,
+    twist_correction_curve_creation,
 )
 
 
@@ -57,7 +59,14 @@ def split_curve_manager():
     ext_vec_arr = ext_vec_curve_creation(mesh_curve_duplicate, len(vert_sequence_array)-1, 4)
     bpy.data.objects.remove(mesh_curve_duplicate, do_unlink=True)
 
-    tilt_correction_split(ext_vec_arr, y_vec_arr, curve_data.get_curve())
+    # Получаем массив углов поврота
+    angle_arr = angle_arr_calc_split(ext_vec_arr, y_vec_arr, curve_data.get_curve())
+
+    # Предотвращаем перекручивание
+    angle_arr = twist_correction_curve_creation(angle_arr)
+
+    # Корректируем тильт
+    tilt_correction_split(angle_arr, curve_data.get_curve())
 
     # Выделяем объект
     main_object_select(curve_data.get_curve())

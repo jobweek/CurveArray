@@ -1,7 +1,7 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
 import mathutils  # type: ignore
-
+import numpy as np
 from ...Common_Functions.Functions import (
     vec_projection,
     angle_calc,
@@ -12,8 +12,8 @@ from ...Common_Functions.Functions import (
 def create_curve_split(vert_co_array, active_object, curve_data):
 
     crv_mesh = bpy.data.curves.new('Split_Curve', 'CURVE')
-    crv_mesh.dimensions = 'Z_UP'
-    crv_mesh.twist_mode = 'MINIMUM'
+    crv_mesh.dimensions = '3D'
+    crv_mesh.twist_mode = 'Z_UP'
 
     for i in range(len(vert_co_array)-1):
 
@@ -34,7 +34,9 @@ def create_curve_split(vert_co_array, active_object, curve_data):
     return curve_data
 
 
-def tilt_correction_split(ext_vec_arr, y_vec_arr, curve):
+def angle_arr_calc_split(ext_vec_arr, y_vec_arr, curve):
+
+    angle_arr = np.empty(len(ext_vec_arr) * 2)
 
     for i in range(len(ext_vec_arr)):
 
@@ -52,8 +54,15 @@ def tilt_correction_split(ext_vec_arr, y_vec_arr, curve):
         first_cross_vec = z_vec.cross(first_y_vec)
         second_cross_vec = z_vec.cross(second_y_vec)
 
-        first_angle = angle_calc(ext_vec, first_y_vec, first_cross_vec)
-        second_angle = angle_calc(ext_vec, second_y_vec, second_cross_vec)
+        angle_arr[i*2] = angle_calc(ext_vec, first_y_vec, first_cross_vec)
+        angle_arr[i*2+1] = angle_calc(ext_vec, second_y_vec, second_cross_vec)
 
-        first_point.tilt = first_angle
-        second_point.tilt = second_angle
+    return angle_arr
+
+
+def tilt_correction_split(angle_arr, curve):
+
+    for i in range(len(curve.data.splines)):
+
+        curve.data.splines[i].bezier_points[0].tilt = angle_arr[i*2]
+        curve.data.splines[i].bezier_points[1].tilt = angle_arr[i*2+1]
