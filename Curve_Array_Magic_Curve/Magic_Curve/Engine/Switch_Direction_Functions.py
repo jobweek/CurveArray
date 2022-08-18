@@ -6,13 +6,9 @@ import numpy as np
 
 def arr_flip_direction(arr):
 
-    i = 0
-
-    while i < len(arr):
+    for i in range(len(arr)):
 
         arr[i] = np.flip(arr[i])
-
-        i += 1
 
     return arr
 
