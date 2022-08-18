@@ -17,7 +17,6 @@ from ...General_Functions.Functions import (
     z_vec,
     main_object_select,
 )
-from ...General_Functions.Debug import print_array
 
 
 def switch_twist_method_manager():

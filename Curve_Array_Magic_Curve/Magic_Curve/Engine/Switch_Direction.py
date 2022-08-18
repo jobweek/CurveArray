@@ -89,7 +89,7 @@ def switch_curve_direction_manager():
 
     # Получаем массив углов поврота
     angle_arr_switched_curve = angle_arr_calc(y_vec_arr, ext_vec_arr, z_vec_arr, switched_curve)
-    print(f'angle_arr_curve: {angle_arr_curve}\nangle_arr_switched_curve: {angle_arr_switched_curve}')
+    print_array(angle_arr_curve, angle_arr_switched_curve)
     # Корректируем тильт
     tilt_correction(angle_arr_curve, angle_arr_switched_curve, switched_curve)
 
