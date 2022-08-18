@@ -587,7 +587,7 @@ def tilt_correction(curve_angle_arr_old, curve_angle_arr_new, curve):
 
         for point_iter in range(len(points)):
 
-            points[point_iter].tilt = curve_angle_arr_new[point_iter]
+            points[point_iter].tilt = curve_angle_arr_new[spline_iter][point_iter]
 
 
 def angle_arr_calc(y_vec_arr, ext_vec_arr, z_vec_arr, curve):
