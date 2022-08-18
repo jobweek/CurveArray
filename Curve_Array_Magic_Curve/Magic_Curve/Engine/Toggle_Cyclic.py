@@ -4,7 +4,6 @@ from ...Errors.Errors import CancelError, show_message_box
 from .Toggle_Cyclic_Functions import (
     end_start_point_type_correction_cyclic,
     toggle_curve_cyclic,
-    tilt_correction_cyclic,
 )
 from ...General_Functions.Functions import (
     duplicate,
@@ -16,6 +15,7 @@ from ...General_Functions.Functions import (
     angle_arr_get,
     point_direction_vec,
     z_vec,
+    angle_arr_calc,
     tilt_correction,
     main_object_select,
 )
@@ -23,26 +23,24 @@ from ...General_Functions.Functions import (
 
 def toggle_cyclic_manager():
 
-    curve = bpy.context.active_object
+    # Проверям стартовые условия вызова оператора
     curve_methods_start_checker()
-    merged_points_check(curve)
-    points_select(curve)
 
-    # Корректируем тип ручек начлаьной и конченой вершины
-    end_start_point_type_correction_cyclic(curve)
-
-    if curve.data.twist_mode == 'Z_UP':
-
-        toggled_curve = toggle_curve_cyclic(curve)
-        main_object_select(toggled_curve)
-
-        return
-
-    elif curve.data.twist_mode == 'TANGENT':
+    curve = bpy.context.active_object
+    if curve.data.twist_mode == 'TANGENT':
 
         show_message_box("Error", "Tangent twist curves are not supported", 'ERROR')
 
         raise CancelError
+
+    # Проверяем кривую на существование слитых точек
+    merged_points_check(curve)
+
+    # Выделяем все точки на кривой
+    points_select(curve)
+
+    # Корректируем тип ручек начлаьной и конченой вершины
+    end_start_point_type_correction_cyclic(curve)
 
     # Дублируем кривую
     curve_duplicate = duplicate(curve)
@@ -50,8 +48,8 @@ def toggle_cyclic_manager():
     # Получим информацию о кривой
     curve_duplicate_data = curve_data(curve_duplicate)
 
-    # Полуичм разницу наклонов точек прямой
-    tilt_twist_y_arr = angle_arr_get(curve_duplicate)
+    # Полуичм углы наклона точек кривой
+    angle_arr_curve = angle_arr_get(curve_duplicate)
 
     # Конвертируем в меш
     mesh_curve_duplicate = convert_to_mesh(curve_duplicate)
@@ -79,14 +77,11 @@ def toggle_cyclic_manager():
     z_vec_arr = z_vec(mesh_toggled_curve_duplicate, toggled_curve_duplicate_data)
     bpy.data.objects.remove(mesh_toggled_curve_duplicate, do_unlink=True)
 
+    # Получаем массив углов поврота
+    angle_arr_changed_curve = angle_arr_calc(y_vec_arr, ext_vec_arr, z_vec_arr, toggled_curve)
+
     # Корректируем тильт
-    tilt_correction_cyclic(y_vec_arr, ext_vec_arr, z_vec_arr, toggled_curve)
-
-    # Получаем твист точек
-    tilt_twist_ext_arr = angle_arr_get(toggled_curve)
-
-    # Корректируем твист
-    tilt_correction(tilt_twist_y_arr, tilt_twist_ext_arr, toggled_curve)
+    tilt_correction(angle_arr_curve, angle_arr_changed_curve, toggled_curve)
 
     # Выделяем объект
     main_object_select(toggled_curve)

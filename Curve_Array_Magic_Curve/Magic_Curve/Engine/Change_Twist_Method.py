@@ -31,7 +31,7 @@ def switch_twist_method_manager():
 
         raise CancelError
 
-    # Проверяем кривую на существование слитый точек
+    # Проверяем кривую на существование слитых точек
     merged_points_check(curve)
 
     # Выделяем все точки на кривой
@@ -54,10 +54,10 @@ def switch_twist_method_manager():
     bpy.data.objects.remove(mesh_curve_duplicate, do_unlink=True)
 
     # Меняем метод скручивания
-    switched_curve = switch_curve_twist(curve)
+    changed_curve = switch_curve_twist(curve)
 
     # Дублируем кривую
-    switched_curve_duplicate = duplicate(switched_curve)
+    switched_curve_duplicate = duplicate(changed_curve)
 
     # Конвертируем в меш
     mesh_switched_curve_duplicate = convert_to_mesh(switched_curve_duplicate)
@@ -70,10 +70,10 @@ def switch_twist_method_manager():
     bpy.data.objects.remove(mesh_switched_curve_duplicate, do_unlink=True)
 
     # Получаем массив углов поврота
-    angle_arr_switched_curve = angle_arr_calc(y_vec_arr, ext_vec_arr, z_vec_arr, switched_curve)
+    angle_arr_changed_curve = angle_arr_calc(y_vec_arr, ext_vec_arr, z_vec_arr, changed_curve)
 
     # Корректируем тильт
-    tilt_correction(angle_arr_curve, angle_arr_switched_curve, switched_curve)
+    tilt_correction(angle_arr_curve, angle_arr_changed_curve, changed_curve)
 
     # Выделяем объект
-    main_object_select(switched_curve)
+    main_object_select(changed_curve)

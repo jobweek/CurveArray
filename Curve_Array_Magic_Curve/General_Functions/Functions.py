@@ -550,16 +550,16 @@ def _twist_levelling(points_tilt_arr):
     return points_tilt_arr
 
 
-def _twist_correction(twist_original, twist_existing):
+def _twist_correction(twist_old, twist_new):
 
-    diff = twist_original - twist_existing
+    diff = twist_old - twist_new
 
     rad_diff = diff * RAD_CIRCLE_CONST
 
     return rad_diff
 
 
-def tilt_correction(angle_arr_curve, angle_arr_switched_curve, curve):
+def tilt_correction(curve_angle_arr_old, curve_angle_arr_new, curve):
 
     splines = curve.data.splines
 
@@ -573,21 +573,21 @@ def tilt_correction(angle_arr_curve, angle_arr_switched_curve, curve):
 
             points = splines[spline_iter].bezier_points
 
-        angle_curve = angle_arr_curve[spline_iter]
-        angle_switched = angle_arr_switched_curve[spline_iter]
+        spline_angle_arr_old = curve_angle_arr_old[spline_iter]
+        spline_angle_arr_new = curve_angle_arr_new[spline_iter]
 
         for i in range(len(points)-1):
 
-            twist_original = _tilt_twist_calc(angle_curve[i], angle_curve[i+1])
-            twist_existing = _tilt_twist_calc(angle_switched[i], angle_switched[i+1])
-            rad_diff = _twist_correction(twist_original, twist_existing)
-            angle_switched[i+1] += rad_diff
+            twist_old = _tilt_twist_calc(spline_angle_arr_old[i], spline_angle_arr_old[i+1])
+            twist_new = _tilt_twist_calc(spline_angle_arr_new[i], spline_angle_arr_new[i+1])
+            rad_diff = _twist_correction(twist_old, twist_new)
+            spline_angle_arr_new[i+1] += rad_diff
 
-        angle_arr_switched_curve[spline_iter] = _twist_levelling(angle_arr_switched_curve[spline_iter])
+        curve_angle_arr_new[spline_iter] = _twist_levelling(curve_angle_arr_new[spline_iter])
 
         for point_iter in range(len(points)):
 
-            points[point_iter].tilt = angle_arr_switched_curve[point_iter]
+            points[point_iter].tilt = curve_angle_arr_new[point_iter]
 
 
 def angle_arr_calc(y_vec_arr, ext_vec_arr, z_vec_arr, curve):
@@ -609,7 +609,7 @@ def angle_arr_calc(y_vec_arr, ext_vec_arr, z_vec_arr, curve):
         ext_arr = ext_vec_arr[spline_iter]
         z_arr = z_vec_arr[spline_iter]
 
-        # Возвращает угл лповорта точки
+        # Возвращает угл поворта точки
         def __under_func(point_iter):
 
             y_vec = y_arr[point_iter]
