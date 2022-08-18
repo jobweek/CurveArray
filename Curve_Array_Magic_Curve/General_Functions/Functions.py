@@ -443,25 +443,6 @@ def curve_data(curve):
     )
 
 
-def _tilt_twist_calc(fist_angle, second_angle):
-
-    twist = second_angle - fist_angle
-
-    if fist_angle > second_angle:
-
-        twist = -(abs(twist) // RAD_CIRCLE_CONST)
-
-    elif fist_angle < second_angle:
-
-        twist = twist // RAD_CIRCLE_CONST
-
-    else:
-
-        twist = 0
-
-    return twist
-
-
 def angle_arr_get(curve):
 
     splines = curve.data.splines
@@ -524,6 +505,25 @@ def point_direction_vec(mesh, curve_data):
             ext_arr[point_iter] = ext_vec
 
     return ext_vec_arr
+
+
+def _tilt_twist_calc(fist_angle, second_angle):
+
+    twist = second_angle - fist_angle
+
+    if fist_angle > second_angle:
+
+        twist = -(abs(twist) // RAD_CIRCLE_CONST)
+
+    elif fist_angle < second_angle:
+
+        twist = twist // RAD_CIRCLE_CONST
+
+    else:
+
+        twist = 0
+
+    return twist
 
 
 def _twist_levelling(points_tilt_arr):

@@ -9,6 +9,7 @@ def arr_flip_direction(arr):
     for i in range(len(arr)):
 
         arr[i] = np.flip(arr[i])
+        arr[i] = np.negative(arr[i])
 
     return arr
 
