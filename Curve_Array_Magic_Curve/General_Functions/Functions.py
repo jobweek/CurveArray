@@ -223,9 +223,9 @@ def duplicate(active_curve):
     if active_curve.animation_data:
         duplicate_curve.animation_data.action = active_curve.animation_data.action.copy()
 
-    # for i in active_curve.users_collection:
-    #
-    #     i.objects.link(duplicate_curve)
+    for i in active_curve.users_collection:
+
+        i.objects.link(duplicate_curve)
 
     return duplicate_curve
 
