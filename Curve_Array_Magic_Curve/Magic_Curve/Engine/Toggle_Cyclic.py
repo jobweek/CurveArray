@@ -12,7 +12,6 @@ from ...General_Functions.Functions import (
     merged_points_check,
     points_select,
     curve_data,
-    angle_arr_get,
     point_direction_vec,
     z_vec,
     angle_arr_calc,
@@ -48,9 +47,6 @@ def toggle_cyclic_manager():
     # Получим информацию о кривой
     curve_duplicate_data = curve_data(curve_duplicate)
 
-    # Полуичм углы наклона точек кривой
-    angle_arr_curve = angle_arr_get(curve_duplicate)
-
     # Конвертируем в меш
     mesh_curve_duplicate = convert_to_mesh(curve_duplicate)
 
@@ -81,7 +77,7 @@ def toggle_cyclic_manager():
     angle_arr_changed_curve = angle_arr_calc(y_vec_arr, ext_vec_arr, z_vec_arr, toggled_curve)
 
     # Корректируем тильт
-    tilt_correction(angle_arr_curve, angle_arr_changed_curve, toggled_curve)
+    tilt_correction(angle_arr_changed_curve, toggled_curve)
 
     # Выделяем объект
     main_object_select(toggled_curve)

@@ -295,19 +295,18 @@ def curve_methods_start_checker():
 
 def merged_points_check(curve):
 
-    iterator = 0
     merged_points_buffer = []
     error_case = False
 
-    for s in curve.data.splines:
+    for spline_iter, spline in enumerate(curve.data.splines):
 
-        if s.type == 'POLY':
+        if spline.type == 'POLY':
 
-            points = s.points
+            points = spline.points
 
-        elif s.type == 'BEZIER':
+        elif spline.type == 'BEZIER':
 
-            points = s.bezier_points
+            points = spline.bezier_points
 
         else:
 
@@ -315,43 +314,35 @@ def merged_points_check(curve):
 
             raise CancelError
 
-        i = 0
         merged_points_buffer.append([])
 
-        while i < len(points) - 1:
+        for i in range(len(points)-1):
 
             if vec_equal(points[i].co, points[i+1].co):
 
-                merged_points_buffer[iterator].append([i, i+1])
+                merged_points_buffer[spline_iter].append([i, i+1])
                 error_case = True
 
-            i += 1
+        if spline.use_cyclic_u:
 
-        if s.use_cyclic_u:
+            if vec_equal(points[-1].co, points[0].co):
 
-            if vec_equal(points[i].co, points[0].co):
-
-                merged_points_buffer[iterator].append([i, 0])
+                merged_points_buffer[spline_iter].append([-1, 0])
                 error_case = True
-
-        iterator += 1
 
     if error_case:
 
         verts_str = ""
-        i = 0
 
-        while i < len(merged_points_buffer):
+        for i, item in enumerate(merged_points_buffer):
 
-            if len(merged_points_buffer[i]) != 0:
+            if len(item) != 0:
 
                 verts_str += "Spline: {0}, Points: ".format(i)
 
-                for p in merged_points_buffer[i]:
+                for p in item:
 
                     verts_str += "({0},{1}) ".format(p[0], p[1])
-
-            i += 1
 
         show_message_box(
             "Error",
@@ -409,30 +400,30 @@ def curve_data(curve):
 
     last_index = -2  # Индекс последней нулевой вершины меша относящегося к сплайну
 
-    for i in range(len(splines)):
+    for spline_iter, spline in enumerate(splines):
 
-        if splines[i].type == 'POLY':
+        if spline.type == 'POLY':
 
-            points = splines[i].points
+            points = spline.points
             spline_type = True
 
         else:
 
-            points = splines[i].bezier_points
+            points = spline.bezier_points
             spline_type = False
-            spline_start_end_handle_arr[i] = [
+            spline_start_end_handle_arr[spline_iter] = [
                 copy.deepcopy(points[0].handle_right),
                 copy.deepcopy(points[-1].handle_left)
             ]
 
-        cyclic = splines[i].use_cyclic_u
-        resolution = splines[i].resolution_u
+        cyclic = spline.use_cyclic_u
+        resolution = spline.resolution_u
 
-        spline_point_count_arr[i] = len(points)
-        spline_verts_index_arr[i], last_index = \
+        spline_point_count_arr[spline_iter] = len(points)
+        spline_verts_index_arr[spline_iter], last_index = \
             _spline_verts_index(points, spline_type, cyclic, resolution, last_index)
-        spline_cyclic_arr[i] = cyclic
-        spline_type_arr[i] = spline_type
+        spline_cyclic_arr[spline_iter] = cyclic
+        spline_type_arr[spline_iter] = spline_type
 
     return (
         spline_point_count_arr,
@@ -489,9 +480,7 @@ def point_direction_vec(mesh, curve_data):
     ext_vec_arr = create_arr(spline_point_count_arr)
     verts = mesh.data.vertices
 
-    for spline_iter in range(len(ext_vec_arr)):
-
-        ext_arr = ext_vec_arr[spline_iter]
+    for spline_iter, ext_arr in enumerate(ext_vec_arr):
 
         for point_iter in range(len(ext_arr)):
 
@@ -539,13 +528,9 @@ def _twist_levelling(points_tilt_arr):
 
         global_tilt_diff = min_range - min_tilt
 
-        i = 0
+        for i, _ in enumerate(points_tilt_arr):
 
-        while i < len(points_tilt_arr):
-
-            points_tilt_arr[i] += global_tilt_diff * math.pi * 2
-
-            i += 1
+            points_tilt_arr[i] += global_tilt_diff * RAD_CIRCLE_CONST
 
     return points_tilt_arr
 
@@ -559,35 +544,25 @@ def _twist_correction(twist_old, twist_new):
     return rad_diff
 
 
-def tilt_correction(curve_angle_arr_old, curve_angle_arr_new, curve):
+def tilt_correction(curve_angle_arr_new, curve):
 
     splines = curve.data.splines
 
-    for spline_iter in range(len(splines)):
+    for spline_iter, spline in enumerate(splines):
 
-        if splines[spline_iter].type == 'POLY':
+        if spline.type == 'POLY':
 
-            points = splines[spline_iter].points
+            points = spline.points
 
         else:
 
-            points = splines[spline_iter].bezier_points
-
-        spline_angle_arr_old = curve_angle_arr_old[spline_iter]
-        spline_angle_arr_new = curve_angle_arr_new[spline_iter]
-
-        for i in range(len(points)-1):
-
-            twist_old = _tilt_twist_calc(spline_angle_arr_old[i], spline_angle_arr_old[i+1])
-            twist_new = _tilt_twist_calc(spline_angle_arr_new[i], spline_angle_arr_new[i+1])
-            rad_diff = _twist_correction(twist_old, twist_new)
-            spline_angle_arr_new[i+1] += rad_diff
+            points = spline.bezier_points
 
         curve_angle_arr_new[spline_iter] = _twist_levelling(curve_angle_arr_new[spline_iter])
 
-        for point_iter in range(len(points)):
+        for point_iter, point in enumerate(points):
 
-            points[point_iter].tilt = curve_angle_arr_new[spline_iter][point_iter]
+            point.tilt = curve_angle_arr_new[spline_iter][point_iter]
 
 
 def angle_arr_calc(y_vec_arr, ext_vec_arr, z_vec_arr, curve):
@@ -656,7 +631,6 @@ def _spline_verts_index(points, spline_type, cyclic, resolution, last_index):
     arr = np.empty(len(points), dtype=int)
 
     vert_index = last_index + 2
-    i = 0
 
     if cyclic and not spline_type:
 
@@ -668,7 +642,7 @@ def _spline_verts_index(points, spline_type, cyclic, resolution, last_index):
 
             vert_index += 2
 
-    while i < len(points) - 1:
+    for i in range(len(points)-1):
 
         arr[i] = vert_index
 
@@ -680,15 +654,14 @@ def _spline_verts_index(points, spline_type, cyclic, resolution, last_index):
 
             vert_index += 2 * resolution
 
-        i += 1
-
     if cyclic and not spline_type:
 
-        arr[i] = last_index + 2
+        arr[-1] = last_index + 2
         last_index = vert_index - 2
 
     else:
-        arr[i] = vert_index
+
+        arr[-1] = vert_index
         last_index = vert_index
 
     return arr, last_index
@@ -713,13 +686,9 @@ def create_arr(points_count_list):
 
     arr = np.empty(len(points_count_list), dtype=object)
 
-    i = 0
+    for i, item in enumerate(points_count_list):
 
-    while i < len(points_count_list):
-
-        arr[i] = np.empty(points_count_list[i], dtype=object)
-
-        i += 1
+        arr[i] = np.empty(item, dtype=object)
 
     return arr
 
@@ -789,9 +758,8 @@ def z_vec(mesh, curve_data):
     z_vec_arr = create_arr(spline_point_count_arr)
     verts = mesh.data.vertices
 
-    for spline_iter in range(len(z_vec_arr)):
+    for spline_iter, z_arr in enumerate(z_vec_arr):
 
-        z_arr = z_vec_arr[spline_iter]
         max_index = np.amax(spline_verts_index_arr[spline_iter])
         min_index = np.amin(spline_verts_index_arr[spline_iter])
 

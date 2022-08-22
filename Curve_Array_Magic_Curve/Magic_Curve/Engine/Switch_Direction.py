@@ -12,7 +12,6 @@ from ...General_Functions.Functions import (
     merged_points_check,
     points_select,
     curve_data,
-    angle_arr_get,
     point_direction_vec,
     angle_arr_calc,
     tilt_correction,
@@ -52,12 +51,6 @@ def switch_curve_direction_manager():
     # Получим информацию о кривой
     curve_duplicate_data = curve_data(curve_duplicate)
 
-    # Полуичм углы наклона точек кривой
-    angle_arr_curve = angle_arr_get(curve_duplicate)
-
-    # Переворачивем массив angle_arr_curve
-    angle_arr_curve = arr_flip_direction(angle_arr_curve)
-
     # Конвертируем в меш
     mesh_curve_duplicate = convert_to_mesh(curve_duplicate)
 
@@ -66,7 +59,7 @@ def switch_curve_direction_manager():
     bpy.data.objects.remove(mesh_curve_duplicate, do_unlink=True)
 
     # Переворачивем массив y_vec
-    y_vec_arr = arr_flip_direction(y_vec_arr)
+    y_vec_arr = arr_flip_direction(y_vec_arr, False)
 
     # Меняем направление
     switched_curve = switch_curve_direction(curve)
@@ -91,7 +84,7 @@ def switch_curve_direction_manager():
     angle_arr_switched_curve = angle_arr_calc(y_vec_arr, ext_vec_arr, z_vec_arr, switched_curve)
 
     # Корректируем тильт
-    tilt_correction(angle_arr_curve, angle_arr_switched_curve, switched_curve)
+    tilt_correction(angle_arr_switched_curve, switched_curve)
 
     # Выделяем объект
     main_object_select(switched_curve)

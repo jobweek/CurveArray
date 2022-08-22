@@ -10,7 +10,6 @@ from ...General_Functions.Functions import (
     curve_methods_start_checker,
     merged_points_check, points_select,
     curve_data,
-    angle_arr_get,
     point_direction_vec,
     angle_arr_calc,
     tilt_correction,
@@ -43,9 +42,6 @@ def switch_twist_method_manager():
     # Получим информацию о кривой
     curve_duplicate_data = curve_data(curve_duplicate)
 
-    # Полуичм углы наклона точек кривой
-    angle_arr_curve = angle_arr_get(curve_duplicate)
-
     # Конвертируем в меш
     mesh_curve_duplicate = convert_to_mesh(curve_duplicate)
 
@@ -73,7 +69,7 @@ def switch_twist_method_manager():
     angle_arr_changed_curve = angle_arr_calc(y_vec_arr, ext_vec_arr, z_vec_arr, changed_curve)
 
     # Корректируем тильт
-    tilt_correction(angle_arr_curve, angle_arr_changed_curve, changed_curve)
+    tilt_correction(angle_arr_changed_curve, changed_curve)
 
     # Выделяем объект
     main_object_select(changed_curve)
