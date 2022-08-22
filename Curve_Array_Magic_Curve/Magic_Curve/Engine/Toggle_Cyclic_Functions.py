@@ -4,7 +4,7 @@ import mathutils  # type: ignore
 from ...Errors.Errors import show_message_box
 from ...General_Functions.Functions import (
     vec_projection,
-    angle_calc,
+    _angle_calc,
 )
 
 
@@ -82,7 +82,7 @@ def tilt_correction_cyclic(y_vec_arr, ext_vec_arr, z_vec_arr, curve):
                     continue
 
             cross_vec = z_vec.cross(y_vec)
-            angle = angle_calc(ext_vec, y_vec, cross_vec)
+            angle = _angle_calc(ext_vec, y_vec, cross_vec)
 
             new_angle = points[point_iter].tilt + angle
 

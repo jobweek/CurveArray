@@ -592,7 +592,7 @@ def angle_arr_calc(y_vec_arr, ext_vec_arr, z_vec_arr, curve):
             z_vec = z_arr[point_iter]
 
             cross_vec = z_vec.cross(y_vec)
-            angle = angle_calc(ext_vec, y_vec, cross_vec)
+            angle = _angle_calc(ext_vec, y_vec, cross_vec)
 
             new_angle = points[point_iter].tilt + angle
 
@@ -710,15 +710,36 @@ def vec_projection(vec, z_vec):
         return (vec - vec.project(z_vec)).normalized()
 
 
-def angle_calc(ext_vec, y_vec, cross_vec):
+def _angle_calc(ext_vec, y_vec, cross_vec):
 
     angle = ext_vec.angle(y_vec)
+    ext_cross_dot = ext_vec.dot(cross_vec)
+    ext_y_dot = ext_vec.dot(y_vec)
 
-    #  Определяем позитивное вращение или негативное
-    if ext_vec.dot(cross_vec) > 0:
+    if ext_y_dot < -0.00002:
 
-        angle = -angle
+        if ext_cross_dot > 0.00002:
 
+            angle = RAD_CIRCLE_CONST - abs(angle)
+
+        elif ext_cross_dot < -0.00002:
+
+            angle = math.pi - (math.pi - abs(angle))
+
+        else:
+
+            angle = math.pi
+
+    elif ext_y_dot > 0.00002:
+
+        if ext_cross_dot > 0.00002:
+
+            angle = -angle
+
+    else:
+
+        angle = 0
+    # print(f'angle: {math.degrees(angle)}, ext: {ext_vec}, y: {y_vec}, cross_vec: {cross_vec}')
     return angle
 
 

@@ -5,7 +5,7 @@ import numpy as np
 import math
 from ...General_Functions.Functions import (
     vec_projection,
-    angle_calc,
+    _angle_calc,
     calc_vec,
     RAD_CIRCLE_CONST,
 )
@@ -76,7 +76,7 @@ def angle_arr_calc_smooth(ext_vec_arr, y_vec_arr, z_vec_arr):
         y_vec = vec_projection(y_vec_arr[i], z_vec)
 
         cross_vec = z_vec.cross(y_vec)
-        angle = angle_calc(ext_vec, y_vec, cross_vec)
+        angle = _angle_calc(ext_vec, y_vec, cross_vec)
 
         return angle
 
