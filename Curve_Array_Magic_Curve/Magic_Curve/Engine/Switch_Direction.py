@@ -59,7 +59,7 @@ def switch_curve_direction_manager():
     bpy.data.objects.remove(mesh_curve_duplicate, do_unlink=True)
 
     # Переворачивем массив y_vec
-    y_vec_arr = arr_flip_direction(y_vec_arr, False)
+    y_vec_arr = arr_flip_direction(y_vec_arr)
 
     # Меняем направление
     switched_curve = switch_curve_direction(curve)

@@ -4,15 +4,20 @@ import mathutils  # type: ignore
 import numpy as np
 
 
-def arr_flip_direction(arr, negative: bool):
+def arr_flip_direction(arr):
 
     for i in range(len(arr)):
 
         arr[i] = np.flip(arr[i])
 
-        if negative:
+    return arr
 
-            arr[i] = np.negative(arr[i])
+
+def arr_negative(arr):
+
+    for i in range(len(arr)):
+
+        arr[i] = np.negative(arr[i])
 
     return arr
 

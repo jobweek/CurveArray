@@ -10,19 +10,15 @@ from ...General_Functions.Functions import (
 
 def end_start_point_type_correction_cyclic(curve):
 
-    iterator = 0
+    for spline in curve.data.splines:
 
-    while iterator < len(curve.data.splines):
+        if spline.type == 'POLY':
 
-        s = curve.data.splines[iterator]
-
-        if s.type == 'POLY':
-
-            points = s.points
+            return
 
         else:
 
-            points = s.bezier_points
+            points = spline.bezier_points
 
         if points[0].handle_left_type == 'AUTO':
 
@@ -33,8 +29,6 @@ def end_start_point_type_correction_cyclic(curve):
 
             points[-1].handle_left_type = 'FREE'
             points[-1].handle_right_type = 'FREE'
-
-        iterator += 1
 
 
 def toggle_curve_cyclic(curve):
