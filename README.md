@@ -152,7 +152,7 @@ The tilt of each spline point corresponds to the normal vector of the mesh verte
    ![Smooth Curve vs Convert](/documentation_resources/15.png)
    ![Smooth Curve vs Convert](/documentation_resources/16.png)
    
-**An unexpected result**
+### An unexpected result
 
 This happens when Smooth Curve works with geometry that has obvious bends in all three axes, as well as strong changing the direction of the curve.
 
@@ -165,7 +165,7 @@ This happens when Smooth Curve works with geometry that has obvious bends in all
 
 If you extruded the resulting curve and turned on the meshes' vertex normals display (blue bars), you will see that at the point of the strongest bend, the curve is not extruded along the normal. 
 It's not a bug, it's the way curves work in Blender. In fact, in this case, there is no curve that matches the vertex norals completely, and the result we have is the closest one. 
-Nevertheless, if you need extreme precision, I suggest you look at the Split Curve operator.
+Nevertheless, if you need good precision in terms of normals, I suggest you look at the Split Curve operator.
 
 ### Split Curve operator
 
@@ -320,3 +320,21 @@ There are a number of conditions which, if not met, will result in known error:
 
 ![Plane](/documentation_resources/44.png)
 ![Edges](/documentation_resources/45.png) 
+
+### An unexpected result
+
+After applying Magic Curve operators to some curves (These are usually curves with unnatural, highly twisted and curved geometry), you may think something has gone wrong. Take a look at the example below. 
+
+![Plane](/documentation_resources/46.png)
+![Edges](/documentation_resources/47.png) 
+
+_As you can see, with Smooth = 100, you will always get perfect results when using Magic Curve operators._
+
+![Plane](/documentation_resources/48.png)
+![Edges](/documentation_resources/49.png) 
+
+But this feeling is wrong. In fact, the operator worked as it should, and the normal of each curve point before and after the call is identical. 
+But then why is there this visual difference? The point is that Blender calculates the "geometry" between the control points, and the accuracy of this calculation depends on the Smooth parameter. 
+You can change it at any time. The higher the parameter, the more accurately the segments between the control points will be drawn, and vice versa. 
+Be warned, however, that high values have an extremely strong effect on the performance of both your scene and your operators. 
+I therefore recommend not using high Smooth parameter values on curves with a high number of points and high Resolution_U.
