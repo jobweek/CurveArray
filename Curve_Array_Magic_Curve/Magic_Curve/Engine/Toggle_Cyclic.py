@@ -4,6 +4,7 @@ from ...Errors.Errors import CancelError, show_message_box
 from .Toggle_Cyclic_Functions import (
     end_start_point_type_correction_cyclic,
     toggle_curve_cyclic,
+    angle_arr_calc_cyclic,
 )
 from ...General_Functions.Functions import (
     duplicate,
@@ -14,7 +15,6 @@ from ...General_Functions.Functions import (
     curve_data,
     point_direction_vec,
     z_vec,
-    angle_arr_calc,
     tilt_correction,
     main_object_select,
 )
@@ -74,7 +74,7 @@ def toggle_cyclic_manager():
     bpy.data.objects.remove(mesh_toggled_curve_duplicate, do_unlink=True)
 
     # Получаем массив углов поврота
-    angle_arr_changed_curve = angle_arr_calc(y_vec_arr, ext_vec_arr, z_vec_arr, toggled_curve)
+    angle_arr_changed_curve = angle_arr_calc_cyclic(y_vec_arr, ext_vec_arr, z_vec_arr, toggled_curve)
 
     # Корректируем тильт
     tilt_correction(angle_arr_changed_curve, toggled_curve)

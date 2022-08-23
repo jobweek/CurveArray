@@ -592,7 +592,7 @@ def angle_arr_calc(y_vec_arr, ext_vec_arr, z_vec_arr, curve):
             z_vec = z_arr[point_iter]
 
             cross_vec = z_vec.cross(y_vec)
-            angle = _angle_calc(ext_vec, y_vec, cross_vec)
+            angle = angle_calc(ext_vec, y_vec, cross_vec)
 
             new_angle = points[point_iter].tilt + angle
 
@@ -710,7 +710,7 @@ def vec_projection(vec, z_vec):
         return (vec - vec.project(z_vec)).normalized()
 
 
-def _angle_calc(ext_vec, y_vec, cross_vec):
+def angle_calc(ext_vec, y_vec, cross_vec):
 
     angle = ext_vec.angle(y_vec)
     ext_cross_dot = ext_vec.dot(cross_vec)

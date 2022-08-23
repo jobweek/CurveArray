@@ -5,7 +5,7 @@ import numpy as np
 import math
 from ...General_Functions.Functions import (
     vec_projection,
-    _angle_calc,
+    angle_calc,
     calc_vec,
     RAD_CIRCLE_CONST,
 )
@@ -56,8 +56,8 @@ def angle_arr_calc_split(ext_vec_arr, y_vec_arr, curve):
         first_cross_vec = z_vec.cross(first_y_vec)
         second_cross_vec = z_vec.cross(second_y_vec)
 
-        first_angle = _angle_calc(ext_vec, first_y_vec, first_cross_vec)
-        second_angle = _angle_calc(ext_vec, second_y_vec, second_cross_vec)
+        first_angle = angle_calc(ext_vec, first_y_vec, first_cross_vec)
+        second_angle = angle_calc(ext_vec, second_y_vec, second_cross_vec)
 
         return first_angle, second_angle
 

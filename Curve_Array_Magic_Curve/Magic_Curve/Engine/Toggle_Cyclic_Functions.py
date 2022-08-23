@@ -1,10 +1,11 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
 import mathutils  # type: ignore
+import numpy as np
 from ...Errors.Errors import show_message_box
 from ...General_Functions.Functions import (
     vec_projection,
-    _angle_calc,
+    angle_calc,
 )
 
 
@@ -43,12 +44,12 @@ def toggle_curve_cyclic(curve):
     return curve
 
 
-def tilt_correction_cyclic(y_vec_arr, ext_vec_arr, z_vec_arr, curve):
+def angle_arr_calc_cyclic(y_vec_arr, ext_vec_arr, z_vec_arr, curve):
 
-    splines = curve.data.splines
-    spline_iter = 0
+    # Возвращает массив содержащий углы поворта кажждой точки для одного сплайна
+    def __func(spline_iter):
 
-    while spline_iter < len(ext_vec_arr):
+        splines = curve.data.splines
 
         if splines[spline_iter].type == 'POLY':
 
@@ -62,27 +63,20 @@ def tilt_correction_cyclic(y_vec_arr, ext_vec_arr, z_vec_arr, curve):
         ext_arr = ext_vec_arr[spline_iter]
         z_arr = z_vec_arr[spline_iter]
 
-        point_iter = 0
-
-        while point_iter < len(y_arr):
+        # Возвращает угл поворта точки
+        def __under_func(point_iter):
 
             y_vec = y_arr[point_iter]
             ext_vec = ext_arr[point_iter]
             z_vec = z_arr[point_iter]
 
-            if point_iter == 0 or point_iter == len(y_arr) - 1:
+            if point_iter == 0 or point_iter == len(y_vec) - 1:
 
                 y_vec = vec_projection(y_vec, z_vec)
                 ext_vec = vec_projection(ext_vec, z_vec)
 
-                if y_vec is None or ext_vec is None:
-
-                    point_iter += 1
-
-                    continue
-
             cross_vec = z_vec.cross(y_vec)
-            angle = _angle_calc(ext_vec, y_vec, cross_vec)
+            angle = angle_calc(ext_vec, y_vec, cross_vec)
 
             new_angle = points[point_iter].tilt + angle
 
@@ -98,8 +92,14 @@ def tilt_correction_cyclic(y_vec_arr, ext_vec_arr, z_vec_arr, curve):
                     'ERROR'
                 )
 
-            points[point_iter].tilt = new_angle
+            return new_angle
 
-            point_iter += 1
+        spline_angle_arr = np.frompyfunc(__under_func, 1, 1)
+        spline_angle_arr = spline_angle_arr(range(len(y_arr)))
 
-        spline_iter += 1
+        return spline_angle_arr
+
+    angle_arr = np.frompyfunc(__func, 1, 1)
+    angle_arr = angle_arr(range(len(ext_vec_arr)))
+
+    return angle_arr
