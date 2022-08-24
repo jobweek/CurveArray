@@ -113,13 +113,13 @@ classes = (
 )
 
 bl_info = {
-    "name": "CurveArrayPro + MagicCurve",
+    "name": "CurveArray + MagicCurve",
     "author": "JobWeek",
     "version": (4, 0, 0),
-    "blender": (3, 0, 0),
+    "blender": (3, 2, 0),
     "location": "View3d > Tool",
     "warning": "",
-    "wiki_url": "https://jobweek.bit.ai/docs/view/JZbQGc7JokXJuaS2",
+    "wiki_url": "https://github.com/jobweek/CurveArray/tree/Curve_Array_4.0",
     "category": "3D View"
 }
 
