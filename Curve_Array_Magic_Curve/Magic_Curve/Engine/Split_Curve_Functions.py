@@ -61,7 +61,7 @@ def angle_arr_calc_split(ext_vec_arr, y_vec_arr, curve):
 
         return first_angle, second_angle
 
-    angle_arr = np.frompyfunc(__func, 1, 2)
+    angle_arr = np.frompyfunc(__func, 1, 1)
 
     angle_arr = angle_arr(range(len(ext_vec_arr)))
 
@@ -89,7 +89,7 @@ def twist_correction_split(angle_arr):
 
 def tilt_correction_split(angle_arr, curve):
 
-    for i in range(len(curve.data.splines)):
+    for i, spline in enumerate(curve.data.splines):
 
-        curve.data.splines[i].bezier_points[0].tilt = angle_arr[i][0]
-        curve.data.splines[i].bezier_points[1].tilt = angle_arr[i][1]
+        spline.bezier_points[0].tilt = angle_arr[i][0]
+        spline.bezier_points[1].tilt = angle_arr[i][1]
