@@ -9,7 +9,7 @@ from ...General_Functions.Functions import (
     convert_to_mesh,
     curve_methods_start_checker,
     merged_points_check, points_select,
-    curve_data,
+    MethodsCurveData,
     point_direction_vec,
     angle_arr_calc,
     tilt_correction,
@@ -40,7 +40,7 @@ def switch_twist_method_manager():
     curve_duplicate = duplicate(curve)
 
     # Получим информацию о кривой
-    curve_duplicate_data = curve_data(curve_duplicate)
+    curve_duplicate_data = MethodsCurveData(curve_duplicate)
 
     # Конвертируем в меш
     mesh_curve_duplicate = convert_to_mesh(curve_duplicate)

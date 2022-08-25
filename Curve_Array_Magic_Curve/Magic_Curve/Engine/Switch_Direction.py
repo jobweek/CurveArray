@@ -11,7 +11,7 @@ from ...General_Functions.Functions import (
     curve_methods_start_checker,
     merged_points_check,
     points_select,
-    curve_data,
+    MethodsCurveData,
     point_direction_vec,
     angle_arr_calc,
     tilt_correction,
@@ -49,7 +49,7 @@ def switch_curve_direction_manager():
     curve_duplicate = duplicate(curve)
 
     # Получим информацию о кривой
-    curve_duplicate_data = curve_data(curve_duplicate)
+    curve_duplicate_data = MethodsCurveData(curve_duplicate)
 
     # Конвертируем в меш
     mesh_curve_duplicate = convert_to_mesh(curve_duplicate)
@@ -68,7 +68,7 @@ def switch_curve_direction_manager():
     switched_curve_duplicate = duplicate(switched_curve)
 
     # Получим информацию о кривой
-    switched_curve_duplicate_data = curve_data(switched_curve_duplicate)
+    switched_curve_duplicate_data = MethodsCurveData(switched_curve_duplicate)
 
     # Конвертируем в меш
     mesh_switched_curve_duplicate = convert_to_mesh(switched_curve_duplicate)

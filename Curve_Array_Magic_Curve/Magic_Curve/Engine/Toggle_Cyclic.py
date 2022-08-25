@@ -12,7 +12,7 @@ from ...General_Functions.Functions import (
     curve_methods_start_checker,
     merged_points_check,
     points_select,
-    curve_data,
+    MethodsCurveData,
     point_direction_vec,
     z_vec,
     tilt_correction,
@@ -45,7 +45,7 @@ def toggle_cyclic_manager():
     curve_duplicate = duplicate(curve)
 
     # Получим информацию о кривой
-    curve_duplicate_data = curve_data(curve_duplicate)
+    curve_duplicate_data = MethodsCurveData(curve_duplicate)
 
     # Конвертируем в меш
     mesh_curve_duplicate = convert_to_mesh(curve_duplicate)
@@ -61,7 +61,7 @@ def toggle_cyclic_manager():
     toggled_curve_duplicate = duplicate(toggled_curve)
 
     # Получим информацию о кривой
-    toggled_curve_duplicate_data = curve_data(toggled_curve_duplicate)
+    toggled_curve_duplicate_data = MethodsCurveData(toggled_curve_duplicate)
 
     # Конвертируем в меш
     mesh_toggled_curve_duplicate = convert_to_mesh(toggled_curve_duplicate)

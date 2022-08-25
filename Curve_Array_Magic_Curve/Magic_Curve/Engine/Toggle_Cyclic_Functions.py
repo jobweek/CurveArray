@@ -70,7 +70,7 @@ def angle_arr_calc_cyclic(y_vec_arr, ext_vec_arr, z_vec_arr, curve):
             ext_vec = ext_arr[point_iter]
             z_vec = z_arr[point_iter]
 
-            if point_iter == 0 or point_iter == len(y_vec) - 1:
+            if point_iter == 0 or point_iter == len(y_arr) - 1:
 
                 y_vec = vec_projection(y_vec, z_vec)
                 ext_vec = vec_projection(ext_vec, z_vec)

@@ -378,60 +378,99 @@ def points_select(curve):
             raise CancelError
 
 
-def curve_data(curve):
+class MethodsCurveData:
 
-    splines = curve.data.splines
-    spline_count = len(splines)
+    def __init__(self, curve):
 
-    # Количество точек на каждом сплайне
-    spline_point_count_arr = np.empty(spline_count, dtype=int)
+        splines = curve.data.splines
+        spline_count = len(splines)
 
-    # Массив индексов вершин меша соответствующих точкам сплайна
-    spline_verts_index_arr = np.empty(spline_count, dtype=object)
+        # Количество точек на каждом сплайне
+        self.spline_point_count_arr = np.empty(spline_count, dtype=int)
 
-    # Cyclic == True; Non_Cyclic == False;
-    spline_cyclic_arr = np.empty(spline_count, dtype=bool)
+        # Массив индексов вершин меша соответствующих точкам сплайна
+        self.spline_verts_index_arr = np.empty(spline_count, dtype=object)
 
-    # Poly == True; Bezier == False;
-    spline_type_arr = np.empty(spline_count, dtype=bool)
+        # Наименьший и наибольший индекс вершин меша сплайна
+        self.spline_min_max_verts_arr = np.empty(spline_count, dtype=object)
 
-    # Координаты правого хэндла для нулевой точки и левого для последней
-    spline_start_end_handle_arr = np.empty(spline_count, dtype=object)
+        # Cyclic == True; Non_Cyclic == False;
+        self.spline_cyclic_arr = np.empty(spline_count, dtype=bool)
 
-    last_index = -2  # Индекс последней нулевой вершины меша относящегося к сплайну
+        # Poly == True; Bezier == False;
+        self.spline_type_arr = np.empty(spline_count, dtype=bool)
 
-    for spline_iter, spline in enumerate(splines):
+        # Координаты правого хэндла для нулевой точки и левого для последней
+        self.spline_start_end_handle_arr = np.empty(spline_count, dtype=object)
 
-        if spline.type == 'POLY':
+        last_index = -2  # Индекс последней нулевой вершины меша относящегося к сплайну
 
-            points = spline.points
-            spline_type = True
+        for spline_iter, spline in enumerate(splines):
 
-        else:
+            if spline.type == 'POLY':
 
-            points = spline.bezier_points
-            spline_type = False
-            spline_start_end_handle_arr[spline_iter] = [
-                copy.deepcopy(points[0].handle_right),
-                copy.deepcopy(points[-1].handle_left)
-            ]
+                points = spline.points
+                spline_type = True
 
-        cyclic = spline.use_cyclic_u
-        resolution = spline.resolution_u
+            else:
 
-        spline_point_count_arr[spline_iter] = len(points)
-        spline_verts_index_arr[spline_iter], last_index = \
-            _spline_verts_index(points, spline_type, cyclic, resolution, last_index)
-        spline_cyclic_arr[spline_iter] = cyclic
-        spline_type_arr[spline_iter] = spline_type
+                points = spline.bezier_points
+                spline_type = False
 
-    return (
-        spline_point_count_arr,
-        spline_verts_index_arr,
-        spline_cyclic_arr,
-        spline_type_arr,
-        spline_start_end_handle_arr
-    )
+                self.spline_start_end_handle_arr[spline_iter] = [
+                    copy.deepcopy(points[0].handle_right),
+                    copy.deepcopy(points[-1].handle_left)
+                ]
+
+            cyclic = spline.use_cyclic_u
+            resolution = spline.resolution_u
+
+            self.spline_point_count_arr[spline_iter] = len(points)
+
+            min_index = last_index+2
+            self.spline_verts_index_arr[spline_iter], last_index = \
+                _spline_verts_index(points, spline_type, cyclic, resolution, last_index)
+            max_index = last_index
+
+            self.spline_min_max_verts_arr[spline_iter] = (min_index, max_index)
+
+            self.spline_cyclic_arr[spline_iter] = cyclic
+
+            self.spline_type_arr[spline_iter] = spline_type
+
+    def get_all(self):
+        return (
+            self.spline_point_count_arr,
+            self.spline_verts_index_arr,
+            self.spline_min_max_verts_arr,
+            self.spline_cyclic_arr,
+            self.spline_type_arr,
+            self.spline_start_end_handle_arr,
+        )
+
+    def get_spline_point_count_arr(self):
+
+        return self.spline_point_count_arr
+
+    def get_spline_verts_index_arr(self):
+
+        return self.spline_verts_index_arr
+
+    def get_spline_min_max_verts_arr(self):
+
+        return self.spline_min_max_verts_arr
+
+    def get_spline_cyclic_arr(self):
+
+        return self.spline_cyclic_arr
+
+    def get_spline_type_arr(self):
+
+        return self.spline_type_arr
+
+    def get_spline_start_end_handle_arr(self):
+
+        return self.spline_start_end_handle_arr
 
 
 def angle_arr_get(curve):
@@ -469,29 +508,29 @@ def angle_arr_get(curve):
 
 def point_direction_vec(mesh, curve_data):
 
-    (
-        spline_point_count_arr,
-        spline_verts_index_arr,
-        cyclic_arr,
-        spline_type_arr,
-        spline_start_end_handle_arr,
-    ) = curve_data
-
-    ext_vec_arr = create_arr(spline_point_count_arr)
+    spline_verts_index_arr = curve_data.get_spline_verts_index_arr()
     verts = mesh.data.vertices
 
-    for spline_iter, ext_arr in enumerate(ext_vec_arr):
+    # Возвращает массив содержащий вектора направления для каждой точки для одного сплайна
+    def __func(item):
 
-        for point_iter in range(len(ext_arr)):
-
-            first_point_index = spline_verts_index_arr[spline_iter][point_iter]
+        # Возвращает вектор направления для точки
+        def __under_func(first_point_index):
 
             first_point = verts[first_point_index]
             second_point = verts[first_point_index + 1]
 
             ext_vec = calc_vec(first_point.co, second_point.co, True)
 
-            ext_arr[point_iter] = ext_vec
+            return ext_vec
+
+        ext_arr = np.frompyfunc(__under_func, 1, 1)
+        ext_arr = ext_arr(item)
+
+        return ext_arr
+
+    ext_vec_arr = np.frompyfunc(__func, 1, 1)
+    ext_vec_arr = ext_vec_arr(spline_verts_index_arr)
 
     return ext_vec_arr
 
@@ -792,14 +831,11 @@ def calc_z_vec(p_0_ind, prev_p_0_ind, next_p_0_ind, verts):
 
 
 def z_vec(mesh, curve_data):
-
-    (
-        spline_point_count_arr,
-        spline_verts_index_arr,
-        cyclic_arr,
-        spline_type_arr,
-        spline_start_end_handle_arr,
-    ) = curve_data
+    spline_point_count_arr = curve_data.get_spline_point_count_arr()
+    spline_verts_index_arr = curve_data.get_spline_verts_index_arr()
+    spline_cyclic_arr = curve_data.get_spline_cyclic_arr()
+    spline_type_arr = curve_data.get_spline_type_arr()
+    spline_start_end_handle_arr = curve_data.get_spline_start_end_handle_arr()
 
     z_vec_arr = create_arr(spline_point_count_arr)
     verts = mesh.data.vertices
@@ -811,7 +847,7 @@ def z_vec(mesh, curve_data):
 
         point_iter = 0  # Соответствует индексу поинтов одного сплайна
 
-        if not cyclic_arr[spline_iter]:
+        if not spline_cyclic_arr[spline_iter]:
 
             point_index = spline_verts_index_arr[spline_iter][point_iter]
             mid_point = midle_point_calc(point_index, verts)
@@ -852,7 +888,7 @@ def z_vec(mesh, curve_data):
 
             point_iter += 1
 
-        if not cyclic_arr[spline_iter]:
+        if not spline_cyclic_arr[spline_iter]:
 
             point_index = spline_verts_index_arr[spline_iter][point_iter]
             mid_point = midle_point_calc(point_index, verts)
