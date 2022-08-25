@@ -29,6 +29,8 @@ class MAGICCURVE_OT_switch_direction(bpy.types.Operator):
             print(traceback.format_exc())
             show_message_box('Programm Error', 'Please, open console and send me report', 'ERROR')
 
+            return {'CANCELLED'}
+
         except (Exception,):
 
             print(traceback.format_exc())
