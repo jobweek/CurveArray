@@ -70,19 +70,19 @@ def angle_arr_calc_split(ext_vec_arr, y_vec_arr, curve):
 
 def twist_correction_split(angle_arr):
 
-    for i in range(len(angle_arr)):
+    for _, item in enumerate(angle_arr):
 
-        diff = angle_arr[i][1] - angle_arr[i][0]
+        diff = item[1] - item[0]
 
         if abs(diff) > math.pi:
 
             if diff > 0:
 
-                angle_arr[i][1] -= RAD_CIRCLE_CONST
+                item[1] -= RAD_CIRCLE_CONST
 
             else:
 
-                angle_arr[i][1] += RAD_CIRCLE_CONST
+                item[1] += RAD_CIRCLE_CONST
 
     return angle_arr
 
