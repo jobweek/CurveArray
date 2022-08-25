@@ -833,6 +833,7 @@ def calc_z_vec(p_0_ind, prev_p_0_ind, next_p_0_ind, verts):
 def z_vec(mesh, curve_data):
     spline_point_count_arr = curve_data.get_spline_point_count_arr()
     spline_verts_index_arr = curve_data.get_spline_verts_index_arr()
+    spline_min_max_verts_arr = curve_data.get_spline_min_max_verts_arr()
     spline_cyclic_arr = curve_data.get_spline_cyclic_arr()
     spline_type_arr = curve_data.get_spline_type_arr()
     spline_start_end_handle_arr = curve_data.get_spline_start_end_handle_arr()
@@ -842,8 +843,8 @@ def z_vec(mesh, curve_data):
 
     for spline_iter, z_arr in enumerate(z_vec_arr):
 
-        max_index = np.amax(spline_verts_index_arr[spline_iter])
-        min_index = np.amin(spline_verts_index_arr[spline_iter])
+        max_index = spline_min_max_verts_arr[0]
+        min_index = spline_min_max_verts_arr[1]
 
         point_iter = 0  # Соответствует индексу поинтов одного сплайна
 
