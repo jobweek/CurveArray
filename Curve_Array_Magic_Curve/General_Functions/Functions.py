@@ -763,7 +763,7 @@ def angle_calc(ext_vec, y_vec, cross_vec):
 
     else:
 
-        assert False, 'Невозможное условие angle_calc'
+        assert False, f'Невозможное условие angle_calc, {ext_y_dot}'
 
     # print(f'angle: {math.degrees(angle)}, ext: {ext_vec}, y: {y_vec}, cross_vec: {cross_vec}')
     return angle
