@@ -6,7 +6,6 @@ from .Split_Curve_Functions import (
     create_curve_split,
     angle_arr_calc_split,
     tilt_correction_split,
-    twist_correction_split,
 )
 from ...General_Functions.Functions import (
     curve_creation_start_check,
@@ -61,9 +60,6 @@ def split_curve_manager():
 
     # Получаем массив углов поврота
     angle_arr = angle_arr_calc_split(ext_vec_arr, y_vec_arr, curve_data.get_curve())
-
-    # Предотвращаем перекручивание
-    angle_arr = twist_correction_split(angle_arr)
 
     # Корректируем тильт
     tilt_correction_split(angle_arr, curve_data.get_curve())
