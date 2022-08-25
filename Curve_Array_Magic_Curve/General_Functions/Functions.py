@@ -712,12 +712,11 @@ def vec_projection(vec, z_vec):
 
 def angle_calc(ext_vec, y_vec, cross_vec):
 
-    angle = ext_vec.angle(y_vec)
     ext_cross_dot = ext_vec.dot(cross_vec)
     ext_y_dot = ext_vec.dot(y_vec)
 
     # Вектор ext перпендикулярен y
-    if -0.00002 > ext_y_dot < 0.00002:
+    if -0.00002 < ext_y_dot < 0.00002:
 
         angle = math.pi/2
 
