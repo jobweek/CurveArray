@@ -716,29 +716,55 @@ def angle_calc(ext_vec, y_vec, cross_vec):
     ext_cross_dot = ext_vec.dot(cross_vec)
     ext_y_dot = ext_vec.dot(y_vec)
 
-    if ext_y_dot < -0.00002:
+    # Вектор ext перпендикулярен y
+    if -0.00002 > ext_y_dot < 0.00002:
 
-        if ext_cross_dot > 0.00002:
+        angle = math.pi/2
 
-            angle = RAD_CIRCLE_CONST - abs(angle)
-
-        elif ext_cross_dot < -0.00002:
-
-            angle = math.pi - (math.pi - abs(angle))
-
-        else:
-
-            angle = math.pi
-
-    elif ext_y_dot > 0.00002:
-
-        if ext_cross_dot > 0.00002:
+        # Вектор ext соноправлен cross
+        if ext_cross_dot > 0:
 
             angle = -angle
 
-    else:
+    # Вектор ext параллелен и соноправлен y
+    elif ext_y_dot > 0.99998:
 
         angle = 0
+
+    # Вектор ext параллелен и противонаправлен y
+    elif ext_y_dot < -0.99998:
+
+        angle = math.pi
+
+    # Вектор ext соноправлен y
+    elif ext_y_dot > 0.00002:
+
+        angle = ext_vec.angle(y_vec)
+
+        # Вектор ext соноправлен cross
+        if ext_cross_dot > 0:
+
+            angle = -angle
+
+    # Вектор ext противонаправлен y
+    elif ext_y_dot < -0.00002:
+
+        angle = ext_vec.angle(y_vec)
+
+        # Вектор ext соноправлен cross
+        if ext_cross_dot > 0:
+
+            angle = RAD_CIRCLE_CONST - abs(angle)
+
+        # Вектор ext противонаправлен cross
+        elif ext_cross_dot < 0:
+
+            angle = math.pi - (math.pi - abs(angle))
+
+    else:
+
+        assert False, 'Невозможное условие angle_calc'
+
     # print(f'angle: {math.degrees(angle)}, ext: {ext_vec}, y: {y_vec}, cross_vec: {cross_vec}')
     return angle
 

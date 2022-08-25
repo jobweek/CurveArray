@@ -24,6 +24,11 @@ class MAGICCURVE_OT_create_smooth_curve(bpy.types.Operator):
 
             return {'CANCELLED'}
 
+        except AssertionError:
+
+            print(traceback.format_exc())
+            show_message_box('Programm Error', 'Please, open console and send me report', 'ERROR')
+
         except (Exception,):
 
             print(traceback.format_exc())
