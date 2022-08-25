@@ -38,6 +38,27 @@ def create_curve_split(vert_co_array, active_object, curve_data):
     return curve_data
 
 
+def _twist_correction_split(first_angle, second_angle):
+
+    diff = second_angle - first_angle
+
+    if abs(diff) > math.pi:
+
+        if diff > 0:
+
+            angle_tuple = (first_angle, second_angle - RAD_CIRCLE_CONST)
+
+        else:
+
+            angle_tuple = (first_angle, second_angle + RAD_CIRCLE_CONST)
+
+    else:
+
+        angle_tuple = (first_angle, second_angle)
+
+    return angle_tuple
+
+
 def angle_arr_calc_split(ext_vec_arr, y_vec_arr, curve):
 
     def __func(i):
@@ -59,30 +80,13 @@ def angle_arr_calc_split(ext_vec_arr, y_vec_arr, curve):
         first_angle = angle_calc(ext_vec, first_y_vec, first_cross_vec)
         second_angle = angle_calc(ext_vec, second_y_vec, second_cross_vec)
 
-        return first_angle, second_angle
+        angle_tuple = _twist_correction_split(first_angle, second_angle)
+
+        return angle_tuple
 
     angle_arr = np.frompyfunc(__func, 1, 1)
 
     angle_arr = angle_arr(range(len(ext_vec_arr)))
-
-    return angle_arr
-
-
-def twist_correction_split(angle_arr):
-
-    for _, item in enumerate(angle_arr):
-
-        diff = item[1] - item[0]
-
-        if abs(diff) > math.pi:
-
-            if diff > 0:
-
-                item[1] -= RAD_CIRCLE_CONST
-
-            else:
-
-                item[1] += RAD_CIRCLE_CONST
 
     return angle_arr
 
