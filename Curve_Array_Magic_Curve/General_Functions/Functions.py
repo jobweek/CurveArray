@@ -843,8 +843,8 @@ def z_vec(mesh, curve_data):
 
     for spline_iter, z_arr in enumerate(z_vec_arr):
 
-        max_index = spline_min_max_verts_arr[spline_iter][0]
-        min_index = spline_min_max_verts_arr[spline_iter][1]
+        min_index = spline_min_max_verts_arr[spline_iter][0]
+        max_index = spline_min_max_verts_arr[spline_iter][1]
 
         point_iter = 0  # Соответствует индексу поинтов одного сплайна
 
