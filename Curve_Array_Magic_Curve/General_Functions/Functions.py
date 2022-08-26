@@ -438,16 +438,6 @@ class MethodsCurveData:
 
             self.spline_type_arr[spline_iter] = spline_type
 
-    def get_all(self):
-        return (
-            self.spline_point_count_arr,
-            self.spline_verts_index_arr,
-            self.spline_min_max_verts_arr,
-            self.spline_cyclic_arr,
-            self.spline_type_arr,
-            self.spline_start_end_handle_arr,
-        )
-
     def get_spline_point_count_arr(self):
 
         return self.spline_point_count_arr
@@ -831,6 +821,7 @@ def calc_z_vec(p_0_ind, prev_p_0_ind, next_p_0_ind, verts):
 
 
 def z_vec(mesh, curve_data):
+
     spline_point_count_arr = curve_data.get_spline_point_count_arr()
     spline_verts_index_arr = curve_data.get_spline_verts_index_arr()
     spline_min_max_verts_arr = curve_data.get_spline_min_max_verts_arr()
@@ -873,7 +864,7 @@ def z_vec(mesh, curve_data):
 
             point_iter = 1
 
-        while point_iter < len(z_arr) - 1:
+        for point_iter in range(point_iter, len(z_arr)-1):
 
             point_index = spline_verts_index_arr[spline_iter][point_iter]
 
@@ -886,8 +877,6 @@ def z_vec(mesh, curve_data):
                 next_point_index = min_index
 
             z_arr[point_iter] = calc_z_vec(point_index, prev_point_index, next_point_index, verts)
-
-            point_iter += 1
 
         if not spline_cyclic_arr[spline_iter]:
 
