@@ -22,5 +22,10 @@ def path_calculation_manager(curve):
     duplicated_curve = duplicate(curve)
 
     extruded_mesh = convert_to_mesh(duplicated_curve)
+    bm = bmesh.new()
+    bm.from_mesh(extruded_mesh.data, face_normals=False, vertex_normals=False)
+    bmesh.ops.transform(bm, matrix=curve.matrix_world, verts=bm.verts)
 
-    bm = bmesh.from_object(extruded_mesh, face_normals=False, vertex_normals=False)
+    for i in bm.verts:
+
+        print(i.index, i.co)

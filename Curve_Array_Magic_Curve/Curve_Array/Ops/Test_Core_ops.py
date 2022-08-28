@@ -12,3 +12,4 @@ class CURVEARRAY_OT_path_calc(bpy.types.Operator):
 
         path_calculation_manager(bpy.context.active_object)
 
+        return {'FINISHED'}

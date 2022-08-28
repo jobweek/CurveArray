@@ -60,21 +60,26 @@ class PathData:
         return self.interpolated_splines[index]
 
 
-def _spline_verts_index(points, spline_type, cyclic, resolution, last_index) -> [int, tuple[int, int]]:
+def _spline_verts_index(points, spline_type, cyclic, resolution, last_index) -> tuple[int, int, tuple[int, int]]:
 
     vert_index = last_index + 2
+    start_range = vert_index
 
     if cyclic and not spline_type:
 
         if points[-1].handle_right_type != 'VECTOR' or points[0].handle_left_type != 'VECTOR':
 
-            vert_index += 2 * resolution
+            shift = 2 * resolution
 
         else:
 
-            vert_index += 2
+            shift = 2
 
-    start_range = vert_index
+        vert_index += shift
+
+    else:
+
+        shift = 0
 
     for i in range(len(points)-1):
 
@@ -88,22 +93,18 @@ def _spline_verts_index(points, spline_type, cyclic, resolution, last_index) -> 
 
     if cyclic and not spline_type:
 
-        end_range = last_index + 2
-        last_index = vert_index - 2
+        vert_index -= 2
 
-    else:
+    end_range = vert_index
 
-        end_range = vert_index
-        last_index = vert_index
-
-    return last_index, (start_range, end_range)
+    return end_range, shift, (start_range, end_range)
 
 
 def spline_range_calc(curve) -> np.ndarray:
 
     last_index = -2  # Индекс последней нулевой вершины меша относящегося к сплайну
 
-    def __func(spline):
+    def __func(spline) -> tuple[bool, int, tuple[int, int]]:
 
         nonlocal last_index
 
@@ -120,9 +121,11 @@ def spline_range_calc(curve) -> np.ndarray:
         cyclic = spline.use_cyclic_u
         resolution = spline.resolution_u
 
-        last_index, spline_range_verts = _spline_verts_index(points, spline_type, cyclic, resolution, last_index)
+        last_index, shift, verts_range = _spline_verts_index(points, spline_type, cyclic, resolution, last_index)
 
-        return spline_range_verts
+        res = (spline_type, shift, verts_range)
+
+        return res
 
     spline_range_arr = np.frompyfunc(__func, 1, 1)
     spline_range_arr = spline_range_arr(curve.data.splines)
