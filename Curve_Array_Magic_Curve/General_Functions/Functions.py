@@ -438,6 +438,11 @@ class MethodsCurveData:
 
             self.spline_type_arr[spline_iter] = spline_type
 
+    def __repr__(self):
+        return f'{self.__class__.__name__}: {self.spline_point_count_arr!r}, {self.spline_verts_index_arr!r},' \
+               f'{self.spline_min_max_verts_arr!r}, {self.spline_cyclic_arr!r}, {self.spline_type_arr!r},' \
+               f'{self.spline_start_end_handle_arr!r}'
+
     def get_spline_point_count_arr(self):
 
         return self.spline_point_count_arr

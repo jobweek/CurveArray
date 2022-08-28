@@ -52,6 +52,9 @@ from .props.curve_array_props import (
 from .Curve_Array.Ops.Curve_Array_By_Offset_Ops import (
     CURVEARRAY_OT_create_array_by_offset
 )
+from .Curve_Array.Ops.Test_Core_ops import (
+    CURVEARRAY_OT_path_calc
+)
 from .Magic_Curve.Ops.Smooth_Curve_Ops import (
     MAGICCURVE_OT_create_smooth_curve
 )
@@ -80,6 +83,7 @@ from .Magic_Curve.Panels.Curve_Methods_Panel import (
 classes = (
     Main_Props,
     CURVEARRAY_OT_create_array_by_offset,
+    CURVEARRAY_OT_path_calc,
     CRVARRPRO_PT_CurveArrayPro,
     CRVARRPRO_PT_CurvePanel,
     CRVARRPRO_OT_CurvePicker,
