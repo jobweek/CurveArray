@@ -131,3 +131,37 @@ def spline_range_calc(curve) -> np.ndarray:
     spline_range_arr = spline_range_arr(curve.data.splines)
 
     return spline_range_arr
+
+
+def verts_range_generator(verts_range: tuple[bool, int, tuple[int, int]]):
+
+    cyclic = verts_range[0]
+    shift = verts_range[1]
+    start = verts_range[2][0]
+    end = verts_range[2][1]
+    p = start + shift
+
+    def __func(p, end):
+
+        while p <= end:
+            yield p
+            p += 2
+
+    for y in __func(p, end):
+        yield y
+
+    if shift != 0:
+
+        p = start
+        end = start + shift - 2
+
+        for y in __func(p, end):
+            yield y
+
+    if cyclic:
+
+        yield start + shift
+
+
+
+

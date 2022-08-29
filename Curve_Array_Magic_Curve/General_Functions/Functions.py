@@ -928,3 +928,10 @@ def main_object_select(obj):
     bpy.ops.object.select_all(action='DESELECT')
     obj.select_set(True)
     bpy.context.view_layer.objects.active = obj
+
+
+def delete_objects(*objects):
+
+    for obj in objects:
+
+        bpy.data.objects.remove(obj, do_unlink=True)
