@@ -123,7 +123,7 @@ def spline_range_calc(curve) -> np.ndarray:
 
         last_index, shift, verts_range = _spline_verts_index(points, spline_type, cyclic, resolution, last_index)
 
-        res = (spline_type, shift, verts_range)
+        res = (cyclic, shift, verts_range)
 
         return res
 
