@@ -6,7 +6,11 @@ from Curve_Array_Magic_Curve.Errors.Errors import (
     show_message_box,
     CancelError,
 )
-from typing import Generator
+from Curve_Array_Magic_Curve.General_Functions.Functions import (
+    midle_point_calc,
+    calc_vec,
+)
+from typing import Iterator
 
 
 class InterpolatedPoint:
@@ -19,7 +23,7 @@ class InterpolatedPoint:
         self.spline_point = spline_point
 
 
-class InterpolatedSpline:
+class InterpolatedSegment:
 
     class_count = 0
 
@@ -61,7 +65,7 @@ class PathData:
         return self.interpolated_splines[index]
 
 
-def _spline_verts_index(points, spline_type, cyclic, resolution, last_index) -> tuple[int, int, tuple[int, int]]:
+def _spline_range_calc(points, spline_type, cyclic, resolution, last_index) -> tuple[int, int, tuple[int, int]]:
 
     vert_index = last_index + 2
     start_range = vert_index
@@ -131,11 +135,11 @@ def _verts_range_generator(verts_range: tuple[bool, int, tuple[int, int]]):
         yield start + shift
 
 
-def spline_range_calc(curve) -> np.ndarray:
+def verts_sequence_calc(curve) -> Iterator[int]:
 
     last_index = -2  # Индекс последней нулевой вершины меша относящегося к сплайну
 
-    def __func(spline) -> Generator:
+    def __func(spline):
 
         nonlocal last_index
 
@@ -152,13 +156,45 @@ def spline_range_calc(curve) -> np.ndarray:
         cyclic = spline.use_cyclic_u
         resolution = spline.resolution_u
 
-        last_index, shift, verts_range = _spline_verts_index(points, spline_type, cyclic, resolution, last_index)
+        last_index, shift, verts_range = _spline_range_calc(points, spline_type, cyclic, resolution, last_index)
 
-        generator = _verts_range_generator((cyclic, shift, verts_range))
+        spline_verts_generator = _verts_range_generator((cyclic, shift, verts_range))
 
-        return generator
+        for i in spline_verts_generator:
 
-    verts_range_generator_arr = np.frompyfunc(__func, 1, 1)
-    verts_range_generator_arr = verts_range_generator_arr(curve.data.splines)
+            yield i
 
-    return verts_range_generator_arr
+    for spline in curve.data.splines:
+
+        for i in __func(spline):
+
+            yield i
+
+
+def _calc_vert_data(index: int, verts) -> tuple[mathutils.Vector, mathutils.Vector]:
+
+    p_0 = verts[index]
+    p_1 = verts[index + 1]
+    mid_point_co = midle_point_calc(p_0.co, p_1.co)
+    normal = calc_vec(p_0.co, p_1.co, True)
+
+    return mid_point_co, normal
+
+
+def func(verts_sequence_generator: Iterator[int], verts):
+
+    fisrt_point = _calc_vert_data(next(verts_sequence_generator), verts)
+
+    while True:
+
+        try:
+
+            second_point = _calc_vert_data(next(verts_sequence_generator), verts)
+
+            print(fisrt_point, second_point)
+
+            fisrt_point = second_point
+
+        except StopIteration:
+
+            break

@@ -6,7 +6,7 @@ import math
 from ...General_Functions.Functions import (
     vec_projection,
     angle_calc,
-    calc_vec,
+    calc_vec_Re,
     RAD_CIRCLE_CONST,
 )
 
@@ -66,7 +66,7 @@ def angle_arr_calc_split(ext_vec_arr, y_vec_arr, curve):
         first_point = curve.data.splines[i].bezier_points[0]
         second_point = curve.data.splines[i].bezier_points[1]
 
-        z_vec = calc_vec(first_point.co.to_3d(), second_point.co.to_3d(), True)
+        z_vec = calc_vec_Re(first_point.co.to_3d(), second_point.co.to_3d(), True)
         assert z_vec is not None, 'z_vec is None'
 
         ext_vec = vec_projection(ext_vec_arr[i], z_vec)
