@@ -13,6 +13,8 @@ from ....General_Functions.Functions import (
 )
 from .Path_Calculation_Functions import (
     verts_sequence_calc,
+    get_bm_verts,
+    func,
 )
 
 
@@ -21,9 +23,9 @@ def path_calculation_manager(curve):
     verts_sequence_generator = verts_sequence_calc(curve)
     duplicated_curve = duplicate(curve)
     extruded_mesh = convert_to_mesh(duplicated_curve)
-    bm = bmesh.new()
-    bm.from_mesh(extruded_mesh.data, face_normals=False, vertex_normals=False)
-    bmesh.ops.transform(bm, matrix=curve.matrix_world, verts=bm.verts)
+    verts = get_bm_verts(extruded_mesh)
     delete_objects(extruded_mesh)
+
+    func(verts_sequence_generator, verts)
 
 

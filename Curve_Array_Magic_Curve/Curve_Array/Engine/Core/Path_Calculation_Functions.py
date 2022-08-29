@@ -171,6 +171,16 @@ def verts_sequence_calc(curve) -> Iterator[int]:
             yield i
 
 
+def get_bm_verts(mesh):
+
+    bm = bmesh.new()
+    bm.from_mesh(mesh.data, face_normals=False, vertex_normals=False)
+    bm.verts.ensure_lookup_table()
+    bmesh.ops.transform(bm, matrix=mesh.matrix_world, verts=bm.verts)
+
+    return bm.verts
+
+
 def _calc_vert_data(index: int, verts) -> tuple[mathutils.Vector, mathutils.Vector]:
 
     p_0 = verts[index]
@@ -191,7 +201,7 @@ def func(verts_sequence_generator: Iterator[int], verts):
 
             second_point = _calc_vert_data(next(verts_sequence_generator), verts)
 
-            print(fisrt_point, second_point)
+            print(f'{fisrt_point}\n{second_point}')
 
             fisrt_point = second_point
 
