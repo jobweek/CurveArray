@@ -6,6 +6,7 @@ from Curve_Array_Magic_Curve.Errors.Errors import (
     show_message_box,
     CancelError,
 )
+from typing import Generator
 
 
 class InterpolatedPoint:
@@ -100,40 +101,7 @@ def _spline_verts_index(points, spline_type, cyclic, resolution, last_index) -> 
     return end_range, shift, (start_range, end_range)
 
 
-def spline_range_calc(curve) -> np.ndarray:
-
-    last_index = -2  # Индекс последней нулевой вершины меша относящегося к сплайну
-
-    def __func(spline) -> tuple[bool, int, tuple[int, int]]:
-
-        nonlocal last_index
-
-        if spline.type == 'POLY':
-
-            points = spline.points
-            spline_type = True
-
-        else:
-
-            points = spline.bezier_points
-            spline_type = False
-
-        cyclic = spline.use_cyclic_u
-        resolution = spline.resolution_u
-
-        last_index, shift, verts_range = _spline_verts_index(points, spline_type, cyclic, resolution, last_index)
-
-        res = (cyclic, shift, verts_range)
-
-        return res
-
-    spline_range_arr = np.frompyfunc(__func, 1, 1)
-    spline_range_arr = spline_range_arr(curve.data.splines)
-
-    return spline_range_arr
-
-
-def verts_range_generator(verts_range: tuple[bool, int, tuple[int, int]]):
+def _verts_range_generator(verts_range: tuple[bool, int, tuple[int, int]]):
 
     cyclic = verts_range[0]
     shift = verts_range[1]
@@ -163,5 +131,34 @@ def verts_range_generator(verts_range: tuple[bool, int, tuple[int, int]]):
         yield start + shift
 
 
+def spline_range_calc(curve) -> np.ndarray:
 
+    last_index = -2  # Индекс последней нулевой вершины меша относящегося к сплайну
 
+    def __func(spline) -> Generator:
+
+        nonlocal last_index
+
+        if spline.type == 'POLY':
+
+            points = spline.points
+            spline_type = True
+
+        else:
+
+            points = spline.bezier_points
+            spline_type = False
+
+        cyclic = spline.use_cyclic_u
+        resolution = spline.resolution_u
+
+        last_index, shift, verts_range = _spline_verts_index(points, spline_type, cyclic, resolution, last_index)
+
+        generator = _verts_range_generator((cyclic, shift, verts_range))
+
+        return generator
+
+    verts_range_generator_arr = np.frompyfunc(__func, 1, 1)
+    verts_range_generator_arr = verts_range_generator_arr(curve.data.splines)
+
+    return verts_range_generator_arr
