@@ -11,6 +11,7 @@ from .Path_Calculation_Functions import (
     verts_sequence_calc,
     get_bm_verts,
     path_data_calc,
+    arr_size_calc,
 )
 
 
@@ -22,6 +23,8 @@ def path_calculation_manager(curve):
     bm = get_bm_verts(extruded_mesh)
     delete_objects(extruded_mesh)
 
-    path_data = path_data_calc(verts_sequence_generator, bm.verts, len(bm.faces), curve.name)
+    arr_size = arr_size_calc(bm.verts, curve)
+
+    path_data = path_data_calc(verts_sequence_generator, bm.verts, arr_size, curve.name)
 
     print(path_data)

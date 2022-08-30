@@ -25,10 +25,32 @@ class InterpolatedSegment:
 
     def __str__(self):
 
-        string = f'SubClass {self.__class__.__name__}:\nStart_Co: {self.start_co}' \
-                 f'\nDirection_Vec: {self.direction_vec}\nLength: {self.length}\nNormal: {self.normal}'
+        string = f'\nSubClass {self.__class__.__name__}:\nStart_Co: {self.start_co}' \
+                 f'\nDirection_Vec: {self.direction_vec}\nLength: {self.length}\nNormal: {self.normal}\n'
 
         return string
+
+    def get_data_by_length(self, searched_length: float) -> tuple[Vector, Vector, Vector]:
+
+        """searched_length - distance between 'start distance' and searched point"""
+
+        ratio = searched_length / self.length
+
+        if searched_length < 0:
+
+            normal = self.normal[0]
+
+        elif searched_length > self.length:
+
+            normal = self.normal[1]
+
+        else:
+
+            normal = self.normal[0].lerp(self.normal[1], ratio).normalized()
+
+        co = self.start_co + self.direction_vec * ratio
+
+        return co, self.direction_vec.normalized(), normal
 
 
 class PathData:
@@ -36,25 +58,43 @@ class PathData:
     def __init__(self, curve_name: str, arrays: tuple[np.ndarray, np.ndarray]):
 
         self.curve_name = curve_name
-        self.interpolated_splines_distance, self.interpolated_splines = arrays
+        self.interpolated_segment_distance, self.interpolated_segment = arrays
 
     def __str__(self):
 
         string = f'Class {self.__class__.__name__}:'
 
-        for i, _ in enumerate(self.interpolated_splines_distance):
+        for i, _ in enumerate(self.interpolated_segment_distance):
 
-            part = f'\nIndex: {i}, Distance: {self.interpolated_splines_distance[i]}\n{self.interpolated_splines[i]}'
+            part = f'\nIndex: {i}, Distance: {self.interpolated_segment_distance[i]}\n{self.interpolated_segment[i]}'
 
             string += part
 
         return string
 
-    def get_nearest(self, distance: float) -> InterpolatedSegment:
+    def get_data_by_distance(self, searched_distance: float) -> tuple[Vector, Vector, Vector]:
 
-        index = np.searchsorted(self.interpolated_splines_distance, distance)
+        index = np.searchsorted(self.interpolated_segment_distance, searched_distance, side='left')
 
-        return self.interpolated_splines[index]
+        element: InterpolatedSegment = self.interpolated_segment[index]
+
+        element_distance = self.interpolated_segment_distance[index]
+
+        if searched_distance < 0:
+
+            searched_length = searched_distance
+
+        elif searched_distance > element_distance:
+
+            searched_length = searched_distance - element_distance + element.length
+
+        else:
+
+            searched_length = element.length - (element_distance - searched_distance)
+
+        data = element.get_data_by_length(searched_length)
+
+        return data
 
 
 def _spline_range_calc(points, spline_type, cyclic, resolution, last_index) -> tuple[int, int, tuple[int, int]]:
@@ -193,6 +233,19 @@ def _calc_segment_data(fisrt_point: tuple[Vector, Vector], second_point: tuple[V
     segment = InterpolatedSegment(fisrt_point[0], direction_vec, length, (fisrt_point[1], second_point[1]))
 
     return length, segment
+
+
+def arr_size_calc(verts, curve) -> int:
+
+    size = len(verts)/2 - 1
+
+    for s in curve.data.splines:
+
+        if s.use_cyclic_u:
+
+            size += 1
+
+    return int(size)
 
 
 def path_data_calc(verts_sequence_generator: Iterator[int], verts, arr_size: int, curve_name: str) -> PathData:
