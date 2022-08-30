@@ -17,14 +17,25 @@ from .Path_Calculation_Functions import (
 
 def path_calculation_manager(curve):
 
+    # Генератор последовательности вершин кривой
     verts_sequence_generator = verts_sequence_calc(curve)
+
+    # дублируем кривую
     duplicated_curve = duplicate(curve)
+
+    # Превращаем в меш
     extruded_mesh = convert_to_mesh(duplicated_curve)
+
+    # Получаем bmesh
     bm = get_bm_verts(extruded_mesh)
+
+    # Удаляем меш
     delete_objects(extruded_mesh)
 
+    # Вычисляем размер массива
     arr_size = arr_size_calc(bm.verts, curve)
 
+    # Получаем класс Path Data
     path_data = path_data_calc(verts_sequence_generator, bm.verts, arr_size, curve.name)
 
     print(path_data)
