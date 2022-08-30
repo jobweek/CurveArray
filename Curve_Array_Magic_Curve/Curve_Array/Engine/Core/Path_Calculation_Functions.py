@@ -2,63 +2,55 @@ import bpy  # type: ignore
 import bmesh  # type: ignore
 import mathutils
 import numpy as np
-from Curve_Array_Magic_Curve.Errors.Errors import (
-    show_message_box,
-    CancelError,
-)
+
 from Curve_Array_Magic_Curve.General_Functions.Functions import (
     midle_point_calc,
     calc_vec,
 )
 from typing import Iterator
-
-
-class InterpolatedPoint:
-
-    def __init__(self, co: mathutils.Vector, normal: mathutils.Vector, distance: float, spline_point: bool):
-
-        self.co = co
-        self.normal = normal
-        self.distance = distance
-        self.spline_point = spline_point
+Vector = mathutils.Vector
 
 
 class InterpolatedSegment:
 
     class_count = 0
 
-    def __init__(self, spline_length: float, arrays: tuple[np.ndarray, np.ndarray]):
+    def __init__(self, start_co: Vector, direction_vec: Vector, length: float, normal: tuple[Vector, Vector]):
 
         self.__class__.class_count += 1
-        self.points_iter = 0
-        self.spline_length = spline_length
-        self.interpolated_points, self.interpolated_points_distance = arrays
+        self.start_co = start_co
+        self.direction_vec = direction_vec
+        self.length = length
+        self.normal = normal
 
-    def get_nearest(self, distance: float) -> InterpolatedPoint:
+    def __str__(self):
 
-        index = np.searchsorted(self.interpolated_points_distance, distance)
+        string = f'SubClass {self.__class__.__name__}:\nStart_Co: {self.start_co}' \
+                 f'\nDirection_Vec: {self.direction_vec}\nLength: {self.length}\nNormal: {self.normal}'
 
-        return self.interpolated_points[index]
+        return string
 
 
 class PathData:
 
-    @staticmethod
-    def _type_check(obj):
+    def __init__(self, curve_name: str, arrays: tuple[np.ndarray, np.ndarray]):
 
-        if obj.type != 'CURVE':
+        self.curve_name = curve_name
+        self.interpolated_splines_distance, self.interpolated_splines = arrays
 
-            show_message_box("Error", "Object should be curve", 'ERROR')
+    def __str__(self):
 
-            raise CancelError
+        string = f'Class {self.__class__.__name__}:'
 
-    def __init__(self, curve, arrays: tuple[np.ndarray, np.ndarray]):
+        for i, _ in enumerate(self.interpolated_splines_distance):
 
-        self._type_check(curve)
-        self.curve_name = curve.name
-        self.interpolated_splines, self.interpolated_splines_distance = arrays
+            part = f'\nIndex: {i}, Distance: {self.interpolated_splines_distance[i]}\n{self.interpolated_splines[i]}'
 
-    def get_nearest(self, distance: float) -> InterpolatedPoint:
+            string += part
+
+        return string
+
+    def get_nearest(self, distance: float) -> InterpolatedSegment:
 
         index = np.searchsorted(self.interpolated_splines_distance, distance)
 
@@ -178,10 +170,10 @@ def get_bm_verts(mesh):
     bm.verts.ensure_lookup_table()
     bmesh.ops.transform(bm, matrix=mesh.matrix_world, verts=bm.verts)
 
-    return bm.verts
+    return bm
 
 
-def _calc_vert_data(index: int, verts) -> tuple[mathutils.Vector, mathutils.Vector]:
+def _calc_vert_data(index: int, verts) -> tuple[Vector, Vector]:
 
     p_0 = verts[index]
     p_1 = verts[index + 1]
@@ -191,9 +183,27 @@ def _calc_vert_data(index: int, verts) -> tuple[mathutils.Vector, mathutils.Vect
     return mid_point_co, normal
 
 
-def func(verts_sequence_generator: Iterator[int], verts):
+def _calc_segment_data(fisrt_point: tuple[Vector, Vector], second_point: tuple[Vector, Vector]
+                       ) -> tuple[float, InterpolatedSegment]:
 
+    direction_vec = calc_vec(fisrt_point[0], second_point[0], False)
+
+    length = direction_vec.length
+
+    segment = InterpolatedSegment(fisrt_point[0], direction_vec, length, (fisrt_point[1], second_point[1]))
+
+    return length, segment
+
+
+def path_data_calc(verts_sequence_generator: Iterator[int], verts, arr_size: int, curve_name: str) -> PathData:
+
+    interpolated_splines_distance_arr = np.empty(arr_size, float)
+    interpolated_splines_arr = np.empty(arr_size, object)
+
+    distance = 0.0
     fisrt_point = _calc_vert_data(next(verts_sequence_generator), verts)
+
+    i = 0
 
     while True:
 
@@ -201,10 +211,21 @@ def func(verts_sequence_generator: Iterator[int], verts):
 
             second_point = _calc_vert_data(next(verts_sequence_generator), verts)
 
-            print(f'{fisrt_point}\n{second_point}')
+            length, segment = _calc_segment_data(fisrt_point, second_point)
+            distance += length
+
+            interpolated_splines_distance_arr[i] = distance
+            interpolated_splines_arr[i] = segment
 
             fisrt_point = second_point
+            i += 1
 
         except StopIteration:
 
             break
+
+    assert i == arr_size, 'PathData, массив не заполнен'
+
+    path_data = PathData(curve_name, (interpolated_splines_distance_arr, interpolated_splines_arr))
+
+    return path_data
