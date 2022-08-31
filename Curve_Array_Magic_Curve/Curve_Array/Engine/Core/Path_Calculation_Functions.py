@@ -92,9 +92,7 @@ class PathData:
 
             searched_length = element.length - (element_distance - searched_distance)
 
-        data = element.get_data_by_length(searched_length)
-
-        return data
+        return element.get_data_by_length(searched_length)
 
 
 def _spline_range_calc(points, spline_type, cyclic, resolution, last_index) -> tuple[int, int, tuple[int, int]]:

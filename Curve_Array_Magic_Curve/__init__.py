@@ -49,6 +49,9 @@ from .props.curve_array_props import (
     reg_2,
     Main_Props
 )
+from .Curve_Array.Property.Core_Props import (
+    InstantPathData
+)
 from .Curve_Array.Ops.Curve_Array_By_Offset_Ops import (
     CURVEARRAY_OT_create_array_by_offset
 )
@@ -142,6 +145,13 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
+    bpy.utils.register_class(InstantPathData)
+
+    bpy.types.Scene.curve_array_engine_storage = bpy.props.PointerProperty(
+        type=InstantPathData,
+        name='Not for User, engine storage'
+    )
+
     bpy.types.Scene.curve_array_properties = bpy.props.PointerProperty(
         type=Main_Props,
         name='Curve Array Properties'
@@ -162,6 +172,9 @@ def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
 
+    bpy.utils.unregister_class(InstantPathData)
+
+    del bpy.types.Scene.curve_array_engine_storage
     del bpy.types.Scene.curve_array_properties
 
 

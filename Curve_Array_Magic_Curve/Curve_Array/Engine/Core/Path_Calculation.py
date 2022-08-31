@@ -38,4 +38,5 @@ def path_calculation_manager(curve):
     # Получаем класс Path Data
     path_data = path_data_calc(verts_sequence_generator, bm.verts, arr_size, curve.name)
 
-    print(path_data)
+    bpy.types.Scene.curve_array_engine_storage.InstantPathData.set_path_data(path_data)
+
