@@ -45,7 +45,7 @@ from .Magic_Curve.Ops.Switch_Direction_Ops import (
 from .Magic_Curve.Ops.Toggle_Cyclic_Ops import (
     MAGICCURVE_OT_toggle_cyclic
 )
-from .Magic_Curve.Panels.Main_Panel import (
+from .Magic_Curve.Panels.General_Panel import (
     MAGICCURVE_PT_main_panel
 )
 from .Magic_Curve.Panels.Create_Curve_Panel import (
