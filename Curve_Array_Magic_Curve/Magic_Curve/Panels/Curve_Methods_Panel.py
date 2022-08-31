@@ -6,7 +6,6 @@ class MAGICCURVE_PT_curve_methods_panel(bpy.types.Panel):
     bl_idname = "MAGICCURVE_PT_curve_methods_panel"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'CrvArrPro'
     bl_parent_id = 'MAGICCURVE_PT_general_panel'
 
     def draw(self, _):
