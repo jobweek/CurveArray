@@ -39,4 +39,3 @@ def path_calculation_manager(curve):
     path_data = path_data_calc(verts_sequence_generator, bm.verts, arr_size, curve.name)
 
     bpy.context.scene.curve_array_properties.engine_props.path_data.set_path_data(path_data)
-

@@ -1,5 +1,5 @@
 import bpy  # type: ignore
-from ..Engine.Core.Path_Calculation import path_calculation_manager
+from ..Engine.Path_Calculation.Path_Calculation import path_calculation_manager
 
 
 class CURVEARRAY_OT_path_calc(bpy.types.Operator):

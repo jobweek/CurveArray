@@ -1,5 +1,5 @@
 import bpy  # type: ignore
-from Curve_Array_Magic_Curve.Curve_Array.Engine.Core.Path_Calculation_Functions import PathData
+from Curve_Array_Magic_Curve.Curve_Array.Engine.Path_Calculation.Path_Calculation_Functions import PathData
 
 
 class InstantPathData(bpy.types.PropertyGroup):

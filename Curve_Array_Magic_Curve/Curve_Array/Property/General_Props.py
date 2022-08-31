@@ -1,5 +1,5 @@
 import bpy  # type: ignore
-from .Core_Props import InstantPathData
+from .Path_Calculation_Props import InstantPathData
 
 
 class EnginePropsPointer(bpy.types.PropertyGroup):
