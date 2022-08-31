@@ -10,7 +10,7 @@ class InstantPathData(bpy.types.PropertyGroup):
 
         self.path_data = path_data
 
-    def get_path_data(self):
+    def get_path_data(self) -> PathData:
 
         return self.path_data
 
