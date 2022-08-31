@@ -32,7 +32,7 @@ class InterpolatedSegment:
 
     def get_data_by_length(self, searched_length: float) -> tuple[Vector, Vector, Vector]:
 
-        """searched_length - distance between 'start distance' and searched point"""
+        """Searched_length = distance between 'start distance' and searched point"""
 
         ratio = searched_length / self.length
 
