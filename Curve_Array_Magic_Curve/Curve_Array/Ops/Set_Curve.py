@@ -6,10 +6,10 @@ from Curve_Array_Magic_Curve.Curve_Array.Engine.Array_Creation.Curve_Array_By_Of
 import traceback
 
 
-class CURVEARRAY_OT_create_array_by_offset(bpy.types.Operator):
-    """Create curve from loop"""
-    bl_label = "Create Array along Curve"
-    bl_idname = 'curvearray.create_array_by_offset'
+class CURVEARRAY_OT_set_curve(bpy.types.Operator):
+    """Set Curve"""
+    bl_label = "Set Curve"
+    bl_idname = 'curvearray.set_curve'
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, _):
