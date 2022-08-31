@@ -3,7 +3,7 @@ from Curve_Array_Magic_Curve.Curve_Array.Engine.Path_Calculation.Path_Calculatio
 
 
 class InstantPathData(bpy.types.PropertyGroup):
-    """Содержит класс PathData, который присваивается полю path_data в начале запуска оператора Curve Array """
+    """Содержит класс PathData, который присваивается полю data в начале запуска оператора Curve Array """
     data: PathData or None = None
 
     @classmethod

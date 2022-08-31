@@ -24,49 +24,55 @@ from .Curve_Array.Property.General_Props import (
     registaration_order,
     CurveArrayProps,
 )
-from .Curve_Array.Ops.Curve_Array_By_Offset_Ops import (
-    CURVEARRAY_OT_create_array_by_offset
-)
-from .Curve_Array.Ops.Test_Core_ops import (
-    CURVEARRAY_OT_path_calc
-)
-from .Curve_Array.Panels.General_Panel import (
-    CURVEARRAY_PT_general_panel
-)
+from .Curve_Array.Ops.Curve_Array_By_Offset_Ops import CURVEARRAY_OT_create_array_by_offset
+from .Curve_Array.Ops.Test_Core_ops import CURVEARRAY_OT_path_calc
+
+from .Curve_Array.Curve_Editor.Ops.Set_Curve_Ops import CURVEARRAY_OT_set_curve
+from .Curve_Array.Curve_Editor.Ops.Clear_Curve_Ops import CURVEARRAY_OT_clear_curve
+
+from .Curve_Array.Object_Editor.Ops.Add_Objects_Ops import CURVEARRAY_OT_add_objects
+from .Curve_Array.Object_Editor.Ops.Clear_All_Ops import CURVEARRAY_OT_clear_all
+from .Curve_Array.Object_Editor.Ops.Queue_Move_Ops import CURVEARRAY_OT_queue_move
+from .Curve_Array.Object_Editor.Ops.Create_Empty_Group_Ops import CURVEARRAY_OT_create_empty_group
+from .Curve_Array.Object_Editor.Ops.Create_Set_Group_Ops import CURVEARRAY_OT_create_set_group
+from .Curve_Array.Object_Editor.Ops.Remove_Item_Ops import CURVEARRAY_OT_remove_item
+from .Curve_Array.Object_Editor.Ops.Duplicate_Item_Ops import CURVEARRAY_OT_duplicate_item
+from .Curve_Array.Object_Editor.Object_Editor_WM import CURVEARRAY_OT_open_editor
+
+from .Curve_Array.Panels.General_Panel import CURVEARRAY_PT_general_panel
+from .Curve_Array.Curve_Editor.Curve_Panel import CURVEARRAY_PT_curve_panel
+from .Curve_Array.Object_Editor.Object_Panel import CURVEARRAY_PT_object_panel
 
 
-from .Magic_Curve.Ops.Smooth_Curve_Ops import (
-    MAGICCURVE_OT_create_smooth_curve
-)
-from .Magic_Curve.Ops.Split_Curve_Ops import (
-    MAGICCURVE_OT_create_split_curve
-)
-from .Magic_Curve.Ops.Change_Twist_Method_Ops import (
-    MAGICCURVE_OT_switch_twist_method
-)
-from .Magic_Curve.Ops.Switch_Direction_Ops import (
-    MAGICCURVE_OT_switch_direction
-)
-from .Magic_Curve.Ops.Toggle_Cyclic_Ops import (
-    MAGICCURVE_OT_toggle_cyclic
-)
+from .Magic_Curve.Ops.Smooth_Curve_Ops import MAGICCURVE_OT_create_smooth_curve
+from .Magic_Curve.Ops.Split_Curve_Ops import MAGICCURVE_OT_create_split_curve
+from .Magic_Curve.Ops.Change_Twist_Method_Ops import MAGICCURVE_OT_switch_twist_method
+from .Magic_Curve.Ops.Switch_Direction_Ops import MAGICCURVE_OT_switch_direction
+from .Magic_Curve.Ops.Toggle_Cyclic_Ops import MAGICCURVE_OT_toggle_cyclic
 
-
-from .Magic_Curve.Panels.General_Panel import (
-    MAGICCURVE_PT_general_panel
-)
-from .Magic_Curve.Panels.Create_Curve_Panel import (
-    MAGICCURVE_PT_create_curve_panel
-)
-from .Magic_Curve.Panels.Curve_Methods_Panel import (
-    MAGICCURVE_PT_curve_methods_panel
-)
+from .Magic_Curve.Panels.General_Panel import MAGICCURVE_PT_general_panel
+from .Magic_Curve.Panels.Create_Curve_Panel import MAGICCURVE_PT_create_curve_panel
+from .Magic_Curve.Panels.Curve_Methods_Panel import MAGICCURVE_PT_curve_methods_panel
 
 classes = (
     CURVEARRAY_OT_create_array_by_offset,
     CURVEARRAY_OT_path_calc,
 
+    CURVEARRAY_OT_set_curve,
+    CURVEARRAY_OT_clear_curve,
+
+    CURVEARRAY_OT_add_objects,
+    CURVEARRAY_OT_clear_all,
+    CURVEARRAY_OT_queue_move,
+    CURVEARRAY_OT_create_empty_group,
+    CURVEARRAY_OT_create_set_group,
+    CURVEARRAY_OT_remove_item,
+    CURVEARRAY_OT_duplicate_item,
+    CURVEARRAY_OT_open_editor,
+
     CURVEARRAY_PT_general_panel,
+    CURVEARRAY_PT_curve_panel,
+    CURVEARRAY_PT_object_panel,
 
 
     MAGICCURVE_OT_create_split_curve,

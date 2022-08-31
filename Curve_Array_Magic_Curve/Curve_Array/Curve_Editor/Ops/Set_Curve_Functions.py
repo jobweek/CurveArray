@@ -7,6 +7,12 @@ from Curve_Array_Magic_Curve.Errors.Errors import (
 
 def get_curve():
 
+    if bpy.context.mode != 'OBJECT':
+
+        show_message_box("Error", "Go to Object Mode", 'ERROR')
+
+        raise CancelError
+
     objects = bpy.context.selected_objects
 
     if len(objects) == 0:
@@ -24,11 +30,6 @@ def get_curve():
     if objects[0].type != 'CURVE':
 
         show_message_box("Error", "Object should be curve", 'ERROR')
-
-        raise CancelError
-
-    if objects[0].mode != 'OBJECT':
-        show_message_box("Error", "Go to Object Mode", 'ERROR')
 
         raise CancelError
 

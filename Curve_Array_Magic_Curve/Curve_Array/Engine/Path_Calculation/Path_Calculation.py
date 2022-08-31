@@ -20,7 +20,7 @@ def path_calculation_manager(curve):
     # Генератор последовательности вершин кривой
     verts_sequence_generator = verts_sequence_calc(curve)
 
-    # дублируем кривую
+    # Дублируем кривую
     duplicated_curve = duplicate(curve)
 
     # Превращаем в меш
@@ -38,5 +38,5 @@ def path_calculation_manager(curve):
     # Получаем класс Path Data
     path_data = path_data_calc(verts_sequence_generator, bm.verts, arr_size, curve.name)
 
-    # Присваиваем дату классу InstantPathData
-    bpy.context.scene.curve_array_properties.engine_props.path_data.set_data(path_data)
+    # Присваиваем класс Path Data классу InstantPathData в атрибут data
+    bpy.context.scene.curve_array_properties.engine_props.instant_path_data.set_data(path_data)
