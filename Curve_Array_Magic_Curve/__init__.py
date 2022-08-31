@@ -19,38 +19,10 @@ Created by JobWeek
 """
 
 import bpy  # type: ignore
-from .curve_array_pro_3_0 import (
-    CRVARRPRO_PT_CurveArrayPro,
-    CRVARRPRO_PT_CurvePanel,
-    CRVARRPRO_OT_CurvePicker,
-    CRVARRPRO_OT_CurveCleaner,
-    CRVARRPRO_PT_ObjectPanel,
-    CRVARRPRO_OT_ObjectPicker,
-    CRVARRPRO_OT_ObjectCleaner,
-    CRVARRPRO_OT_ObjectEditor,
-    CRVARRPRO_OT_TransformEditor,
-    CRVARRPRO_OT_ClearProp,
-    CRVARRPRO_OT_UpProp,
-    CRVARRPRO_OT_DownProp,
-    CRVARRPRO_OT_NewRandomGroup,
-    CRVARRPRO_OT_SetGroup,
-    CRVARRPRO_OT_RemoveObjFromRG,
-    CRVARRPRO_OT_Empty,
-    CRVARRPRO_PT_MainPanel,
-    CRVARRPRO_OT_MakeIt,
-    CRVARRPRO_PT_ButtonPanel,
-    CRVARRPRO_OT_Delete_Last_Array,
-    CRVARRPRO_OT_Reset_Settings,
-    CRVARRPRO_OT_Flip_Curve
-)
-from .props.curve_array_props import (
-    reg_0,
-    reg_1,
-    reg_2,
-    Main_Props
-)
-from .Curve_Array.Property.Core_Props import (
-    InstantPathData
+
+from .Curve_Array.Property.General_Props import (
+    registaration_order,
+    CurveArrayProps,
 )
 from .Curve_Array.Ops.Curve_Array_By_Offset_Ops import (
     CURVEARRAY_OT_create_array_by_offset
@@ -84,36 +56,15 @@ from .Magic_Curve.Panels.Curve_Methods_Panel import (
 )
 
 classes = (
-    Main_Props,
     CURVEARRAY_OT_create_array_by_offset,
     CURVEARRAY_OT_path_calc,
-    CRVARRPRO_PT_CurveArrayPro,
-    CRVARRPRO_PT_CurvePanel,
-    CRVARRPRO_OT_CurvePicker,
-    CRVARRPRO_OT_CurveCleaner,
-    CRVARRPRO_PT_ObjectPanel,
-    CRVARRPRO_OT_ObjectPicker,
-    CRVARRPRO_OT_ObjectCleaner,
-    CRVARRPRO_OT_ObjectEditor,
-    CRVARRPRO_OT_TransformEditor,
-    CRVARRPRO_OT_ClearProp,
-    CRVARRPRO_OT_UpProp,
-    CRVARRPRO_OT_DownProp,
-    CRVARRPRO_OT_NewRandomGroup,
-    CRVARRPRO_OT_SetGroup,
-    CRVARRPRO_OT_RemoveObjFromRG,
-    CRVARRPRO_OT_Empty,
-    CRVARRPRO_PT_MainPanel,
-    CRVARRPRO_OT_MakeIt,
-    CRVARRPRO_PT_ButtonPanel,
-    CRVARRPRO_OT_Delete_Last_Array,
-    CRVARRPRO_OT_Reset_Settings,
-    CRVARRPRO_OT_Flip_Curve,
+
     MAGICCURVE_OT_create_split_curve,
     MAGICCURVE_OT_create_smooth_curve,
     MAGICCURVE_OT_switch_twist_method,
     MAGICCURVE_OT_switch_direction,
     MAGICCURVE_OT_toggle_cyclic,
+
     MAGICCURVE_PT_main_panel,
     MAGICCURVE_PT_create_curve_panel,
     MAGICCURVE_PT_curve_methods_panel,
@@ -133,48 +84,26 @@ bl_info = {
 
 def register():
 
-    for cls in reg_0:
-        bpy.utils.register_class(cls)
-
-    for cls in reg_1:
-        bpy.utils.register_class(cls)
-
-    for cls in reg_2:
+    for cls in registaration_order:
         bpy.utils.register_class(cls)
 
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    bpy.utils.register_class(InstantPathData)
-
-    bpy.types.Scene.curve_array_engine_storage = bpy.props.PointerProperty(
-        type=InstantPathData,
-        name='Not for User, engine storage'
-    )
-
     bpy.types.Scene.curve_array_properties = bpy.props.PointerProperty(
-        type=Main_Props,
-        name='Curve Array Properties'
+        type=CurveArrayProps,
+        name='CurveArray array properties'
     )
 
 
 def unregister():
 
-    for cls in reg_0:
-        bpy.utils.unregister_class(cls)
-
-    for cls in reg_1:
-        bpy.utils.unregister_class(cls)
-
-    for cls in reg_2:
+    for cls in registaration_order:
         bpy.utils.unregister_class(cls)
 
     for cls in classes:
         bpy.utils.unregister_class(cls)
 
-    bpy.utils.unregister_class(InstantPathData)
-
-    del bpy.types.Scene.curve_array_engine_storage
     del bpy.types.Scene.curve_array_properties
 
 
