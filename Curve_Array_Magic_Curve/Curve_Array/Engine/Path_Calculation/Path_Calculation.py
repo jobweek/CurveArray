@@ -38,4 +38,5 @@ def path_calculation_manager(curve):
     # Получаем класс Path Data
     path_data = path_data_calc(verts_sequence_generator, bm.verts, arr_size, curve.name)
 
-    bpy.context.scene.curve_array_properties.engine_props.path_data.set_path_data(path_data)
+    # Присваиваем дату классу InstantPathData
+    bpy.context.scene.curve_array_properties.engine_props.path_data.set_data(path_data)

@@ -1,8 +1,9 @@
 import bpy  # type: ignore
-import bmesh  # type: ignore
-import mathutils  # type: ignore
+from Curve_Array_Magic_Curve.Curve_Array.Engine.Set_Curve.Set_Curve_Functions import (
+    get_curve,
+)
 
 
 def set_curve_manager():
 
-    pass
+    curve = get_curve()
