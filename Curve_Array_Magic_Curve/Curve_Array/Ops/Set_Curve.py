@@ -1,8 +1,6 @@
 import bpy  # type: ignore
 from Curve_Array_Magic_Curve.Errors.Errors import CancelError, show_message_box
-from Curve_Array_Magic_Curve.Curve_Array.Engine.Array_Creation.Curve_Array_By_Offset import (
-    curve_array_by_offset_manager,
-)
+
 import traceback
 
 
@@ -16,7 +14,7 @@ class CURVEARRAY_OT_set_curve(bpy.types.Operator):
 
         try:
 
-            curve_array_by_offset_manager(bpy.context.active_object, None, None)
+            pass
 
             return {'FINISHED'}
 
