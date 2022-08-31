@@ -1,5 +1,7 @@
 import bpy  # type: ignore
 from Curve_Array_Magic_Curve.Errors.Errors import CancelError, show_message_box
+from Curve_Array_Magic_Curve.Curve_Array.Engine.Set_Curve.Set_Curve import set_curve_manager
+
 
 import traceback
 
@@ -14,7 +16,7 @@ class CURVEARRAY_OT_set_curve(bpy.types.Operator):
 
         try:
 
-            pass
+            set_curve_manager()
 
             return {'FINISHED'}
 

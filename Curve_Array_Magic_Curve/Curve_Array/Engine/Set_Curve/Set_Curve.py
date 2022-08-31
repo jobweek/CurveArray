@@ -3,6 +3,6 @@ import bmesh  # type: ignore
 import mathutils  # type: ignore
 
 
-def set_curve_manager(curve, objects, params):
+def set_curve_manager():
 
     pass
