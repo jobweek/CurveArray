@@ -92,7 +92,7 @@ def register():
 
     bpy.types.Scene.curve_array_properties = bpy.props.PointerProperty(
         type=CurveArrayProps,
-        name='CurveArray array properties'
+        name='CurveArray Properties'
     )
 
 
