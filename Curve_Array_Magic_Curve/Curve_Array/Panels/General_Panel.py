@@ -9,5 +9,5 @@ class CURVEARRAY_PT_general_panel(bpy.types.Panel):
     bl_region_type = 'UI'
     bl_category = 'CurveArray'
 
-    def draw(self, context):
+    def draw(self, _):
         pass

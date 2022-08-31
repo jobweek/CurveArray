@@ -30,6 +30,11 @@ from .Curve_Array.Ops.Curve_Array_By_Offset_Ops import (
 from .Curve_Array.Ops.Test_Core_ops import (
     CURVEARRAY_OT_path_calc
 )
+from .Curve_Array.Panels.General_Panel import (
+    CURVEARRAY_PT_general_panel
+)
+
+
 from .Magic_Curve.Ops.Smooth_Curve_Ops import (
     MAGICCURVE_OT_create_smooth_curve
 )
@@ -45,8 +50,10 @@ from .Magic_Curve.Ops.Switch_Direction_Ops import (
 from .Magic_Curve.Ops.Toggle_Cyclic_Ops import (
     MAGICCURVE_OT_toggle_cyclic
 )
+
+
 from .Magic_Curve.Panels.General_Panel import (
-    MAGICCURVE_PT_main_panel
+    MAGICCURVE_PT_general_panel
 )
 from .Magic_Curve.Panels.Create_Curve_Panel import (
     MAGICCURVE_PT_create_curve_panel
@@ -59,13 +66,16 @@ classes = (
     CURVEARRAY_OT_create_array_by_offset,
     CURVEARRAY_OT_path_calc,
 
+    CURVEARRAY_PT_general_panel,
+
+
     MAGICCURVE_OT_create_split_curve,
     MAGICCURVE_OT_create_smooth_curve,
     MAGICCURVE_OT_switch_twist_method,
     MAGICCURVE_OT_switch_direction,
     MAGICCURVE_OT_toggle_cyclic,
 
-    MAGICCURVE_PT_main_panel,
+    MAGICCURVE_PT_general_panel,
     MAGICCURVE_PT_create_curve_panel,
     MAGICCURVE_PT_curve_methods_panel,
 )
