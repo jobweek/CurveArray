@@ -27,7 +27,7 @@ def groups_remove(call_owner: bool, owner_id: int, item_id: int):
 
     item_owner.remove(item_id)
 
-    _run_remove_queue_clear(remove_queue, queue, groups, objects)
+    _run_remove_queue(remove_queue, queue, groups, objects)
 
 
 def _get_item_and_owner(call_owner: bool, owner_id: int, item_id: int, queue: Any, groups: Any,) -> tuple[Any, Any]:
@@ -42,7 +42,7 @@ def _get_item_and_owner(call_owner: bool, owner_id: int, item_id: int, queue: An
     return item, item_owner
 
 
-def _run_remove_queue_clear(remove_queue: tuple[list, list], queue: Any, groups: Any, objects: Any):
+def _run_remove_queue(remove_queue: tuple[list, list], queue: Any, groups: Any, objects: Any):
 
     objets_remove_queue = remove_queue[0]
 
@@ -70,7 +70,7 @@ def _remove_group(index: int, remove_queue: Any, groups: Any):
     for coll in groups[index].collection:
 
         if coll.type:
-            remove_queue[0].append(index)
+            remove_queue[0].append(coll.index)
         else:
             _remove_group(coll.index, remove_queue, groups)
 

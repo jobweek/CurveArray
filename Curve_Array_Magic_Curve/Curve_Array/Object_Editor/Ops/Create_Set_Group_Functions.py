@@ -3,7 +3,7 @@ from ...Property.Get_Property_Path import (
     get_queue_props,
     get_groups_props,
 )
-from ....Errors.Errors import show_message_box
+from ....Errors.Errors import show_message_box, CancelError
 from typing import Any
 
 
@@ -14,17 +14,13 @@ def create_set_group(call_owner: bool, owner_id: int, item_id: int, target_id: s
 
     item, item_owner = _get_item_and_owner(queue, groups, call_owner, owner_id, item_id)
 
-    if (not item.type and item.index == int(target_id)) or (call_owner and target_id == '-2'):
+    if (not item.type and item.index == int(target_id)) or (call_owner and target_id == '-2') \
+            or (not call_owner and owner_id == int(target_id)):
         show_message_box('', "Can't Set to itself", 'NONE')
-        return
+        raise CancelError
 
     if not item.type:
-
-        for i in groups[item.index].collection:
-
-            if not i.type and i.index == int(target_id):
-                show_message_box('', "Can't Set, cyclical dependence", 'NONE')
-                return
+        _check_cyclic_dependence(groups, int(target_id), item.index)
 
     if target_id == '-2':
 
@@ -42,6 +38,17 @@ def create_set_group(call_owner: bool, owner_id: int, item_id: int, target_id: s
     new_item.type = item.type
 
     item_owner.remove(item_id)
+
+
+def _check_cyclic_dependence(groups: Any, target_id: int, index: int):
+
+    for i in groups[index].collection:
+
+        if not i.type:
+            if i.index == target_id:
+                show_message_box('', "Can't Set, cyclical dependence", 'NONE')
+                raise CancelError
+            _check_cyclic_dependence(groups, target_id, i.index)
 
 
 def _get_item_and_owner(queue: Any, groups: Any, call_owner: bool, owner_id: int, item_id: int) -> tuple[Any, Any]:
