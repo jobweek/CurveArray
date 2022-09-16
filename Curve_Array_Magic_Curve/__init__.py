@@ -24,8 +24,7 @@ from .Curve_Array.Property.General_Props import (
     registaration_order,
     CurveArrayProps,
 )
-from .Curve_Array.Ops.Curve_Array_By_Offset_Ops import CURVEARRAY_OT_create_array_by_offset
-from .Curve_Array.Ops.Test_Core_ops import CURVEARRAY_OT_path_calc
+from .Curve_Array.Engine.Array_Creation.Create_Array_Ops import CURVEARRAY_OT_create_array
 
 from .Curve_Array.Curve_Editor.Ops.Set_Curve_Ops import CURVEARRAY_OT_set_curve
 from .Curve_Array.Curve_Editor.Ops.Clear_Curve_Ops import CURVEARRAY_OT_clear_curve
@@ -42,6 +41,7 @@ from .Curve_Array.Object_Editor.Object_Editor_WM import CURVEARRAY_OT_open_edito
 from .Curve_Array.Panels.General_Panel import CURVEARRAY_PT_general_panel
 from .Curve_Array.Curve_Editor.Curve_Panel import CURVEARRAY_PT_curve_panel
 from .Curve_Array.Object_Editor.Object_Panel import CURVEARRAY_PT_object_panel
+from .Curve_Array.Panels.Array_Settings_Panel import CURVEARRAY_PT_array_settings_panel
 
 
 from .Magic_Curve.Ops.Smooth_Curve_Ops import MAGICCURVE_OT_create_smooth_curve
@@ -55,8 +55,7 @@ from .Magic_Curve.Panels.Create_Curve_Panel import MAGICCURVE_PT_create_curve_pa
 from .Magic_Curve.Panels.Curve_Methods_Panel import MAGICCURVE_PT_curve_methods_panel
 
 classes = (
-    CURVEARRAY_OT_create_array_by_offset,
-    CURVEARRAY_OT_path_calc,
+    CURVEARRAY_OT_create_array,
 
     CURVEARRAY_OT_set_curve,
     CURVEARRAY_OT_clear_curve,
@@ -73,6 +72,7 @@ classes = (
     CURVEARRAY_PT_general_panel,
     CURVEARRAY_PT_curve_panel,
     CURVEARRAY_PT_object_panel,
+    CURVEARRAY_PT_array_settings_panel,
 
 
     MAGICCURVE_OT_create_split_curve,
@@ -103,13 +103,13 @@ def register():
     for cls in registaration_order:
         bpy.utils.register_class(cls)
 
-    for cls in classes:
-        bpy.utils.register_class(cls)
-
     bpy.types.Scene.curve_array_properties = bpy.props.PointerProperty(
         type=CurveArrayProps,
         name='CurveArray Properties'
     )
+
+    for cls in classes:
+        bpy.utils.register_class(cls)
 
 
 def unregister():

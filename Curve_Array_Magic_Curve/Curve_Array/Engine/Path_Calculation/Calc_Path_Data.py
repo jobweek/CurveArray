@@ -1,21 +1,25 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
 
-
+from ...Property.Get_Property_Path import get_instant_data_props
 from ....General_Functions.Functions import (
     duplicate,
     convert_to_mesh,
     delete_objects,
 )
-from .Path_Calculation_Functions import (
+from .Calc_Path_Data_Functions import (
     verts_sequence_calc,
     get_bm_verts,
     path_data_calc,
     arr_size_calc,
+    get_curve,
 )
 
 
-def path_calculation_manager(curve):
+def calc_path_data_manager():
+
+    # Получаем кривую
+    curve = get_curve()
 
     # Генератор последовательности вершин кривой
     verts_sequence_generator = verts_sequence_calc(curve)
@@ -38,5 +42,5 @@ def path_calculation_manager(curve):
     # Получаем класс Path Data
     path_data = path_data_calc(verts_sequence_generator, bm.verts, arr_size, curve.name)
 
-    # Присваиваем класс Path Data классу InstantPathData в атрибут data
-    bpy.context.scene.curve_array_properties.engine_props.instant_path_data.set_data(path_data)
+    # Присваиваем экземпляр класса PathData классу InstantPathData в атрибут __data
+    get_instant_data_props().path_data.set(path_data)

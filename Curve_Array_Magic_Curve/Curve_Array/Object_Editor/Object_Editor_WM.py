@@ -142,9 +142,9 @@ def _calc_chance(part: int, whole: int) -> str:
     return "{0:.1f}".format(chance)
 
 
-def _get_sum_element_count(group) -> int:
+def _get_sum_element_count(group: Any) -> int:
 
-    sum_count: int = 0
+    sum_count = 0
 
     for coll in group.collection:
 

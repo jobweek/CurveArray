@@ -1,14 +1,14 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
-import mathutils
+from mathutils import Vector
 import numpy as np
-
+from typing import Iterator
+from ...Property.Get_Property_Path import get_curve_props
 from Curve_Array_Magic_Curve.General_Functions.Functions import (
     midle_point_calc,
     calc_vec,
 )
-from typing import Iterator
-Vector = mathutils.Vector
+from....Errors.Errors import show_message_box, CancelError
 
 
 class InterpolatedSegment:
@@ -74,25 +74,28 @@ class PathData:
 
     def get_data_by_distance(self, searched_distance: float) -> tuple[Vector, Vector, Vector]:
 
-        index = np.searchsorted(self.interpolated_segment_distance, searched_distance, side='left')
-
-        element: InterpolatedSegment = self.interpolated_segment[index]
-
-        element_distance = self.interpolated_segment_distance[index]
-
         if searched_distance < 0:
 
+            element: InterpolatedSegment = self.interpolated_segment[0]
             searched_length = searched_distance
 
-        elif searched_distance > element_distance:
+        elif searched_distance > self.interpolated_segment_distance[-1]:
 
+            element: InterpolatedSegment = self.interpolated_segment[-1]
+            element_distance = self.interpolated_segment_distance[-1]
             searched_length = searched_distance - element_distance + element.length
 
         else:
 
+            index = np.searchsorted(self.interpolated_segment_distance, searched_distance, side='left')
+            element: InterpolatedSegment = self.interpolated_segment[index]
+            element_distance = self.interpolated_segment_distance[index]
             searched_length = element.length - (element_distance - searched_distance)
 
         return element.get_data_by_length(searched_length)
+
+    def get_path_length(self) -> float:
+        return self.interpolated_segment_distance[-1]
 
 
 def _spline_range_calc(points, spline_type, cyclic, resolution, last_index) -> tuple[int, int, tuple[int, int]]:
@@ -221,6 +224,23 @@ def _calc_vert_data(index: int, verts) -> tuple[Vector, Vector]:
     return mid_point_co, normal
 
 
+def __project_vec(direction: Vector, normal: Vector) -> Vector:
+
+    dot = normal.dot(direction)
+
+    if dot > 0.99998 or dot < -0.99998:
+
+        raise AssertionError
+
+    elif 0.00002 > dot > -0.00002:
+
+        return normal
+
+    else:
+
+        return (normal - normal.project(direction)).normalized()
+
+
 def _calc_segment_data(fisrt_point: tuple[Vector, Vector], second_point: tuple[Vector, Vector]
                        ) -> tuple[float, InterpolatedSegment]:
 
@@ -228,7 +248,10 @@ def _calc_segment_data(fisrt_point: tuple[Vector, Vector], second_point: tuple[V
 
     length = direction_vec.length
 
-    segment = InterpolatedSegment(fisrt_point[0], direction_vec, length, (fisrt_point[1], second_point[1]))
+    first_normal = __project_vec(direction_vec, fisrt_point[1])
+    second_normal = __project_vec(direction_vec, second_point[1])
+
+    segment = InterpolatedSegment(fisrt_point[0], direction_vec, length, (first_normal, second_normal))
 
     return length, segment
 
@@ -280,3 +303,13 @@ def path_data_calc(verts_sequence_generator: Iterator[int], verts, arr_size: int
     path_data = PathData(curve_name, (interpolated_splines_distance_arr, interpolated_splines_arr))
 
     return path_data
+
+
+def get_curve():
+
+    try:
+        return bpy.context.scene.objects[get_curve_props().name]
+    except KeyError:
+        show_message_box("Error", f"Curve {get_curve_props().name} could not be found, "
+                                  f"it has been removed from the scene or renamed.", 'ERROR')
+        raise CancelError

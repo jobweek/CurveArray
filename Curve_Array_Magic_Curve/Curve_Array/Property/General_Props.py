@@ -1,5 +1,9 @@
 import bpy  # type: ignore
-from .Path_Calculation_Props import InstantPathData
+from .Instant_Data_Props import (
+    InstantQueueData,
+    InstantPathData,
+    InstantData,
+)
 from .Curve_Editor_Props import (
     Curve,
     CurveEditorData,
@@ -12,13 +16,16 @@ from .Object_Editor_Props import (
     WMProperty,
     ObjectEditorData,
 )
+from .Array_Settings_Props import (
+    ArraySettings,
+)
 
 
 class EngineProps(bpy.types.PropertyGroup):
 
-    instant_path_data: bpy.props.PointerProperty(
-        type=InstantPathData,
-        name="instant_path_data",
+    instant_data: bpy.props.PointerProperty(
+        type=InstantData,
+        name="instant_data",
         description=""
         )
 
@@ -37,25 +44,30 @@ class EngineProps(bpy.types.PropertyGroup):
 
 class ArrayProps(bpy.types.PropertyGroup):
 
-    pass
+    array_settings: bpy.props.PointerProperty(
+        type=ArraySettings,
+        name="array_settings",
+        description="Array Settings"
+        )
 
 
 class CurveArrayProps(bpy.types.PropertyGroup):
 
     engine_props: bpy.props.PointerProperty(
         type=EngineProps,
-        name="Engine Props (Not for User's)",
-        description="Dont change this data."
+        name="engine_props",
+        description="Engine Props (Not for User's). Dont change this data."
         )
 
     array_props: bpy.props.PointerProperty(
         type=ArrayProps,
-        name="User Array Settings",
-        description="Can be edit."
+        name="array_props",
+        description="User Array Settings. Can be edit."
         )
 
 # Табуляция иммитирует вложенность (снизу вверх)
 registaration_order = (
+            ArraySettings,
         ArrayProps,
                 Curve,
             CurveEditorData,
@@ -65,7 +77,9 @@ registaration_order = (
                 Queue,
                 WMProperty,
             ObjectEditorData,
-            InstantPathData,
+                InstantQueueData,
+                InstantPathData,
+            InstantData,
         EngineProps,
     CurveArrayProps,
 )

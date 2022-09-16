@@ -22,7 +22,7 @@ class Queue(bpy.types.PropertyGroup):
         description="Number of repetitions",
         default=1,
         min=0,
-        max=100,
+        max=1000,
         )
 
     ghost: bpy.props.BoolProperty(

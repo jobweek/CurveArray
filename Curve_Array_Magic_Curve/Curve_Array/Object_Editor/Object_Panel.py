@@ -99,6 +99,5 @@ def _object_names_generator() -> Iterator[str]:
 def _col_generator(left, right) -> Iterator[any]:
 
     while True:
-
         yield left
         yield right
