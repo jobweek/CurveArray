@@ -51,6 +51,12 @@ class CURVEARRAY_OT_create_array(bpy.types.Operator):
         ]
         )
 
+    smooth_normal: bpy.props.BoolProperty(
+        name="smooth_normal",
+        description="Smooth the direction of objects on the curve?",
+        default=False
+        )
+
     count: bpy.props.IntProperty(
         name="count",
         description="Count of objects on the path",
@@ -141,6 +147,7 @@ class CURVEARRAY_OT_create_array(bpy.types.Operator):
                 random_seed=self.random_seed,
                 spacing_type=self.spacing_type,
                 cloning_type=self.cloning_type,
+                smooth_normal=self.smooth_normal,
                 count=self.count,
                 start_offset=self.start_offset,
                 end_offset=self.end_offset,

@@ -103,7 +103,7 @@ def fill_by_offset_manager(params,  path_data: PathData, queue_data: QueueData) 
     for _ in range(params['count']):
 
         obj = queue_data.next()
-        co, direction, normal = path_data.get_data_by_distance(searched_distance)
+        co, direction, normal = path_data.get_data_by_distance(searched_distance, params['smooth_normal'])
 
         yield obj, co, direction, normal
 

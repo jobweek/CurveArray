@@ -4,6 +4,7 @@ from mathutils import Vector, Matrix
 from ...Property.Get_Property_Path import get_curve_props, get_queue_props
 from ...Property.Get_Property_Path import get_instant_data_props
 from ..Path_Calculation.Calc_Path_Data import calc_path_data_manager
+from ..Path_Calculation.Calc_Path_Data_Functions import __project_vec
 from ..Queue_Calculation.Calc_Queue_Data import calc_queue_data_manager
 from .Spacing_Types.Fill_By_Offset import fill_by_offset_manager
 from....Errors.Errors import show_message_box, CancelError
@@ -20,7 +21,13 @@ def start_check():
         raise CancelError
 
 
-def clone_obj(obj: Any, cloning_type: str) -> Any:
+def create_collection():
+    collection = bpy.data.collections.new("CurveArray")
+    bpy.context.scene.collection.children.link(collection)
+    return collection
+
+
+def clone_obj(obj: Any, cloning_type: str, collection) -> Any:
 
     if cloning_type == '0':
         duplicate = obj.copy()
@@ -29,13 +36,12 @@ def clone_obj(obj: Any, cloning_type: str) -> Any:
         if obj.animation_data:
             duplicate.animation_data.action = obj.animation_data.action.copy()
 
-        for i in obj.users_collection:
-            i.objects.link(duplicate)
-
     elif cloning_type == '1':
-        duplicate = None
+        duplicate = obj.copy()
     else:
-        duplicate = None
+        duplicate = bpy.data.objects.new(obj.name, obj.data)
+
+    collection.objects.link(duplicate)
 
     return duplicate
 
@@ -45,10 +51,12 @@ def move_obj(obj: Any, co: Vector):
     obj.location = co
 
 
-def rotate_obj(obj: Any, direction: Vector, normal: Vector, rail_axis: str, normal_axis: str):
+def rotate_obj(obj: Any, direction: Vector, normal: Vector, rail_axis: str, normal_axis: str, smooth_normal: bool):
+
+    if smooth_normal:
+        normal = __project_vec(direction, normal)
 
     if rail_axis[0] == '-':
-
         direction = direction * -1
     if normal_axis[0] == '-':
         normal = normal * -1
@@ -109,6 +117,8 @@ def crete_array_manager(**params):
     else:
         gen = fill_by_offset_manager(params, path_data, queue_data)
 
+    collection = create_collection()
+
     while True:
         try:
             obj, co, direction, normal = next(gen)
@@ -116,11 +126,13 @@ def crete_array_manager(**params):
             if obj is None:
                 continue
 
-            duplicate = clone_obj(obj, params['cloning_type'])
+            duplicate = clone_obj(obj, params['cloning_type'], collection)
             move_obj(duplicate, co)
 
             if params['align_rotation']:
-                rotate_obj(duplicate, direction, normal, params['rail_axis'], params['normal_axis'])
+                rotate_obj(
+                    duplicate, direction, normal, params['rail_axis'], params['normal_axis'], params['smooth_normal']
+                )
 
         except StopIteration:
             break
