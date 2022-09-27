@@ -36,6 +36,8 @@ class InterpolatedSegment:
         self.__class__.class_count += 1
         self.start_co = start_co
         self.direction = direction
+        self.direction_normalized = direction.normalized()
+        self.direction_smooth = None
         self.length = length
         self.normal = normal
 
@@ -55,27 +57,46 @@ class InterpolatedSegment:
         elif searched_length > self.length:
             normal = self.normal[1]
         else:
-            normal = self.normal[0].lerp(self.normal[1], ratio).normalized()
+            normal = self.normal[0].lerp(self.normal[1], ratio)
 
         co = self.start_co + self.direction * ratio
 
-        return co, self.direction.normalized(), normal
+        return co, self.direction_normalized, normal
 
-    def get_data_by_length_smooth(self, searched_length: float, direction_smooth_start: Vector,
-                                  direction_smooth_end: Vector) -> tuple[Vector, Vector, Vector]:
+    @staticmethod
+    def __project_vec(direction: Vector, normal: Vector) -> Vector:
+
+        dot = normal.dot(direction)
+
+        if dot > 0.99998 or dot < -0.99998:
+            raise AssertionError
+        elif 0.00002 > dot > -0.00002:
+            return normal
+        else:
+            return (normal - normal.project(direction)).normalized()
+
+    def get_data_by_length_smooth(self, searched_length: float) -> tuple[Vector, Vector, Vector]:
         """Searched_length = distance between 'start distance' and searched point"""
         ratio = searched_length / self.length
+        middle_length = self.length/2
 
         if searched_length < 0:
+            direction = self.direction_smooth[0]
             normal = self.normal[0]
-            direction = self.direction.normalized()
         elif searched_length > self.length:
+            direction = self.direction_smooth[1]
             normal = self.normal[1]
-            direction = self.direction.normalized()
         else:
-            normal = self.normal[0].lerp(self.normal[1], ratio).normalized()
-            direction = direction_smooth_start.lerp(direction_smooth_end, ratio).normalized()
-
+            if searched_length < middle_length:
+                middle_ratio = 0.5 + ((searched_length / middle_length) / 2)
+                direction = self.direction_smooth[0].lerp(self.direction_normalized, middle_ratio)
+            elif searched_length > middle_length:
+                middle_ratio = ((searched_length - middle_length) / middle_length) / 2
+                direction = self.direction_normalized.lerp(self.direction_smooth[1], middle_ratio)
+            else:
+                direction = self.direction_normalized
+            normal = self.normal[0].lerp(self.normal[1], ratio)
+            normal = self.__project_vec(direction, normal)
         co = self.start_co + self.direction * ratio
 
         return co, direction, normal
@@ -120,23 +141,10 @@ class PathData:
             element_distance = self.interpolated_segment_distance[index]
             searched_length = element.length - (element_distance - searched_distance)
 
-            if smooth_normal:
-                if index == 0:
-                    direction_prev = None
-                    direction_next = self.interpolated_segment[index+1].direction.normalized()
-                elif index == len(self.interpolated_segment_distance) - 1:
-                    direction_prev = self.interpolated_segment[index-1].direction.normalized()
-                    direction_next = None
-                else:
-                    direction_prev = self.interpolated_segment[index-1].direction.normalized()
-                    direction_next = self.interpolated_segment[index+1].direction.normalized()
-
-                direction_smooth_start, direction_smooth_end = \
-                    _get_smooth_direction(direction_prev, element.direction.normalized(), direction_next)
-
-                return element.get_data_by_length_smooth(searched_length, direction_smooth_start, direction_smooth_end)
-
-        return element.get_data_by_length(searched_length)
+        if smooth_normal:
+            return element.get_data_by_length_smooth(searched_length)
+        else:
+            return element.get_data_by_length(searched_length)
 
     def get_path_length(self) -> float:
         return self.interpolated_segment_distance[-1]
@@ -273,15 +281,10 @@ def __project_vec(direction: Vector, normal: Vector) -> Vector:
     dot = normal.dot(direction)
 
     if dot > 0.99998 or dot < -0.99998:
-
         raise AssertionError
-
     elif 0.00002 > dot > -0.00002:
-
         return normal
-
     else:
-
         return (normal - normal.project(direction)).normalized()
 
 
@@ -292,8 +295,8 @@ def _calc_segment_data(fisrt_point: tuple[Vector, Vector], second_point: tuple[V
 
     length = direction.length
 
-    first_normal = __project_vec(direction, fisrt_point[1])
-    second_normal = __project_vec(direction, second_point[1])
+    first_normal = __project_vec(direction, fisrt_point[1]).normalized()
+    second_normal = __project_vec(direction, second_point[1]).normalized()
 
     segment = InterpolatedSegment(fisrt_point[0], direction, length, (first_normal, second_normal))
 
@@ -305,18 +308,41 @@ def arr_size_calc(verts, curve) -> int:
     size = len(verts)/2 - 1
 
     for s in curve.data.splines:
-
         if s.use_cyclic_u:
-
             size += 1
 
     return int(size)
 
 
+def _calc_smooth_direction(interpolated_segments_arr: np.ndarray):
+
+    if len(interpolated_segments_arr) > 1:
+
+        interpolated_segments_arr[0].direction_smooth = \
+            (interpolated_segments_arr[0].direction_normalized, interpolated_segments_arr[1].direction_normalized)
+
+        interpolated_segments_arr[-1].direction_smooth = \
+            (interpolated_segments_arr[-2].direction_normalized, interpolated_segments_arr[-1].direction_normalized)
+
+    else:
+
+        interpolated_segments_arr[0].direction_smooth = \
+            (interpolated_segments_arr[0].direction_normalized, interpolated_segments_arr[0].direction_normalized)
+
+    i = 1
+
+    while i < len(interpolated_segments_arr) - 1:
+
+        interpolated_segments_arr[i].direction_smooth = \
+            (interpolated_segments_arr[i-1].direction_normalized, interpolated_segments_arr[i+1].direction_normalized)
+
+        i += 1
+
+
 def path_data_calc(verts_sequence_generator: Iterator[int], verts, arr_size: int, curve_name: str) -> PathData:
 
-    interpolated_splines_distance_arr = np.empty(arr_size, float)
-    interpolated_splines_arr = np.empty(arr_size, object)
+    interpolated_segments_distance_arr = np.empty(arr_size, float)
+    interpolated_segments_arr = np.empty(arr_size, object)
 
     distance = 0.0
     fisrt_point = _calc_vert_data(next(verts_sequence_generator), verts)
@@ -332,8 +358,8 @@ def path_data_calc(verts_sequence_generator: Iterator[int], verts, arr_size: int
             length, segment = _calc_segment_data(fisrt_point, second_point)
             distance += length
 
-            interpolated_splines_distance_arr[i] = distance
-            interpolated_splines_arr[i] = segment
+            interpolated_segments_distance_arr[i] = distance
+            interpolated_segments_arr[i] = segment
 
             fisrt_point = second_point
             i += 1
@@ -344,7 +370,8 @@ def path_data_calc(verts_sequence_generator: Iterator[int], verts, arr_size: int
 
     assert i == arr_size, 'PathData, массив не заполнен'
 
-    path_data = PathData(curve_name, (interpolated_splines_distance_arr, interpolated_splines_arr))
+    _calc_smooth_direction(interpolated_segments_arr)
+    path_data = PathData(curve_name, (interpolated_segments_distance_arr, interpolated_segments_arr))
 
     return path_data
 

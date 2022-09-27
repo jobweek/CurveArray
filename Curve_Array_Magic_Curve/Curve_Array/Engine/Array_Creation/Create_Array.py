@@ -4,7 +4,6 @@ from mathutils import Vector, Matrix
 from ...Property.Get_Property_Path import get_curve_props, get_queue_props
 from ...Property.Get_Property_Path import get_instant_data_props
 from ..Path_Calculation.Calc_Path_Data import calc_path_data_manager
-from ..Path_Calculation.Calc_Path_Data_Functions import __project_vec
 from ..Queue_Calculation.Calc_Queue_Data import calc_queue_data_manager
 from .Spacing_Types.Fill_By_Offset import fill_by_offset_manager
 from....Errors.Errors import show_message_box, CancelError
@@ -51,10 +50,7 @@ def move_obj(obj: Any, co: Vector):
     obj.location = co
 
 
-def rotate_obj(obj: Any, direction: Vector, normal: Vector, rail_axis: str, normal_axis: str, smooth_normal: bool):
-
-    if smooth_normal:
-        normal = __project_vec(direction, normal)
+def rotate_obj(obj: Any, direction: Vector, normal: Vector, rail_axis: str, normal_axis: str):
 
     if rail_axis[0] == '-':
         direction = direction * -1
@@ -130,9 +126,7 @@ def crete_array_manager(**params):
             move_obj(duplicate, co)
 
             if params['align_rotation']:
-                rotate_obj(
-                    duplicate, direction, normal, params['rail_axis'], params['normal_axis'], params['smooth_normal']
-                )
+                rotate_obj(duplicate, direction, normal, params['rail_axis'], params['normal_axis'])
 
         except StopIteration:
             break
