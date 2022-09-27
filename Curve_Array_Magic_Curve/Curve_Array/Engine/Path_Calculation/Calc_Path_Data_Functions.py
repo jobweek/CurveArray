@@ -1,6 +1,7 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
 from mathutils import Vector
+from decimal import Decimal, getcontext
 import numpy as np
 from typing import Iterator, Union
 from ...Property.Get_Property_Path import get_curve_props
@@ -121,25 +122,35 @@ class PathData:
 
         return string
 
-    def get_data_by_distance(self, searched_distance: float, smooth_normal: bool) -> tuple[Vector, Vector, Vector]:
+    def get_data_by_distance(self, searched_distance: Decimal, smooth_normal: bool, cyclic: bool)\
+            -> tuple[Vector, Vector, Vector]:
+
+        getcontext().prec = 60
+
+        if cyclic:
+            prec = Decimal('1.000000000')
+            if searched_distance.quantize(prec) != Decimal(self.interpolated_segment_distance[-1]).quantize(prec):
+                searched_distance = searched_distance % Decimal(self.interpolated_segment_distance[-1])
+
+        searched_distance = float(searched_distance)
 
         if searched_distance < 0:
 
             element: InterpolatedSegment = self.interpolated_segment[0]
-            searched_length = searched_distance
+            searched_length: float = searched_distance
 
         elif searched_distance > self.interpolated_segment_distance[-1]:
 
             element: InterpolatedSegment = self.interpolated_segment[-1]
-            element_distance = self.interpolated_segment_distance[-1]
-            searched_length = searched_distance - element_distance + element.length
+            element_distance: float = self.interpolated_segment_distance[-1]
+            searched_length: float = searched_distance - element_distance + element.length
 
         else:
 
             index = np.searchsorted(self.interpolated_segment_distance, searched_distance, side='left')
             element: InterpolatedSegment = self.interpolated_segment[index]
-            element_distance = self.interpolated_segment_distance[index]
-            searched_length = element.length - (element_distance - searched_distance)
+            element_distance: float = self.interpolated_segment_distance[index]
+            searched_length: float = element.length - (element_distance - float(searched_distance))
 
         if smooth_normal:
             return element.get_data_by_length_smooth(searched_length)
@@ -156,33 +167,22 @@ def _spline_range_calc(points, spline_type, cyclic, resolution, last_index) -> t
     start_range = vert_index
 
     if cyclic and not spline_type:
-
         if points[-1].handle_right_type != 'VECTOR' or points[0].handle_left_type != 'VECTOR':
-
             shift = 2 * resolution
-
         else:
-
             shift = 2
-
         vert_index += shift
-
     else:
-
         shift = 0
 
     for i in range(len(points)-1):
 
         if spline_type or (points[i].handle_right_type == 'VECTOR' and points[i + 1].handle_left_type == 'VECTOR'):
-
             vert_index += 2
-
         else:
-
             vert_index += 2 * resolution
 
     if cyclic and not spline_type:
-
         vert_index -= 2
 
     end_range = vert_index
@@ -229,12 +229,9 @@ def verts_sequence_calc(curve) -> Iterator[int]:
         nonlocal last_index
 
         if spline.type == 'POLY':
-
             points = spline.points
             spline_type = True
-
         else:
-
             points = spline.bezier_points
             spline_type = False
 

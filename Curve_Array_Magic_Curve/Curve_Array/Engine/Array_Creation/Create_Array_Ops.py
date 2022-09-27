@@ -51,6 +51,12 @@ class CURVEARRAY_OT_create_array(bpy.types.Operator):
         ]
         )
 
+    cyclic: bpy.props.BoolProperty(
+        name="cyclic",
+        description="Is the array cyclic?",
+        default=False
+        )
+
     smooth_normal: bpy.props.BoolProperty(
         name="smooth_normal",
         description="Smooth the direction of objects on the curve?",
@@ -147,6 +153,7 @@ class CURVEARRAY_OT_create_array(bpy.types.Operator):
                 random_seed=self.random_seed,
                 spacing_type=self.spacing_type,
                 cloning_type=self.cloning_type,
+                cyclic=self.cyclic,
                 smooth_normal=self.smooth_normal,
                 count=self.count,
                 start_offset=self.start_offset,
