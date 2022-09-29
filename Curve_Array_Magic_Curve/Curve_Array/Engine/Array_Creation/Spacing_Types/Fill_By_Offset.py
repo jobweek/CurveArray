@@ -1,10 +1,11 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
 from decimal import Decimal, getcontext
-from mathutils import Vector
 from typing import Any, Iterator
-from...Path_Calculation.Calc_Path_Data_Functions import PathData
-from...Queue_Calculation.Calc_Queue_Data_Functions import QueueData
+from .General_Data_Classes import ItemData
+from ...Path_Calculation.Calc_Path_Data_Functions import PathData
+from ...Queue_Calculation.Calc_Queue_Data_Functions import QueueData
+from .....Errors.Errors import show_message_box, CancelError
 
 
 def get_demension(obj: Any, axis: str, direction: bool) -> float:
@@ -73,8 +74,20 @@ def get_demension(obj: Any, axis: str, direction: bool) -> float:
             return _positive_z(bb)
 
 
+def _get_object_by_name(name: str) -> Any:
+
+    try:
+        obj = bpy.context.scene.objects[name]
+    except KeyError:
+        show_message_box("Error", f"Object '{name}' could not be found, "
+                                  f"it has been removed from the scene or renamed.", 'ERROR')
+        raise CancelError
+
+    return obj
+
+
 def fill_by_offset_manager(params,  path_data: PathData, queue_data: QueueData) \
-        -> Iterator[tuple[Any, Vector, Vector, Vector]]:
+        -> Iterator[ItemData]:
 
     getcontext().prec = 60
 
@@ -84,8 +97,11 @@ def fill_by_offset_manager(params,  path_data: PathData, queue_data: QueueData) 
 
     if params['consider_size'] and params['align_rotation']:
 
-        start_size_offset = get_demension(queue_data.get_by_index(0), params['rail_axis'], False)
-        end_size_offset = get_demension(queue_data.get_by_index(params['count']-1), params['rail_axis'], True)
+        first_obj = _get_object_by_name(queue_data.get_by_index(0).object_name)
+        last_obj = _get_object_by_name(queue_data.get_by_index(params['count']-1).object_name)
+
+        start_size_offset = get_demension(first_obj, params['rail_axis'], False)
+        end_size_offset = get_demension(last_obj, params['rail_axis'], True)
 
         start_offset += Decimal(start_size_offset)
         end_offset += Decimal(end_size_offset)
@@ -105,10 +121,23 @@ def fill_by_offset_manager(params,  path_data: PathData, queue_data: QueueData) 
 
     for i in range(params['count']):
 
-        obj = queue_data.next()
-        co, direction, normal = \
-            path_data.get_data_by_distance(searched_distance, params['smooth_normal'], params['cyclic'])
+        obj_name, ghost, transform = queue_data.next()
 
-        yield obj, co, direction, normal
+        co, direction, normal = path_data.get_data_by_distance(
+            searched_distance,
+            params['smooth_normal'],
+            params['cyclic']
+        )
+
+        item_data = ItemData(
+            _get_object_by_name(obj_name),
+            ghost,
+            co,
+            direction,
+            normal,
+            transform,
+        )
+
+        yield item_data
 
         searched_distance += step

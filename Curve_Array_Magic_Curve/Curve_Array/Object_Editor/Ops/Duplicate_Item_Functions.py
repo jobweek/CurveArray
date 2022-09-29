@@ -42,6 +42,38 @@ def _move_in_owner(item_owner: Any, index_in_owner: int, item_id: int):
 
 def _add_to_owner(item_owner: Any, call_owner: bool, item: Any, index: int):
 
+    def __copy_transform(new_transofrm, owner_transform):
+
+        new_transofrm.rotation_progressive_x = owner_transform.rotation_progressive_x
+        new_transofrm.rotation_progressive_y = owner_transform.rotation_progressive_y
+        new_transofrm.rotation_progressive_z = owner_transform.rotation_progressive_z
+        new_transofrm.rotation_random_min_x = owner_transform.rotation_random_min_x
+        new_transofrm.rotation_random_min_y = owner_transform.rotation_random_min_y
+        new_transofrm.rotation_random_min_z = owner_transform.rotation_random_min_z
+        new_transofrm.rotation_random_max_x = owner_transform.rotation_random_max_x
+        new_transofrm.rotation_random_max_y = owner_transform.rotation_random_max_y
+        new_transofrm.rotation_random_max_z = owner_transform.rotation_random_max_z
+
+        new_transofrm.location_progressive_x = owner_transform.location_progressive_x
+        new_transofrm.location_progressive_y = owner_transform.location_progressive_y
+        new_transofrm.location_progressive_z = owner_transform.location_progressive_z
+        new_transofrm.location_random_min_x = owner_transform.location_random_min_x
+        new_transofrm.location_random_min_y = owner_transform.location_random_min_y
+        new_transofrm.location_random_min_z = owner_transform.location_random_min_z
+        new_transofrm.location_random_max_x = owner_transform.location_random_max_x
+        new_transofrm.location_random_max_y = owner_transform.location_random_max_y
+        new_transofrm.location_random_max_z = owner_transform.location_random_max_z
+
+        new_transofrm.scale_progressive_x = owner_transform.scale_progressive_x
+        new_transofrm.scale_progressive_y = owner_transform.scale_progressive_y
+        new_transofrm.scale_progressive_z = owner_transform.scale_progressive_z
+        new_transofrm.scale_random_min_x = owner_transform.scale_random_min_x
+        new_transofrm.scale_random_min_y = owner_transform.scale_random_min_y
+        new_transofrm.scale_random_min_z = owner_transform.scale_random_min_z
+        new_transofrm.scale_random_max_x = owner_transform.scale_random_max_x
+        new_transofrm.scale_random_max_y = owner_transform.scale_random_max_y
+        new_transofrm.scale_random_max_z = owner_transform.scale_random_max_z
+
     index_in_owner = len(item_owner)
     new_item = item_owner.add()
 
@@ -52,6 +84,7 @@ def _add_to_owner(item_owner: Any, call_owner: bool, item: Any, index: int):
         new_item.count = item.count
         new_item.ghost = item.ghost
         new_item.ghost_percentage = item.ghost_percentage
+        __copy_transform(new_item.transform_data, item.transform_data)
 
     else:
 

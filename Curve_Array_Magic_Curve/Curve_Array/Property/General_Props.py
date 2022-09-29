@@ -9,6 +9,7 @@ from .Curve_Editor_Props import (
     CurveEditorData,
 )
 from .Object_Editor_Props import (
+    TransformData,
     Collection,
     Queue,
     Objects,
@@ -74,6 +75,7 @@ registaration_order = (
                     Collection,
                 Groups,
                 Objects,
+                    TransformData,
                 Queue,
                 WMProperty,
             ObjectEditorData,

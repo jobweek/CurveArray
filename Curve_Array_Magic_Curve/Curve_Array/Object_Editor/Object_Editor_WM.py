@@ -25,16 +25,18 @@ class CURVEARRAY_OT_open_object_editor(bpy.types.Operator):
 
         layout = self.layout
 
-        QueueSplitLayout.layout_split(layout)
+        LabelSplitLayout.layout_split(layout)
 
-        QueueSplitLayout.number_row.label(text='№')
-        QueueSplitLayout.name_row.label(text='Object Name')
-        QueueSplitLayout.count_row.label(text='Count')
-        QueueSplitLayout.ghost_percent_row.label(text='Ghost %')
-        QueueSplitLayout.butt_up_down.label(text='')
-        QueueSplitLayout.butt_copy_remove.label(text='')
-        QueueSplitLayout.choose_group_row.operator('curvearray.create_empty_group', text='Create Empty Group')
-        QueueSplitLayout.set_group_row.label(text='Set')
+        LabelSplitLayout.number_row.label(text='№')
+        LabelSplitLayout.name_row.label(text='Object Name')
+        LabelSplitLayout.count_row.label(text='     Count')
+        LabelSplitLayout.ghost_percent_row.label(text='   Ghost %')
+        LabelSplitLayout.pivot_row.label(text='      Pivot')
+        LabelSplitLayout.transform_row.label(text='  Transform')
+        LabelSplitLayout.repition_label_row.label(text='Len:')
+        LabelSplitLayout.repition_prop_row.prop(wm_props, 'queue_repetitions', text='')
+        LabelSplitLayout.choose_group_row.operator('curvearray.create_empty_group', text='Create Empty Group')
+        LabelSplitLayout.set_group_row.label(text='Set')
 
         if len(queue) > 0:
             layout.row().label(text='Queue:')
@@ -49,6 +51,10 @@ class CURVEARRAY_OT_open_object_editor(bpy.types.Operator):
             QueueSplitLayout.name_row.label(text=name)
             QueueSplitLayout.count_row.prop(q, 'count', text='')
             QueueSplitLayout.ghost_percent_row.prop(q, 'ghost_percentage', text='')
+            QueueSplitLayout.pivot_row.prop(q, 'pivot', text='')
+
+            oper = QueueSplitLayout.transform_row.operator('curvearray.open_transform_editor', text='Open Editor')
+            oper.index = item_index
 
             oper = QueueSplitLayout.butt_up_down.operator('curvearray.queue_move', text='', icon='TRIA_UP')
             oper.index = item_index
@@ -131,7 +137,7 @@ class CURVEARRAY_OT_open_object_editor(bpy.types.Operator):
     def invoke(self, context, _):
         wm = context.window_manager
 
-        return wm.invoke_props_dialog(self, width=540)
+        return wm.invoke_props_dialog(self, width=810)
 
 
 def _calc_chance(part: int, whole: int) -> str:
@@ -165,12 +171,64 @@ def _get_name(item_type: bool, item_index: int, objects: Any, groups: Any) -> st
     return name
 
 
+class LabelSplitLayout:
+
+    number_row: Any
+    name_row: Any
+    count_row: Any
+    ghost_percent_row: Any
+    pivot_row: Any
+    transform_row: Any
+    repition_label_row: Any
+    repition_prop_row: Any
+    choose_group_row: Any
+    set_group_row: Any
+
+    @classmethod
+    def layout_split(cls, layout):
+
+        split = layout.split(factor=0.8)
+
+        left_side = split.row()  # 648 pix
+        right_side = split.box()  # 162 pix
+
+        split = left_side.split(factor=0.849)
+        left_box = split.box()  # 551 pix
+        right_box = split.box()  # 97 pix
+
+        split = left_box.split(factor=0.027)  # 536 pix
+        cls.number_row = split.row()  # 15 pix
+
+        split = split.split(factor=0.422)  # 491 pix
+        cls.name_row = split.row()  # 190 pix
+
+        split = split.split(factor=0.76)
+        left_block = split.row()
+        right_block = split.row()
+
+        cls.count_row = left_block.row()
+        cls.ghost_percent_row = left_block.row()
+        cls.pivot_row = left_block.row()
+
+        cls.transform_row = right_block.row()
+
+        split = right_box.split(factor=0.32)
+        cls.repition_label_row = split.row()
+        cls.repition_prop_row = split.row()
+
+        split = right_side.split(factor=0.82)
+        cls.choose_group_row = split.row()
+        cls.set_group_row = split.row()
+
+
 class QueueSplitLayout:
 
     number_row: Any
     name_row: Any
     count_row: Any
     ghost_percent_row: Any
+    pivot_row: Any
+    transform_row: Any
     butt_up_down: Any
     butt_copy_remove: Any
     choose_group_row: Any
@@ -179,26 +237,30 @@ class QueueSplitLayout:
     @classmethod
     def layout_split(cls, layout):
 
-        split = layout.split(factor=0.7)
+        split = layout.split(factor=0.8)
 
-        left_side = split.box()  # 378 pix
+        left_side = split.box()  # 648 pix
         right_side = split.box()  # 162 pix
 
-        split = left_side.split(factor=0.04)  # 363 pix
+        split = left_side.split(factor=0.0231)  # 633 pix
         cls.number_row = split.row()  # 15 pix
 
-        split = split.split(factor=0.4)  # 214 pix
-        cls.name_row = split.row()  # 142 pix
+        split = split.split(factor=0.35)  # 491 pix
+        cls.name_row = split.row()  # 190 pix
 
-        split = split.split(factor=0.6)
+        split = split.split(factor=0.55)
         left_block = split.row()
         right_block = split.row()
 
-        split = left_block.split(factor=0.5)
-        cls.count_row = split.row()
-        cls.ghost_percent_row = split.row()
+        cls.count_row = left_block.row()
+        cls.ghost_percent_row = left_block.row()
+        cls.pivot_row = left_block.row()
 
-        split = right_block.split(factor=0.5)
+        split = right_block.split(factor=0.45)
+
+        cls.transform_row = split.row()
+
+        split = split.split(factor=0.5)
         cls.butt_up_down = split.row(align=True)
         cls.butt_copy_remove = split.row(align=True)
 
@@ -220,25 +282,25 @@ class GroupsSplitLayout:
     @classmethod
     def layout_split(cls, layout):
 
-        split = layout.split(factor=0.695)
+        split = layout.split(factor=0.8)
 
-        left_side = split.row()  # 378 pix
+        left_side = split.row()  # 648 pix
         right_side = split.row()  # 162 pix
 
-        split = left_side.split(factor=0.04)  # 363 pix
+        split = left_side.split(factor=0.0231)  # 633 pix
         cls.number_row = split.row()  # 15 pix
 
-        split = split.split(factor=0.4)  # 214 pix
-        cls.name_row = split.row()  # 142 pix
+        split = split.split(factor=0.3487)  # 491 pix
+        cls.name_row = split.row()  # 190 pix
 
-        split = split.split(factor=0.28)
+        split = split.split(factor=0.168)
         cls.count_row = split.row()
 
-        split = split.split(factor=0.74)
+        split = split.split(factor=0.86)
         cls.chance_row = split.row()
         cls.butt_up_down = split.row(align=True)
 
-        split = right_side.split(factor=0.014)
+        split = right_side.split(factor=0.006)
         split.row()
         right_side = split.row()
         split = right_side.split(factor=0.82)

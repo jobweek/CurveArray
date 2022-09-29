@@ -1,12 +1,15 @@
 import bpy  # type: ignore
 from typing import Any
+from math import radians
 from mathutils import Vector, Matrix
 from ...Property.Get_Property_Path import get_curve_props, get_queue_props
 from ...Property.Get_Property_Path import get_instant_data_props
 from ..Path_Calculation.Calc_Path_Data import calc_path_data_manager
 from ..Queue_Calculation.Calc_Queue_Data import calc_queue_data_manager
 from .Spacing_Types.Fill_By_Offset import fill_by_offset_manager
-from....Errors.Errors import show_message_box, CancelError
+from .Spacing_Types.General_Data_Classes import ItemData
+from ..Queue_Calculation.Calc_Queue_Data_Functions import ItemTransform
+from ....Errors.Errors import show_message_box, CancelError
 
 
 def start_check():
@@ -20,9 +23,14 @@ def start_check():
         raise CancelError
 
 
-def create_collection():
+def create_collection(parent=None):
     collection = bpy.data.collections.new("CurveArray")
-    bpy.context.scene.collection.children.link(collection)
+
+    if parent is None:
+        bpy.context.scene.collection.children.link(collection)
+    else:
+        parent.children.link(collection)
+
     return collection
 
 
@@ -50,14 +58,14 @@ def move_obj(obj: Any, co: Vector):
     obj.location = co
 
 
-def rotate_obj(obj: Any, direction: Vector, normal: Vector, rail_axis: str, normal_axis: str):
+def align_obj(obj: Any, direction: Vector, normal: Vector, rail_axis: str, normal_axis: str):
 
     if rail_axis[0] == '-':
         direction = direction * -1
     if normal_axis[0] == '-':
         normal = normal * -1
 
-    def _align_object(obj: Any, x_vec=None, y_vec=None, z_vec=None):
+    def _align(obj: Any, x_vec=None, y_vec=None, z_vec=None):
 
         if x_vec is None:
             x_vec = y_vec.cross(z_vec)
@@ -79,21 +87,79 @@ def rotate_obj(obj: Any, direction: Vector, normal: Vector, rail_axis: str, norm
 
     if rail_axis[1] == 'x':
         if normal_axis[1] == 'y':
-            _align_object(obj, x_vec=direction, y_vec=normal)
+            _align(obj, x_vec=direction, y_vec=normal)
         else:
-            _align_object(obj, x_vec=direction, z_vec=normal)
+            _align(obj, x_vec=direction, z_vec=normal)
     elif rail_axis[1] == 'y':
         if normal_axis[1] == 'x':
-            _align_object(obj, x_vec=normal, y_vec=direction)
+            _align(obj, x_vec=normal, y_vec=direction)
         else:
-            _align_object(obj, y_vec=direction, z_vec=normal)
+            _align(obj, y_vec=direction, z_vec=normal)
     elif rail_axis[1] == 'z':
         if normal_axis[1] == 'x':
-            _align_object(obj, x_vec=normal, z_vec=direction)
+            _align(obj, x_vec=normal, z_vec=direction)
         else:
-            _align_object(obj, y_vec=normal, z_vec=direction)
+            _align(obj, y_vec=normal, z_vec=direction)
     else:
         raise AssertionError
+
+
+def trasnform_obj(obj: Any, transform: ItemTransform, rail_axis: str, normal_axis: str):
+
+    def _transform_x_y_z(obj, transform):
+        obj.rotation_euler[0] += radians(transform.rotation_x)
+        obj.rotation_euler[1] += radians(transform.rotation_y)
+        obj.rotation_euler[2] += radians(transform.rotation_z)
+
+    def _transform_x_z_y(obj, transform):
+        obj.rotation_euler[0] += radians(transform.rotation_x)
+        obj.rotation_euler[2] += radians(transform.rotation_z)
+        obj.rotation_euler[1] += radians(transform.rotation_y)
+
+    def _transform_y_x_z(obj, transform):
+        obj.rotation_euler[1] += radians(transform.rotation_y)
+        obj.rotation_euler[0] += radians(transform.rotation_x)
+        obj.rotation_euler[2] += radians(transform.rotation_z)
+
+    def _transform_y_z_x(obj, transform):
+        obj.rotation_euler[1] += radians(transform.rotation_y)
+        obj.rotation_euler[2] += radians(transform.rotation_z)
+        obj.rotation_euler[0] += radians(transform.rotation_x)
+
+    def _transform_z_x_y(obj, transform):
+        obj.rotation_euler[2] += radians(transform.rotation_z)
+        obj.rotation_euler[0] += radians(transform.rotation_x)
+        obj.rotation_euler[1] += radians(transform.rotation_y)
+
+    def _transform_z_y_x(obj, transform):
+        obj.rotation_euler[2] += radians(transform.rotation_z)
+        obj.rotation_euler[1] += radians(transform.rotation_y)
+        obj.rotation_euler[0] += radians(transform.rotation_x)
+
+    if rail_axis[1] == 'x':
+        if normal_axis[1] == 'y':
+            _transform_x_y_z(obj, transform)
+        else:
+            _transform_x_z_y(obj, transform)
+    elif rail_axis[1] == 'y':
+        if normal_axis[1] == 'x':
+            _transform_y_x_z(obj, transform)
+        else:
+            _transform_y_z_x(obj, transform)
+    elif rail_axis[1] == 'z':
+        if normal_axis[1] == 'x':
+            _transform_z_x_y(obj, transform)
+        else:
+            _transform_z_y_x(obj, transform)
+
+    lov_vec = Vector((transform.location_x, transform.location_y, transform.location_z))
+    rot_matrix = obj.rotation_euler.to_matrix().inverted()
+
+    obj.location += lov_vec @ rot_matrix
+
+    obj.scale[0] += transform.scale_x
+    obj.scale[1] += transform.scale_y
+    obj.scale[2] += transform.scale_z
 
 
 def crete_array_manager(**params):
@@ -113,20 +179,28 @@ def crete_array_manager(**params):
     else:
         gen = fill_by_offset_manager(params, path_data, queue_data)
 
-    collection = create_collection()
+    main_collection = create_collection()
+    ghost_collection = None
 
     while True:
         try:
-            obj, co, direction, normal = next(gen)
+            item_data: ItemData = next(gen)
 
-            if obj is None:
-                continue
+            if item_data.ghost:
 
-            duplicate = clone_obj(obj, params['cloning_type'], collection)
-            move_obj(duplicate, co)
+                if ghost_collection is None:
+                    ghost_collection = create_collection(main_collection)
+
+                duplicate = clone_obj(item_data.obj, params['cloning_type'], ghost_collection)
+            else:
+                duplicate = clone_obj(item_data.obj, params['cloning_type'], main_collection)
+
+            move_obj(duplicate, item_data.co)
 
             if params['align_rotation']:
-                rotate_obj(duplicate, direction, normal, params['rail_axis'], params['normal_axis'])
+                align_obj(duplicate, item_data.direction, item_data.normal, params['rail_axis'], params['normal_axis'])
+
+            trasnform_obj(duplicate, item_data.transform, params['rail_axis'], params['normal_axis'])
 
         except StopIteration:
             break

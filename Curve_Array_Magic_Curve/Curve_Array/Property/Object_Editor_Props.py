@@ -2,6 +2,297 @@ import bpy  # type: ignore
 from .Get_Property_Path import get_groups_props
 
 
+class TransformData(bpy.types.PropertyGroup):
+
+    def _rot_rand_min_x_update(self, _):
+        if self.rotation_random_min_x > self.rotation_random_max_x:
+            self.rotation_random_min_x = self.rotation_random_max_x
+
+    def _rot_rand_min_y_update(self, _):
+        if self.rotation_random_min_y > self.rotation_random_max_y:
+            self.rotation_random_min_y = self.rotation_random_max_y
+
+    def _rot_rand_min_z_update(self, _):
+        if self.rotation_random_min_z > self.rotation_random_max_z:
+            self.rotation_random_min_z = self.rotation_random_max_z
+
+    def _rot_rand_max_x_update(self, _):
+        if self.rotation_random_max_x < self.rotation_random_min_x:
+            self.rotation_random_max_x = self.rotation_random_min_x
+
+    def _rot_rand_max_y_update(self, _):
+        if self.rotation_random_max_y < self.rotation_random_min_y:
+            self.rotation_random_max_y = self.rotation_random_min_y
+
+    def _rot_rand_max_z_update(self, _):
+        if self.rotation_random_max_z < self.rotation_random_min_z:
+            self.rotation_random_max_z = self.rotation_random_min_z
+
+    def _loc_rand_min_x_update(self, _):
+        if self.location_random_min_x > self.location_random_max_x:
+            self.location_random_min_x = self.location_random_max_x
+
+    def _loc_rand_min_y_update(self, _):
+        if self.location_random_min_y > self.location_random_max_y:
+            self.location_random_min_y = self.location_random_max_y
+
+    def _loc_rand_min_z_update(self, _):
+        if self.location_random_min_z > self.location_random_max_z:
+            self.location_random_min_z = self.location_random_max_z
+
+    def _loc_rand_max_x_update(self, _):
+        if self.location_random_max_x < self.location_random_min_x:
+            self.location_random_max_x = self.location_random_min_x
+
+    def _loc_rand_max_y_update(self, _):
+        if self.location_random_max_y < self.location_random_min_y:
+            self.location_random_max_y = self.location_random_min_y
+
+    def _loc_rand_max_z_update(self, _):
+        if self.location_random_max_z < self.location_random_min_z:
+            self.location_random_max_z = self.location_random_min_z
+
+    def _scale_rand_min_x_update(self, _):
+        if self.scale_random_min_x > self.scale_random_max_x:
+            self.scale_random_min_x = self.scale_random_max_x
+
+    def _scale_rand_min_y_update(self, _):
+        if self.scale_random_min_y > self.scale_random_max_y:
+            self.scale_random_min_y = self.scale_random_max_y
+
+    def _scale_rand_min_z_update(self, _):
+        if self.scale_random_min_z > self.scale_random_max_z:
+            self.scale_random_min_z = self.scale_random_max_z
+
+    def _scale_rand_max_x_update(self, _):
+        if self.scale_random_max_x < self.scale_random_min_x:
+            self.scale_random_max_x = self.scale_random_min_x
+
+    def _scale_rand_max_y_update(self, _):
+        if self.scale_random_max_y < self.scale_random_min_y:
+            self.scale_random_max_y = self.scale_random_min_y
+
+    def _scale_rand_max_z_update(self, _):
+        if self.scale_random_max_z < self.scale_random_min_z:
+            self.scale_random_max_z = self.scale_random_min_z
+
+    rotation_progressive_x: bpy.props.FloatProperty(
+        name="rotation_progressive_x",
+        description="Progressive Rotation X Axis",
+        default=0,
+        soft_min=-360,
+        soft_max=360,
+        )
+
+    rotation_progressive_y: bpy.props.FloatProperty(
+        name="rotation_progressive_y",
+        description="Progressive Rotation Y Axis",
+        default=0,
+        soft_min=-360,
+        soft_max=360,
+        )
+
+    rotation_progressive_z: bpy.props.FloatProperty(
+        name="rotation_progressive_z",
+        description="Progressive Rotation Z Axis",
+        default=0,
+        soft_min=-360,
+        soft_max=360,
+        )
+
+    rotation_random_min_x: bpy.props.FloatProperty(
+        name="rotation_random_soft_min_x",
+        description="soft_minimum Random Rotation X Axis",
+        default=0,
+        soft_min=-360,
+        soft_max=360,
+        update=_rot_rand_min_x_update,
+        )
+
+    rotation_random_min_y: bpy.props.FloatProperty(
+        name="rotation_random_soft_min_y",
+        description="soft_minimum Random Rotation Y Axis",
+        default=0,
+        soft_min=-360,
+        soft_max=360,
+        update=_rot_rand_min_y_update,
+        )
+
+    rotation_random_min_z: bpy.props.FloatProperty(
+        name="rotation_random_soft_min_z",
+        description="soft_minimum Random Rotation Z Axis",
+        default=0,
+        soft_min=-360,
+        soft_max=360,
+        update=_rot_rand_min_z_update,
+        )
+
+    rotation_random_max_x: bpy.props.FloatProperty(
+        name="rotation_random_soft_max_x",
+        description="soft_maximum Random Rotation X Axis",
+        default=0,
+        soft_min=-360,
+        soft_max=360,
+        update=_rot_rand_max_x_update,
+        )
+
+    rotation_random_max_y: bpy.props.FloatProperty(
+        name="rotation_random_soft_max_y",
+        description="soft_maximum Random Rotation Y Axis",
+        default=0,
+        soft_min=-360,
+        soft_max=360,
+        update=_rot_rand_max_y_update,
+        )
+
+    rotation_random_max_z: bpy.props.FloatProperty(
+        name="rotation_random_soft_max_z",
+        description="soft_maximum Random Rotation Z Axis",
+        default=0,
+        soft_min=-360,
+        soft_max=360,
+        update=_rot_rand_max_z_update,
+        )
+
+    location_progressive_x: bpy.props.FloatProperty(
+        name="location_progressive_x",
+        description="Progressive Location X Axis",
+        default=0,
+        )
+
+    location_progressive_y: bpy.props.FloatProperty(
+        name="location_progressive_y",
+        description="Progressive Location Y Axis",
+        default=0,
+        )
+
+    location_progressive_z: bpy.props.FloatProperty(
+        name="location_progressive_z",
+        description="Progressive Location Z Axis",
+        default=0,
+        )
+
+    location_random_min_x: bpy.props.FloatProperty(
+        name="location_random_min_x",
+        description="Minimum Random Location X Axis",
+        default=0,
+        update=_loc_rand_min_x_update,
+        )
+
+    location_random_min_y: bpy.props.FloatProperty(
+        name="location_random_min_y",
+        description="Minimum Random Location Y Axis",
+        default=0,
+        update=_loc_rand_min_y_update,
+        )
+
+    location_random_min_z: bpy.props.FloatProperty(
+        name="location_random_min_z",
+        description="Minimum Random Location Z Axis",
+        default=0,
+        update=_loc_rand_min_z_update,
+        )
+
+    location_random_max_x: bpy.props.FloatProperty(
+        name="location_random_max_x",
+        description="Maximum Random Location X Axis",
+        default=0,
+        update=_loc_rand_max_x_update,
+        )
+
+    location_random_max_y: bpy.props.FloatProperty(
+        name="location_random_max_y",
+        description="Maximum Random Location Y Axis",
+        default=0,
+        update=_loc_rand_max_y_update,
+        )
+
+    location_random_max_z: bpy.props.FloatProperty(
+        name="location_random_max_z",
+        description="Maximum Random Location Z Axis",
+        default=0,
+        update=_loc_rand_max_z_update,
+        )
+
+    scale_progressive_x: bpy.props.FloatProperty(
+        name="scale_progressive_x",
+        description="Progressive Scale X Axis",
+        default=0,
+        soft_min=-1,
+        soft_max=1,
+        )
+
+    scale_progressive_y: bpy.props.FloatProperty(
+        name="scale_progressive_y",
+        description="Progressive Scale Y Axis",
+        default=0,
+        soft_min=-1,
+        soft_max=1,
+        )
+
+    scale_progressive_z: bpy.props.FloatProperty(
+        name="scale_progressive_z",
+        description="Progressive Scale Z Axis",
+        default=0,
+        soft_min=-1,
+        soft_max=1,
+        )
+
+    scale_random_min_x: bpy.props.FloatProperty(
+        name="scale_random_min_x",
+        description="Minimum Random Scale X Axis",
+        default=0,
+        soft_min=-1,
+        soft_max=1,
+        update=_scale_rand_min_x_update,
+        )
+
+    scale_random_min_y: bpy.props.FloatProperty(
+        name="scale_random_min_y",
+        description="Minimum Random Scale Y Axis",
+        default=0,
+        soft_min=-1,
+        soft_max=1,
+        update=_scale_rand_min_y_update,
+        )
+
+    scale_random_min_z: bpy.props.FloatProperty(
+        name="scale_random_min_z",
+        description="Minimum Random Scale Z Axis",
+        default=0,
+        soft_min=-1,
+        soft_max=1,
+        update=_scale_rand_min_z_update,
+        )
+
+    scale_random_max_x: bpy.props.FloatProperty(
+        name="scale_random_max_x",
+        description="Maximum Random Scale X Axis",
+        default=0,
+        soft_min=-1,
+        soft_max=1,
+        update=_scale_rand_max_x_update,
+        )
+
+    scale_random_max_y: bpy.props.FloatProperty(
+        name="scale_random_max_y",
+        description="Maximum Random Scale Y Axis",
+        default=0,
+        soft_min=-1,
+        soft_max=1,
+        update=_scale_rand_max_y_update,
+        )
+
+    scale_random_max_z: bpy.props.FloatProperty(
+        name="scale_random_max_z",
+        description="Maximum Random Scale Z Axis",
+        default=0,
+        soft_min=-1,
+        soft_max=1,
+        update=_scale_rand_max_z_update,
+        )
+
+
 class Queue(bpy.types.PropertyGroup):
 
     index: bpy.props.IntProperty(
@@ -22,7 +313,7 @@ class Queue(bpy.types.PropertyGroup):
         description="Number of repetitions",
         default=1,
         min=0,
-        max=1000,
+        max=9999,
         )
 
     ghost: bpy.props.BoolProperty(
@@ -37,6 +328,19 @@ class Queue(bpy.types.PropertyGroup):
         default=0,
         min=0,
         max=100,
+        )
+
+    pivot: bpy.props.FloatProperty(
+        name="pivot",
+        description="Distance to pivot",
+        default=0,
+        min=0,
+        )
+
+    transform_data: bpy.props.PointerProperty(
+        type=TransformData,
+        name="transform_data",
+        description="Transform Data"
         )
 
 
@@ -106,9 +410,17 @@ class WMProperty(bpy.types.PropertyGroup):
         return items
 
     choose_group: bpy.props.EnumProperty(
-        name="Choose Group",
+        name="choose_group",
         description="",
         items=_get_groups
+    )
+
+    queue_repetitions: bpy.props.IntProperty(
+        name="queue_repetitions",
+        description="",
+        default=1000,
+        min=1,
+        max=9999,
     )
 
 
