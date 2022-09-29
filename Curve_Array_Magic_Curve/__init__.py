@@ -36,7 +36,10 @@ from .Curve_Array.Object_Editor.Ops.Create_Empty_Group_Ops import CURVEARRAY_OT_
 from .Curve_Array.Object_Editor.Ops.Create_Set_Group_Ops import CURVEARRAY_OT_create_set_group
 from .Curve_Array.Object_Editor.Ops.Remove_Item_Ops import CURVEARRAY_OT_remove_item
 from .Curve_Array.Object_Editor.Ops.Duplicate_Item_Ops import CURVEARRAY_OT_duplicate_item
-from .Curve_Array.Object_Editor.Object_Editor_WM import CURVEARRAY_OT_open_editor
+from .Curve_Array.Object_Editor.Object_Editor_WM import CURVEARRAY_OT_open_object_editor
+
+
+from .Curve_Array.Transform_Editor.Transform_Editor_WM import CURVEARRAY_OT_open_transform_editor
 
 from .Curve_Array.Panels.General_Panel import CURVEARRAY_PT_general_panel
 from .Curve_Array.Curve_Editor.Curve_Panel import CURVEARRAY_PT_curve_panel
@@ -62,12 +65,15 @@ classes = (
 
     CURVEARRAY_OT_add_objects,
     CURVEARRAY_OT_clear_all,
+
     CURVEARRAY_OT_queue_move,
     CURVEARRAY_OT_create_empty_group,
     CURVEARRAY_OT_create_set_group,
     CURVEARRAY_OT_remove_item,
     CURVEARRAY_OT_duplicate_item,
-    CURVEARRAY_OT_open_editor,
+    CURVEARRAY_OT_open_object_editor,
+
+    CURVEARRAY_OT_open_transform_editor,
 
     CURVEARRAY_PT_general_panel,
     CURVEARRAY_PT_curve_panel,

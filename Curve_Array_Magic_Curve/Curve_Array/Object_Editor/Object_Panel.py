@@ -59,7 +59,7 @@ class CURVEARRAY_PT_object_panel(bpy.types.Panel):
             col_left.label(text="None")
 
         row = layout.row()
-        row.operator('curvearray.open_editor', icon='OPTIONS')
+        row.operator('curvearray.open_object_editor', icon='OPTIONS')
 
         row = layout.row()
         row.operator('curvearray.clear_all', icon='CANCEL')

@@ -9,10 +9,10 @@ from ..Property.Get_Property_Path import (
 )
 
 
-class CURVEARRAY_OT_open_editor(bpy.types.Operator):
+class CURVEARRAY_OT_open_object_editor(bpy.types.Operator):
     """Editing Objects which will be used for array creation"""
     bl_label = "Object Editor"
-    bl_idname = 'curvearray.open_editor'
+    bl_idname = 'curvearray.open_object_editor'
     bl_options = {'UNDO'}
 
     def draw(self, _):
@@ -117,6 +117,8 @@ class CURVEARRAY_OT_open_editor(bpy.types.Operator):
                 oper.owner_id = group_index
                 oper.item_id = item_index
                 oper.target_id = wm_choose_group
+
+        layout.row().operator('curvearray.open_editor', icon='OPTIONS')
 
     def execute(self, _):
 

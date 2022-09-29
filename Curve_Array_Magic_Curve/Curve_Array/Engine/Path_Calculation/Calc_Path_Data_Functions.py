@@ -115,9 +115,7 @@ class PathData:
         string = f'Class {self.__class__.__name__}:'
 
         for i, _ in enumerate(self.interpolated_segment_distance):
-
             part = f'\nIndex: {i}, Distance: {self.interpolated_segment_distance[i]}\n{self.interpolated_segment[i]}'
-
             string += part
 
         return string
@@ -208,15 +206,12 @@ def _verts_range_generator(verts_range: tuple[bool, int, tuple[int, int]]):
         yield y
 
     if shift != 0:
-
         p = start
         end = start + shift - 2
-
         for y in __func(p, end):
             yield y
 
     if cyclic:
-
         yield start + shift
 
 
@@ -243,13 +238,10 @@ def verts_sequence_calc(curve) -> Iterator[int]:
         spline_verts_generator = _verts_range_generator((cyclic, shift, verts_range))
 
         for i in spline_verts_generator:
-
             yield i
 
     for spline in curve.data.splines:
-
         for i in __func(spline):
-
             yield i
 
 
