@@ -41,6 +41,10 @@ def get_wm_choose_group_props():
     return bpy.context.scene.curve_array_properties.engine_props.object_editor_data.wm_property.choose_group
 
 
+def get_wm_queue_repetitions():
+    return bpy.context.scene.curve_array_properties.engine_props.object_editor_data.wm_property.queue_repetitions
+
+
 def set_wm_choose_group_default():
     bpy.context.scene.curve_array_properties.engine_props.object_editor_data.wm_property.choose_group = '-1'
 

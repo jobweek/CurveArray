@@ -38,7 +38,7 @@ class InterpolatedSegment:
         self.start_co = start_co
         self.direction = direction
         self.direction_normalized = direction.normalized()
-        self.direction_smooth = None
+        self.direction_smooth: Union[Vector, None] = None
         self.length = length
         self.normal = normal
 
@@ -120,8 +120,8 @@ class PathData:
 
         return string
 
-    def get_data_by_distance(self, searched_distance: Decimal, smooth_normal: bool, cyclic: bool)\
-            -> tuple[Vector, Vector, Vector]:
+    def get_data_by_distance(self, searched_distance: Decimal, smooth_normal: bool, cyclic: bool
+                             ) -> tuple[Vector, Vector, Vector]:
 
         getcontext().prec = 60
 
@@ -129,6 +129,8 @@ class PathData:
             prec = Decimal('1.000000000')
             if searched_distance.quantize(prec) != Decimal(self.interpolated_segment_distance[-1]).quantize(prec):
                 searched_distance = searched_distance % Decimal(self.interpolated_segment_distance[-1])
+            if searched_distance < 0:
+                searched_distance += Decimal(self.interpolated_segment_distance[-1])
 
         searched_distance = float(searched_distance)
 
@@ -215,7 +217,7 @@ def _verts_range_generator(verts_range: tuple[bool, int, tuple[int, int]]):
         yield start + shift
 
 
-def verts_sequence_calc(curve) -> Iterator[int]:
+def verts_sequence_calc(curve) -> Iterator[Union[int, None]]:
 
     last_index = -2  # Индекс последней нулевой вершины меша относящегося к сплайну
 
@@ -240,6 +242,8 @@ def verts_sequence_calc(curve) -> Iterator[int]:
         for i in spline_verts_generator:
             yield i
 
+        yield None
+
     for spline in curve.data.splines:
         for i in __func(spline):
             yield i
@@ -259,6 +263,7 @@ def _calc_vert_data(index: int, verts) -> tuple[Vector, Vector]:
 
     p_0 = verts[index]
     p_1 = verts[index + 1]
+    print(f'P_0: {p_0.index}, P_1: {p_1.index}')
     mid_point_co = midle_point_calc(p_0.co, p_1.co)
     normal = calc_vec(p_0.co, p_1.co, True)
 
@@ -294,55 +299,59 @@ def _calc_segment_data(fisrt_point: tuple[Vector, Vector], second_point: tuple[V
 
 def arr_size_calc(verts, curve) -> int:
 
-    size = len(verts)/2 - 1
+    size = len(verts)/2
 
     for s in curve.data.splines:
-        if s.use_cyclic_u:
-            size += 1
+        if not s.use_cyclic_u:
+            size -= 1
 
     return int(size)
 
 
-def _calc_smooth_direction(interpolated_segments_arr: np.ndarray):
+def _calc_smooth_direction(interpolated_segments_arr: np.ndarray, start_range: int, end_range: int,):
 
-    if len(interpolated_segments_arr) > 1:
+    interpolated_segments_arr[start_range].direction_smooth = (
+        interpolated_segments_arr[start_range].direction_normalized,
+        interpolated_segments_arr[start_range + 1].direction_normalized
+    )
 
-        interpolated_segments_arr[0].direction_smooth = \
-            (interpolated_segments_arr[0].direction_normalized, interpolated_segments_arr[1].direction_normalized)
+    interpolated_segments_arr[end_range].direction_smooth = (
+        interpolated_segments_arr[end_range - 1].direction_normalized,
+        interpolated_segments_arr[end_range].direction_normalized
+    )
 
-        interpolated_segments_arr[-1].direction_smooth = \
-            (interpolated_segments_arr[-2].direction_normalized, interpolated_segments_arr[-1].direction_normalized)
-
-    else:
-
-        interpolated_segments_arr[0].direction_smooth = \
-            (interpolated_segments_arr[0].direction_normalized, interpolated_segments_arr[0].direction_normalized)
-
-    i = 1
-
-    while i < len(interpolated_segments_arr) - 1:
-
+    i = start_range + 1
+    while i < end_range:
         interpolated_segments_arr[i].direction_smooth = \
             (interpolated_segments_arr[i-1].direction_normalized, interpolated_segments_arr[i+1].direction_normalized)
-
         i += 1
 
 
-def path_data_calc(verts_sequence_generator: Iterator[int], verts, arr_size: int, curve_name: str) -> PathData:
+def path_data_calc(verts_sequence_generator: Iterator[Union[int, None]], verts, arr_size: int, curve_name: str
+                   ) -> PathData:
 
     interpolated_segments_distance_arr = np.empty(arr_size, float)
     interpolated_segments_arr = np.empty(arr_size, object)
 
     distance = 0.0
-    fisrt_point = _calc_vert_data(next(verts_sequence_generator), verts)
+    vert_index = next(verts_sequence_generator)
+    fisrt_point = _calc_vert_data(vert_index, verts)
 
     i = 0
-
+    start_range = i
     while True:
-
         try:
+            vert_index = next(verts_sequence_generator)
 
-            second_point = _calc_vert_data(next(verts_sequence_generator), verts)
+            if vert_index is None:
+                _calc_smooth_direction(interpolated_segments_arr, start_range, end_range=(i - 1))
+
+                vert_index = next(verts_sequence_generator)
+                fisrt_point = _calc_vert_data(vert_index, verts)
+                start_range = i
+                continue
+
+            second_point = _calc_vert_data(vert_index, verts)
 
             length, segment = _calc_segment_data(fisrt_point, second_point)
             distance += length
@@ -354,12 +363,10 @@ def path_data_calc(verts_sequence_generator: Iterator[int], verts, arr_size: int
             i += 1
 
         except StopIteration:
-
             break
 
     assert i == arr_size, 'PathData, массив не заполнен'
 
-    _calc_smooth_direction(interpolated_segments_arr)
     path_data = PathData(curve_name, (interpolated_segments_distance_arr, interpolated_segments_arr))
 
     return path_data

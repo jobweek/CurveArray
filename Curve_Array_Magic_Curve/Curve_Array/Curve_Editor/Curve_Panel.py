@@ -19,9 +19,9 @@ class CURVEARRAY_PT_curve_panel(bpy.types.Panel):
         layout = self.layout
 
         row = layout.row()
-        row.operator('curvearray.set_curve', icon='CURVE_DATA')
-
-        row = layout.row()
+        row.operator('curvearray.set_curve')
+        row.operator('curvearray.clear_curve')
+        row = layout.box().row()
 
         if curve.name != '':
 
@@ -30,6 +30,3 @@ class CURVEARRAY_PT_curve_panel(bpy.types.Panel):
         else:
 
             row.label(text="None", icon=curve.icon)
-
-        row = layout.row()
-        row.operator('curvearray.clear_curve', icon='CANCEL')

@@ -22,7 +22,8 @@ class CURVEARRAY_PT_object_panel(bpy.types.Panel):
         object_count = len(bpy.context.scene.curve_array_properties.engine_props.object_editor_data.objects)
 
         row = layout.row()
-        row.operator('curvearray.add_objects', icon='MESH_DATA')
+        row.operator('curvearray.add_objects')
+        row.operator('curvearray.clear_all')
 
         row = layout.row().split(factor=0.8)
         row.label(text='Objects stored:')
@@ -60,9 +61,6 @@ class CURVEARRAY_PT_object_panel(bpy.types.Panel):
 
         row = layout.row()
         row.operator('curvearray.open_object_editor', icon='OPTIONS')
-
-        row = layout.row()
-        row.operator('curvearray.clear_all', icon='CANCEL')
 
 
 def _object_names_generator() -> Iterator[str]:

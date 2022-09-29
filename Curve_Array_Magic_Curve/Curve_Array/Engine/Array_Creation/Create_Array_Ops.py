@@ -1,7 +1,9 @@
 import bpy  # type: ignore
+import traceback
+from math import radians
 from Curve_Array_Magic_Curve.Errors.Errors import CancelError, show_message_box
 from .Create_Array import crete_array_manager
-import traceback
+from ..General_Data_Classes import ArrayPrams, ArrayTransform
 
 
 class CURVEARRAY_OT_create_array(bpy.types.Operator):
@@ -143,11 +145,88 @@ class CURVEARRAY_OT_create_array(bpy.types.Operator):
         items=_normal_axis_items
     )
 
-    def execute(self, _):
+    rotation_x: bpy.props.FloatProperty(
+        name="rotation_x",
+        description="Rotation X Axis",
+        default=0,
+        soft_min=-360,
+        soft_max=360,
+        )
 
+    rotation_y: bpy.props.FloatProperty(
+        name="rotation_y",
+        description="Rotation Y Axis",
+        default=0,
+        soft_min=-360,
+        soft_max=360,
+        )
+    
+    rotation_z: bpy.props.FloatProperty(
+        name="rotation_z",
+        description="Rotation Z Axis",
+        default=0,
+        soft_min=-360,
+        soft_max=360,
+        )
+
+    location_x: bpy.props.FloatProperty(
+        name="location_x",
+        description="Location X Axis",
+        default=0,
+    )
+
+    location_y: bpy.props.FloatProperty(
+        name="location_y",
+        description="Location Y Axis",
+        default=0,
+    )
+
+    location_z: bpy.props.FloatProperty(
+        name="location_z",
+        description="Location Z Axis",
+        default=0,
+    )
+
+    scale_x: bpy.props.FloatProperty(
+        name="scale_x",
+        description="Scale X Axis",
+        default=0,
+        soft_min=-1,
+        soft_max=1,
+    )
+
+    scale_y: bpy.props.FloatProperty(
+        name="scale_y",
+        description="Scale Y Axis",
+        default=0,
+        soft_min=-1,
+        soft_max=1,
+    )
+
+    scale_z: bpy.props.FloatProperty(
+        name="scale_z",
+        description="Scale Z Axis",
+        default=0,
+        soft_min=-1,
+        soft_max=1,
+    )
+
+    def execute(self, _):
         try:
 
-            crete_array_manager(
+            array_transform = ArrayTransform(
+                rotation_x=radians(self.rotation_x),
+                rotation_y=radians(self.rotation_y),
+                rotation_z=radians(self.rotation_z),
+                location_x=self.location_x,
+                location_y=self.location_y,
+                location_z=self.location_z,
+                scale_x=self.scale_x,
+                scale_y=self.scale_y,
+                scale_z=self.scale_z,
+            )
+
+            array_params = ArrayPrams(
                 calculate_path_data=self.calculate_path_data,
                 calculate_queue_data=self.calculate_queue_data,
                 random_seed=self.random_seed,
@@ -163,7 +242,10 @@ class CURVEARRAY_OT_create_array(bpy.types.Operator):
                 align_rotation=self.align_rotation,
                 rail_axis=self.rail_axis,
                 normal_axis=self.normal_axis,
+                array_transform=array_transform,
             )
+
+            crete_array_manager(array_params)
 
             self.calculate_path_data = False
             self.calculate_queue_data = False

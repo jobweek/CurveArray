@@ -38,7 +38,7 @@ from .Curve_Array.Object_Editor.Ops.Remove_Item_Ops import CURVEARRAY_OT_remove_
 from .Curve_Array.Object_Editor.Ops.Duplicate_Item_Ops import CURVEARRAY_OT_duplicate_item
 from .Curve_Array.Object_Editor.Object_Editor_WM import CURVEARRAY_OT_open_object_editor
 
-
+from .Curve_Array.Transform_Editor.Ops.Reset_Transform_Ops import CURVEARRAY_OT_reset_transform
 from .Curve_Array.Transform_Editor.Transform_Editor_WM import CURVEARRAY_OT_open_transform_editor
 
 from .Curve_Array.Panels.General_Panel import CURVEARRAY_PT_general_panel
@@ -73,6 +73,7 @@ classes = (
     CURVEARRAY_OT_duplicate_item,
     CURVEARRAY_OT_open_object_editor,
 
+    CURVEARRAY_OT_reset_transform,
     CURVEARRAY_OT_open_transform_editor,
 
     CURVEARRAY_PT_general_panel,
