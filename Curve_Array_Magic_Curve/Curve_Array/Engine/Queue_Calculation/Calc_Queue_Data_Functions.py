@@ -2,12 +2,29 @@ import bpy  # type: ignore
 import numpy as np
 from typing import Any
 from itertools import cycle
+from math import radians
+from ..General_Data_Classes import ItemTransform, QueueItem
 from...Property.Get_Property_Path import (
     get_queue_props,
     get_objects_props,
     get_groups_props,
+    get_wm_queue_repetitions,
 )
-from....Errors.Errors import show_message_box, CancelError
+
+
+class BaseTransform:
+
+    def __init__(self):
+
+        self.rotation_x = [0.0]
+        self.rotation_y = [0.0]
+        self.rotation_z = [0.0]
+        self.location_x = [0.0]
+        self.location_y = [0.0]
+        self.location_z = [0.0]
+        self.scale_x = [0.0]
+        self.scale_y = [0.0]
+        self.scale_z = [0.0]
 
 
 class QueueData:
@@ -19,15 +36,14 @@ class QueueData:
     def prepare_queue_loop(self):
         self.queue_loop = cycle(self.queue_list)
 
-    def next(self):
+    def next(self) -> QueueItem:
+        return next(self.queue_loop)
 
-        return _get_object_by_name(next(self.queue_loop))
-
-    def get_by_index(self, index):
+    def get_by_index(self, index) -> QueueItem:
         try:
-            return _get_object_by_name(self.queue_list[index])
+            return self.queue_list[index]
         except IndexError:
-            return _get_object_by_name(self.queue_list[index % len(self.queue_list)])
+            return self.queue_list[index % len(self.queue_list)]
 
     def __str__(self):
         return f'\nClass {self.__class__.__name__}:\nQueue_List: {self.queue_list}\n'
@@ -60,18 +76,6 @@ def _get_cahnce_list(group: Any) -> tuple[list, list] or None:
         chance_list.append(float(coll.count)/float(sum_count))
 
     return index_list, chance_list
-
-
-def _get_object_by_name(name: str) -> Any:
-
-    try:
-        obj = bpy.context.scene.objects[name]
-    except KeyError:
-        show_message_box("Error", f"Object '{name}' could not be found, "
-                                  f"it has been removed from the scene or renamed.", 'ERROR')
-        raise CancelError
-
-    return obj
 
 
 def _get_random_coll(index: int, groups: Any, objects: Any) -> Any or None:
@@ -108,30 +112,107 @@ def _get_object_name(q: Any) -> str or None:
     return name
 
 
-def _get_queue_data(random_seed: int):
+def __calc_transform(base_trform: list[float], progressive_trform: float, random_trform: tuple[float, float]) -> float:
+
+    base_trform[0] += progressive_trform
+
+    transform = base_trform[0] + np.random.uniform(random_trform[0], random_trform[1])
+
+    return transform
+
+
+def _get_queue_data(random_seed: int) -> list[QueueItem]:
 
     queue = get_queue_props()
-    queue_list = []
+    queue_repit = get_wm_queue_repetitions()
     np.random.seed(random_seed)
 
-    for q in queue:
+    queue_list = []
 
-        if q.count == 0:
-            continue
+    base_transform = [BaseTransform() for _ in range(len(queue))]
 
-        for i in range(q.count):
+    queue_len = 0
 
-            if q.ghost_percentage == 100:
-                queue_list.append(None)
+    while queue_len < queue_repit:
 
-            elif q.ghost_percentage == 0:
+        for queue_index, q in enumerate(queue):
+
+            transofrm_data = q.transform_data
+
+            if q.count == 0:
+                continue
+
+            for i in range(q.count):
+
+                rotation_x = __calc_transform(
+                    base_transform[queue_index].rotation_x,
+                    transofrm_data.rotation_progressive_x,
+                    (transofrm_data.rotation_random_min_x, transofrm_data.rotation_random_max_x)
+                )
+                rotation_y = __calc_transform(
+                    base_transform[queue_index].rotation_y,
+                    transofrm_data.rotation_progressive_y,
+                    (transofrm_data.rotation_random_min_y, transofrm_data.rotation_random_max_y)
+                )
+                rotation_z = __calc_transform(
+                    base_transform[queue_index].rotation_z,
+                    transofrm_data.rotation_progressive_z,
+                    (transofrm_data.rotation_random_min_z, transofrm_data.rotation_random_max_z)
+                )
+                location_x = __calc_transform(
+                    base_transform[queue_index].location_x,
+                    transofrm_data.location_progressive_x,
+                    (transofrm_data.location_random_min_x, transofrm_data.location_random_max_x)
+                )
+                location_y = __calc_transform(
+                    base_transform[queue_index].location_y,
+                    transofrm_data.location_progressive_y,
+                    (transofrm_data.location_random_min_y, transofrm_data.location_random_max_y)
+                )
+                location_z = __calc_transform(
+                    base_transform[queue_index].location_z,
+                    transofrm_data.location_progressive_z,
+                    (transofrm_data.location_random_min_z, transofrm_data.location_random_max_z)
+                )
+                scale_x = __calc_transform(
+                    base_transform[queue_index].scale_x,
+                    transofrm_data.scale_progressive_x,
+                    (transofrm_data.scale_random_min_x, transofrm_data.scale_random_max_x)
+                )
+                scale_y = __calc_transform(
+                    base_transform[queue_index].scale_y,
+                    transofrm_data.scale_progressive_y,
+                    (transofrm_data.scale_random_min_y, transofrm_data.scale_random_max_y)
+                )
+                scale_z = __calc_transform(
+                    base_transform[queue_index].scale_z,
+                    transofrm_data.scale_progressive_z,
+                    (transofrm_data.scale_random_min_z, transofrm_data.scale_random_max_z)
+                )
+
                 obj_name = _get_object_name(q)
-                queue_list.append(obj_name)
-            else:
+
                 if np.random.uniform(0, 100) < q.ghost_percentage:
-                    queue_list.append(None)
+                    ghost = True
                 else:
-                    obj_name = _get_object_name(q)
-                    queue_list.append(obj_name)
+                    ghost = False
+
+                queue_list.append(QueueItem(
+                    obj_name,
+                    ghost,
+                    ItemTransform(
+                        rotation_x=radians(rotation_x),
+                        rotation_y=radians(rotation_y),
+                        rotation_z=radians(rotation_z),
+                        location_x=location_x,
+                        location_y=location_y,
+                        location_z=location_z,
+                        scale_x=scale_x,
+                        scale_y=scale_y,
+                        scale_z=scale_z,
+                    )
+                ))
+
+                queue_len += 1
 
     return queue_list

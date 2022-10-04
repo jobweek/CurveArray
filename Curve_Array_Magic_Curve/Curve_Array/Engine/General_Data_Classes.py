@@ -3,6 +3,7 @@ from mathutils import Vector
 
 
 class ItemTransform(NamedTuple):
+
     rotation_x: float
     rotation_y: float
     rotation_z: float
@@ -15,6 +16,7 @@ class ItemTransform(NamedTuple):
 
 
 class QueueItem(NamedTuple):
+
     object_name: str
     ghost: bool
     transform: ItemTransform

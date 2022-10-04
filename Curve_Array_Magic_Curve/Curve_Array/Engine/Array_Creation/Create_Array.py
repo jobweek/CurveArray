@@ -1,48 +1,61 @@
 import bpy  # type: ignore
+from .Create_Array_Functions import (
+    trasnform_obj,
+    align_obj,
+    move_obj,
+    clone_obj,
+    create_collection,
+    start_check
+)
 from ...Property.Get_Property_Path import get_instant_data_props
 from ..Path_Calculation.Calc_Path_Data import calc_path_data_manager
 from ..Queue_Calculation.Calc_Queue_Data import calc_queue_data_manager
 from .Spacing_Types.Fill_By_Offset import fill_by_offset_manager
-from .Create_Array_Functions import (
-    start_check,
-    create_collection,
-    clone_obj,
-    move_obj,
-    rotate_obj,
+from ..General_Data_Classes import (
+    ItemData,
+    ArrayPrams
 )
 
 
-def crete_array_manager(**params):
+def crete_array_manager(params: ArrayPrams):
 
     start_check()
 
-    if params['calculate_path_data']:
+    if params.calculate_path_data:
         calc_path_data_manager()
     path_data = get_instant_data_props().path_data.get()
 
-    if params['calculate_queue_data']:
-        calc_queue_data_manager(params['random_seed'])
+    if params.calculate_queue_data:
+        calc_queue_data_manager(params.random_seed)
     queue_data = get_instant_data_props().queue_data.get()
 
-    if params['spacing_type'] == '0':
+    if params.spacing_type == '0':
         gen = fill_by_offset_manager(params, path_data, queue_data)
     else:
         gen = fill_by_offset_manager(params, path_data, queue_data)
 
-    collection = create_collection()
+    main_collection = create_collection()
+    ghost_collection = None
 
     while True:
         try:
-            obj, co, direction, normal = next(gen)
+            item_data: ItemData = next(gen)
 
-            if obj is None:
-                continue
+            if item_data.ghost:
 
-            duplicate = clone_obj(obj, params['cloning_type'], collection)
-            move_obj(duplicate, co)
+                if ghost_collection is None:
+                    ghost_collection = create_collection(main_collection)
 
-            if params['align_rotation']:
-                rotate_obj(duplicate, direction, normal, params['rail_axis'], params['normal_axis'])
+                duplicate = clone_obj(item_data.obj, params.cloning_type, ghost_collection)
+            else:
+                duplicate = clone_obj(item_data.obj, params.cloning_type, main_collection)
+
+            move_obj(duplicate, item_data.co)
+
+            if params.align_rotation:
+                align_obj(duplicate, item_data.direction, item_data.normal, params.rail_axis, params.normal_axis)
+
+            trasnform_obj(duplicate, item_data.transform, params.array_transform, params.rail_axis, params.normal_axis)
 
         except StopIteration:
             break

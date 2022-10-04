@@ -1,5 +1,19 @@
 import bpy  # type: ignore
+import mathutils  # type: ignore
 from typing import Any
+from Curve_Array_Magic_Curve.Errors.Errors import show_message_box, CancelError
+
+
+def get_object_by_name(name: str) -> Any:
+
+    try:
+        obj = bpy.context.scene.objects[name]
+    except KeyError:
+        show_message_box("Error", f"Object '{name}' could not be found, "
+                                  f"it has been removed from the scene or renamed.", 'ERROR')
+        raise CancelError
+
+    return obj
 
 
 def get_demension(obj: Any, axis: str, direction: bool) -> float:
