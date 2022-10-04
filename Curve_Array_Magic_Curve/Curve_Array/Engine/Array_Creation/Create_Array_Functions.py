@@ -1,8 +1,6 @@
-from typing import Any
-
 import bpy  # type: ignore
+from typing import Any
 from mathutils import Vector, Matrix
-
 from Curve_Array_Magic_Curve.Curve_Array.Engine.General_Data_Classes import ItemTransform, ArrayTransform
 from Curve_Array_Magic_Curve.Curve_Array.Property.Get_Property_Path import get_curve_props, get_queue_props
 from Curve_Array_Magic_Curve.Errors.Errors import show_message_box, CancelError
@@ -154,3 +152,49 @@ def start_check():
     if len(get_queue_props()) == 0:
         show_message_box("Error", f"To create an array, store the objects!", 'ERROR')
         raise CancelError
+
+
+def rotate_obj(obj: Any, direction: Vector, normal: Vector, rail_axis: str, normal_axis: str):
+
+    if rail_axis[0] == '-':
+        direction = direction * -1
+    if normal_axis[0] == '-':
+        normal = normal * -1
+
+    def _align_object(obj: Any, x_vec=None, y_vec=None, z_vec=None):
+
+        if x_vec is None:
+            x_vec = y_vec.cross(z_vec)
+        elif y_vec is None:
+            y_vec = z_vec.cross(x_vec)
+        else:
+            z_vec = x_vec.cross(y_vec)
+
+        rot_mat = Matrix.Rotation(0, 3, 'X')
+
+        rot_mat[0] = x_vec
+        rot_mat[1] = y_vec
+        rot_mat[2] = z_vec
+
+        rot_mat_inverted = rot_mat.inverted()
+        rot_euler = rot_mat_inverted.to_euler('XYZ')  # type: ignore
+
+        obj.rotation_euler = rot_euler
+
+    if rail_axis[1] == 'x':
+        if normal_axis[1] == 'y':
+            _align_object(obj, x_vec=direction, y_vec=normal)
+        else:
+            _align_object(obj, x_vec=direction, z_vec=normal)
+    elif rail_axis[1] == 'y':
+        if normal_axis[1] == 'x':
+            _align_object(obj, x_vec=normal, y_vec=direction)
+        else:
+            _align_object(obj, y_vec=direction, z_vec=normal)
+    elif rail_axis[1] == 'z':
+        if normal_axis[1] == 'x':
+            _align_object(obj, x_vec=normal, z_vec=direction)
+        else:
+            _align_object(obj, y_vec=normal, z_vec=direction)
+    else:
+        raise AssertionError
