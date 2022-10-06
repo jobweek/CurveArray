@@ -51,11 +51,10 @@ def crete_array_manager(params: ArrayPrams):
                 duplicate = clone_obj(item_data.obj, params.cloning_type, main_collection)
 
             move_obj(duplicate, item_data.co)
+            trasnform_obj(duplicate,  item_data.total_transform)
 
             if params.align_rotation:
                 align_obj(duplicate, item_data.direction, item_data.normal, params.rail_axis, params.normal_axis)
-
-            trasnform_obj(duplicate, item_data.transform, params.array_transform, params.rail_axis, params.normal_axis)
 
         except StopIteration:
             break

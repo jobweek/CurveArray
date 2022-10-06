@@ -1,5 +1,5 @@
 from typing import Any, NamedTuple
-from mathutils import Vector
+from mathutils import Vector, Matrix
 
 
 class ItemTransform(NamedTuple):
@@ -19,7 +19,7 @@ class QueueItem(NamedTuple):
 
     object_name: str
     ghost: bool
-    transform: ItemTransform
+    queue_transform: ItemTransform
 
 
 class ItemData(NamedTuple):
@@ -29,7 +29,7 @@ class ItemData(NamedTuple):
     co: Vector
     direction: Vector
     normal: Vector
-    transform: ItemTransform
+    total_transform: Matrix
 
 
 class ArrayTransform(NamedTuple):

@@ -573,7 +573,7 @@ def LengthOfCurve(spline, crv):
         dupl_crv = crv.copy()
         dupl_crv.data = crv.data.copy()
         dupl_crv.animation_data_clear()
-        dupl_crv.data.transform(dupl_crv.matrix_world)
+        dupl_crv.data.queue_transform(dupl_crv.matrix_world)
         dupl_crv.matrix_world = mathutils.Matrix()
         length = dupl_crv.data.splines[0].calc_length()
         bpy.data.curves.remove(dupl_crv.data)
@@ -1726,8 +1726,8 @@ class CRVARRPRO_OT_MakeIt(bpy.types.Operator):
         name = "",
         description="Select type of cloning",
         items = (
-            ('OP3',"Real instance (Light)","All objects use main object data, and copy transform"),
-            ('OP2',"Real instance","All objects use main object data, but have a custom transform"),
+            ('OP3',"Real instance (Light)","All objects use main object data, and copy queue_transform"),
+            ('OP2',"Real instance","All objects use main object data, but have a custom queue_transform"),
             ('OP1',"Usual Copy","Every object is unique")
         )
         )

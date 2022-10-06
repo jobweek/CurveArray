@@ -263,7 +263,6 @@ def _calc_vert_data(index: int, verts) -> tuple[Vector, Vector]:
 
     p_0 = verts[index]
     p_1 = verts[index + 1]
-    print(f'P_0: {p_0.index}, P_1: {p_1.index}')
     mid_point_co = midle_point_calc(p_0.co, p_1.co)
     normal = calc_vec(p_0.co, p_1.co, True)
 

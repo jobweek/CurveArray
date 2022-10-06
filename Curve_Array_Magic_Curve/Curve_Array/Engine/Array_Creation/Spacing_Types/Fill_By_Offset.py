@@ -2,7 +2,7 @@ import bpy  # type: ignore
 import bmesh  # type: ignore
 from decimal import Decimal, getcontext
 from typing import Iterator
-from .Fill_By_Offset_Functions import get_object_by_name, get_demension
+from .Fill_By_Offset_Functions import get_object_by_name, get_demension, calc_total_transform
 from ...General_Data_Classes import ItemData, ArrayPrams
 from ...Path_Calculation.Calc_Path_Data_Functions import PathData
 from ...Queue_Calculation.Calc_Queue_Data_Functions import QueueData
@@ -16,13 +16,20 @@ def fill_by_offset_manager(params: ArrayPrams,  path_data: PathData, queue_data:
     start_offset = Decimal(params.start_offset)
     end_offset = Decimal(params.end_offset)
 
-    if params.consider_size and params.align_rotation:
+    if params.consider_size:
 
-        first_obj = get_object_by_name(queue_data.get_by_index(0).object_name)
-        last_obj = get_object_by_name(queue_data.get_by_index(params.count - 1).object_name)
+        first_item = queue_data.get_by_index(0)
+        last_item = queue_data.get_by_index(params.count - 1)
 
-        start_size_offset = get_demension(first_obj, params.rail_axis, False)
-        end_size_offset = get_demension(last_obj, params.rail_axis, True)
+        first_obj = get_object_by_name(first_item.object_name)
+        last_obj = get_object_by_name(last_item.object_name)
+
+        start_size_offset = get_demension(
+            first_obj, params.array_transform, first_item.queue_transform, params.rail_axis, False
+        )
+        end_size_offset = get_demension(
+            last_obj, params.array_transform, last_item.queue_transform, params.rail_axis, True
+        )
 
         start_offset += Decimal(start_size_offset)
         end_offset += Decimal(end_size_offset)
@@ -42,7 +49,11 @@ def fill_by_offset_manager(params: ArrayPrams,  path_data: PathData, queue_data:
 
     for i in range(params.count):
 
-        obj_name, ghost, transform = queue_data.next()
+        obj_name, ghost, queue_transform = queue_data.next()
+
+        obj = get_object_by_name(obj_name)
+
+        total_transform = calc_total_transform(obj, params.array_transform, queue_transform)
 
         co, direction, normal = path_data.get_data_by_distance(
             searched_distance,
@@ -51,12 +62,12 @@ def fill_by_offset_manager(params: ArrayPrams,  path_data: PathData, queue_data:
         )
 
         item_data = ItemData(
-            get_object_by_name(obj_name),
+            obj,
             ghost,
             co,
             direction,
             normal,
-            transform,
+            total_transform,
         )
 
         yield item_data

@@ -2631,8 +2631,8 @@ class Array_Settings(bpy.types.PropertyGroup):
         name = "",
         description="Select type of cloning",
         items = [
-            ('OP3',"Real instance (Light)","All objects use main object data, and copy transform"),
-            ('OP2',"Real instance","All objects use main object data, but have a custom transform"),
+            ('OP3',"Real instance (Light)","All objects use main object data, and copy queue_transform"),
+            ('OP2',"Real instance","All objects use main object data, but have a custom queue_transform"),
             ('OP1',"Usual Copy","Every object is unique")
         ]
         )

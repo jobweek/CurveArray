@@ -1,65 +1,17 @@
 import bpy  # type: ignore
 from typing import Any
-from mathutils import Vector, Matrix
+from mathutils import Vector, Matrix, Euler
 from Curve_Array_Magic_Curve.Curve_Array.Engine.General_Data_Classes import ItemTransform, ArrayTransform
 from Curve_Array_Magic_Curve.Curve_Array.Property.Get_Property_Path import get_curve_props, get_queue_props
 from Curve_Array_Magic_Curve.Errors.Errors import show_message_box, CancelError
 
 
-def trasnform_obj(obj: Any, item_transform: ItemTransform, array_transform: ArrayTransform,
-                  rail_axis: str, normal_axis: str):
+def trasnform_obj(obj: Any, total_transform: Matrix):
 
-    def __rotate_x():
-        obj.rotation_euler.rotate_axis("X", item_transform.rotation_x + array_transform.rotation_x)
-
-    def __rotate_y():
-        obj.rotation_euler.rotate_axis("Y", item_transform.rotation_y + array_transform.rotation_y)
-
-    def __rotate_z():
-        obj.rotation_euler.rotate_axis("Z", item_transform.rotation_z + array_transform.rotation_z)
-
-    if rail_axis[1] == 'x':
-        if normal_axis[1] == 'y':
-            __rotate_x()
-            __rotate_y()
-            __rotate_z()
-        else:
-            __rotate_x()
-            __rotate_z()
-            __rotate_y()
-    elif rail_axis[1] == 'y':
-        if normal_axis[1] == 'x':
-            __rotate_y()
-            __rotate_x()
-            __rotate_z()
-
-        else:
-            __rotate_y()
-            __rotate_z()
-            __rotate_x()
-    elif rail_axis[1] == 'z':
-        if normal_axis[1] == 'x':
-            __rotate_z()
-            __rotate_y()
-            __rotate_x()
-        else:
-            __rotate_z()
-            __rotate_x()
-            __rotate_y()
-
-    lov_vec = Vector((
-        item_transform.location_x + array_transform.location_x,
-        item_transform.location_y + array_transform.location_y,
-        item_transform.location_z + array_transform.location_z,
-    ))
-
-    rot_matrix = obj.rotation_euler.to_matrix().inverted()
-
-    obj.location += lov_vec @ rot_matrix
-
-    obj.scale[0] += item_transform.scale_x + array_transform.scale_x
-    obj.scale[1] += item_transform.scale_y + array_transform.scale_y
-    obj.scale[2] += item_transform.scale_z + array_transform.scale_z
+    loc, rot, scale = total_transform.decompose()
+    obj.location += loc
+    obj.rotation_euler = rot.to_euler('XYZ')  # type: ignore
+    obj.scale = scale
 
 
 def align_obj(obj: Any, direction: Vector, normal: Vector, rail_axis: str, normal_axis: str):
@@ -87,7 +39,7 @@ def align_obj(obj: Any, direction: Vector, normal: Vector, rail_axis: str, norma
         rot_mat_inverted = rot_mat.inverted()
         rot_euler = rot_mat_inverted.to_euler('XYZ')  # type: ignore
 
-        obj.rotation_euler = rot_euler
+        obj.rotation_euler.rotate(rot_euler)
 
     if rail_axis[1] == 'x':
         if normal_axis[1] == 'y':
