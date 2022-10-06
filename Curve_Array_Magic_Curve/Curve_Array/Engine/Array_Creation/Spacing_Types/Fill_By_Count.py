@@ -1,7 +1,7 @@
 import bpy  # type: ignore
 from decimal import Decimal, getcontext
 from typing import Iterator
-from .Fill_By_Count_Functions import get_object_by_name, get_demension, calc_total_transform
+from .General_Functions import get_object_by_name, calc_total_transform, get_demension
 from ...General_Data_Classes import ItemData, ArrayPrams
 from ...Path_Calculation.Calc_Path_Data_Functions import PathData
 from ...Queue_Calculation.Calc_Queue_Data_Functions import QueueData

@@ -75,6 +75,13 @@ class CURVEARRAY_OT_create_array(bpy.types.Operator):
         min=1,
         )
 
+    step_offset: bpy.props.FloatProperty(
+        name="step_offset",
+        description="Distance between objects in the array",
+        default=1,
+        min=0,
+        )
+
     start_offset: bpy.props.FloatProperty(
         name="start_offset",
         description="Start Offset",
@@ -238,6 +245,7 @@ class CURVEARRAY_OT_create_array(bpy.types.Operator):
                 cyclic=self.cyclic,
                 smooth_normal=self.smooth_normal,
                 count=self.count,
+                step_offset=self.step_offset,
                 start_offset=self.start_offset,
                 end_offset=self.end_offset,
                 slide=self.slide,

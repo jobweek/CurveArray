@@ -55,6 +55,7 @@ class ArrayPrams(NamedTuple):
     cyclic: bool
     smooth_normal: bool
     count: int
+    step_offset: float
     start_offset: float
     end_offset: float
     slide: float
