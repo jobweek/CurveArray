@@ -12,6 +12,7 @@ from ..Path_Calculation.Calc_Path_Data import calc_path_data_manager
 from ..Queue_Calculation.Calc_Queue_Data import calc_queue_data_manager
 from .Spacing_Types.Fill_By_Count import fill_by_count_manager
 from .Spacing_Types.Fill_By_Offset import fill_by_offset_manager
+from .Spacing_Types.Fill_By_Size import fill_by_size_manager
 from ..General_Data_Classes import (
     ItemData,
     ArrayPrams
@@ -35,7 +36,7 @@ def crete_array_manager(params: ArrayPrams):
     elif params.spacing_type == '1':
         gen = fill_by_offset_manager(params, path_data, queue_data)
     elif params.spacing_type == '2':
-        gen = fill_by_offset_manager(params, path_data, queue_data)
+        gen = fill_by_size_manager(params, path_data, queue_data)
     else:
         gen = fill_by_offset_manager(params, path_data, queue_data)
 
