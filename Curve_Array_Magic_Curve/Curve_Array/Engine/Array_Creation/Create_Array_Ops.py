@@ -40,6 +40,9 @@ class CURVEARRAY_OT_create_array(bpy.types.Operator):
         description="Type of arrangment of objects along path",
         items=[
             ('0', "Fill by Count", ""),
+            ('1', "Fill by Offset", ""),
+            ('2', "Fill by Size", ""),
+            ('3', "Fill by Origin", ""),
         ]
     )
 
@@ -48,8 +51,8 @@ class CURVEARRAY_OT_create_array(bpy.types.Operator):
         description="Select type of cloning",
         items=[
             ('0', "Copy", "Every object is unique"),
-            ('1', "Semi Instance", "All objects use main object data, but have a custom transform"),
-            ('2', "Full Instance", "All objects use main object data, and copy transform"),
+            ('1', "Semi Instance", "All objects use main object data, but have a custom modifiers"),
+            ('2', "Full Instance", "All objects use main object data"),
         ]
         )
 
@@ -119,17 +122,17 @@ class CURVEARRAY_OT_create_array(bpy.types.Operator):
 
         if self.rail_axis[1] == 'x':
             return [
-                ('+y', "+y", ""),
                 ('+z', "+z", ""),
-                ('-y', "-y", ""),
+                ('+y', "+y", ""),
                 ('-z', "-z", ""),
+                ('-y', "-y", ""),
             ]
         elif self.rail_axis[1] == 'y':
             return [
-                ('+x', "+x", ""),
                 ('+z', "+z", ""),
-                ('-x', "-x", ""),
+                ('+x', "+x", ""),
                 ('-z', "-z", ""),
+                ('-x', "-x", ""),
             ]
         else:
             return [

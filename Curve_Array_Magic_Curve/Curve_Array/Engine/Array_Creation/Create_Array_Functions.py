@@ -1,7 +1,6 @@
 import bpy  # type: ignore
 from typing import Any
-from mathutils import Vector, Matrix, Euler
-from Curve_Array_Magic_Curve.Curve_Array.Engine.General_Data_Classes import ItemTransform, ArrayTransform
+from mathutils import Vector, Matrix
 from Curve_Array_Magic_Curve.Curve_Array.Property.Get_Property_Path import get_curve_props, get_queue_props
 from Curve_Array_Magic_Curve.Errors.Errors import show_message_box, CancelError
 

@@ -10,6 +10,7 @@ from .Create_Array_Functions import (
 from ...Property.Get_Property_Path import get_instant_data_props
 from ..Path_Calculation.Calc_Path_Data import calc_path_data_manager
 from ..Queue_Calculation.Calc_Queue_Data import calc_queue_data_manager
+from .Spacing_Types.Fill_By_Count import fill_by_count_manager
 from .Spacing_Types.Fill_By_Offset import fill_by_offset_manager
 from ..General_Data_Classes import (
     ItemData,
@@ -30,6 +31,10 @@ def crete_array_manager(params: ArrayPrams):
     queue_data = get_instant_data_props().queue_data.get()
 
     if params.spacing_type == '0':
+        gen = fill_by_count_manager(params, path_data, queue_data)
+    elif params.spacing_type == '1':
+        gen = fill_by_offset_manager(params, path_data, queue_data)
+    elif params.spacing_type == '2':
         gen = fill_by_offset_manager(params, path_data, queue_data)
     else:
         gen = fill_by_offset_manager(params, path_data, queue_data)
