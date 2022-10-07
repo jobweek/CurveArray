@@ -1,7 +1,7 @@
 import bpy  # type: ignore
 from decimal import Decimal, getcontext
 from typing import Iterator
-from .General_Functions import get_object_by_name, calc_total_transform, get_demension
+from .General_Functions import get_object_by_name, calc_total_transform, get_bb_offset
 from ...General_Data_Classes import ItemData, ArrayPrams
 from ...Path_Calculation.Calc_Path_Data_Functions import PathData
 from ...Queue_Calculation.Calc_Queue_Data_Functions import QueueData
@@ -23,10 +23,10 @@ def fill_by_count_manager(params: ArrayPrams, path_data: PathData, queue_data: Q
         first_obj = get_object_by_name(first_item.object_name)
         last_obj = get_object_by_name(last_item.object_name)
 
-        start_size_offset = get_demension(
+        start_size_offset = get_bb_offset(
             first_obj, params.array_transform, first_item.queue_transform, params.rail_axis, False
         )
-        end_size_offset = get_demension(
+        end_size_offset = get_bb_offset(
             last_obj, params.array_transform, last_item.queue_transform, params.rail_axis, True
         )
 

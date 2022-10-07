@@ -56,6 +56,8 @@ class ArrayPrams(NamedTuple):
     smooth_normal: bool
     count: int
     step_offset: float
+    size_offset: float
+    max_count: int
     start_offset: float
     end_offset: float
     slide: float

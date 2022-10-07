@@ -7,7 +7,7 @@ from ...Queue_Calculation.Calc_Queue_Data_Functions import QueueData
 from .General_Functions import (
     get_object_by_name,
     calc_total_transform,
-    get_demension,
+    get_bb_offset,
 )
 
 
@@ -19,6 +19,7 @@ def fill_by_offset_manager(params: ArrayPrams, path_data: PathData, queue_data: 
     start_offset = Decimal(params.start_offset)
     end_offset = Decimal(params.end_offset)
     step = Decimal(params.step_offset)
+    max_count = params.max_count - 1
 
     if params.consider_size:
 
@@ -26,7 +27,7 @@ def fill_by_offset_manager(params: ArrayPrams, path_data: PathData, queue_data: 
 
         first_obj = get_object_by_name(first_item.object_name)
 
-        start_size_offset = get_demension(
+        start_size_offset = get_bb_offset(
             first_obj, params.array_transform, first_item.queue_transform, params.rail_axis, False
         )
 
@@ -37,19 +38,28 @@ def fill_by_offset_manager(params: ArrayPrams, path_data: PathData, queue_data: 
         return
 
     count = int(path_length // step) + 1
-
-    searched_distance = start_offset + Decimal(params.slide)
+    searched_distance = start_offset
 
     for i in range(count):
+
+        if i == max_count:
+            break
 
         obj_name, ghost, queue_transform = queue_data.next()
 
         obj = get_object_by_name(obj_name)
 
+        if params.consider_size:
+            end_size_offset = get_bb_offset(
+                obj, params.array_transform, queue_transform, params.rail_axis, True
+            )
+            if searched_distance + Decimal(end_size_offset) > path_length:
+                break
+
         total_transform = calc_total_transform(obj, params.array_transform, queue_transform)
 
         co, direction, normal = path_data.get_data_by_distance(
-            searched_distance,
+            searched_distance + Decimal(params.slide),
             params.smooth_normal,
             params.cyclic
         )

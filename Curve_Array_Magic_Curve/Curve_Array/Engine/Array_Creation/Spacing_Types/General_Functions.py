@@ -94,7 +94,7 @@ def _calc_bm_transform(obj: Any, total_transform: Matrix):
     return bm
 
 
-def get_demension(
+def get_bb_offset(
     obj: Any, array_transform: ArrayTransform, item_transform: ItemTransform,  axis: str, direction: bool
                   ) -> float:
 
@@ -174,3 +174,28 @@ def get_demension(
             return _negative_z()
         else:
             return _positive_z()
+
+
+def get_dimension_offset(obj: Any, total_transform: Matrix,  axis: str) -> tuple[float, float]:
+
+    bm = _calc_bm_transform(obj, total_transform)
+
+    def __collect_points(axis: int) -> np.ndarray:
+        def __func(v):
+            return v.co[axis]
+        arr = np.frompyfunc(__func, 1, 1)
+        return arr(bm.verts)
+
+    def __get_dimension(axis: int) -> tuple[float, float]:
+        points = __collect_points(axis)
+        neg_offset = np.amin(points)
+        pos_offset = np.amax(points)
+        bm.free()
+        return -neg_offset, pos_offset
+
+    if axis[1] == 'x':
+        return __get_dimension(0)
+    elif axis[1] == 'y':
+        return __get_dimension(1)
+    elif axis[1] == 'z':
+        return __get_dimension(2)

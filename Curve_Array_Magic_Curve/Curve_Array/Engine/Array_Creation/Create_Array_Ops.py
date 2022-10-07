@@ -82,6 +82,21 @@ class CURVEARRAY_OT_create_array(bpy.types.Operator):
         min=0,
         )
 
+    size_offset: bpy.props.FloatProperty(
+        name="size_offset",
+        description="Size Offset",
+        default=1,
+        min=0,
+        )
+
+    max_count: bpy.props.IntProperty(
+        name="max_count",
+        description="Max Count of objects on the path",
+        default=100,
+        min=1,
+        soft_max=1000,
+        )
+
     start_offset: bpy.props.FloatProperty(
         name="start_offset",
         description="Start Offset",
@@ -201,7 +216,7 @@ class CURVEARRAY_OT_create_array(bpy.types.Operator):
         name="scale_x",
         description="Scale X Axis",
         default=0,
-        soft_min=-1,
+        soft_min=-0.9,
         soft_max=1,
     )
 
@@ -209,7 +224,7 @@ class CURVEARRAY_OT_create_array(bpy.types.Operator):
         name="scale_y",
         description="Scale Y Axis",
         default=0,
-        soft_min=-1,
+        soft_min=-0.9,
         soft_max=1,
     )
 
@@ -217,7 +232,7 @@ class CURVEARRAY_OT_create_array(bpy.types.Operator):
         name="scale_z",
         description="Scale Z Axis",
         default=0,
-        soft_min=-1,
+        soft_min=-0.9,
         soft_max=1,
     )
 
@@ -246,6 +261,8 @@ class CURVEARRAY_OT_create_array(bpy.types.Operator):
                 smooth_normal=self.smooth_normal,
                 count=self.count,
                 step_offset=self.step_offset,
+                size_offset=self.size_offset,
+                max_count=self.max_count,
                 start_offset=self.start_offset,
                 end_offset=self.end_offset,
                 slide=self.slide,
