@@ -124,8 +124,6 @@ class CURVEARRAY_OT_open_object_editor(bpy.types.Operator):
                 oper.item_id = item_index
                 oper.target_id = wm_choose_group
 
-        layout.row().operator('curvearray.open_editor', icon='OPTIONS')
-
     def execute(self, _):
 
         for area in bpy.context.window.screen.areas:

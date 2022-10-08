@@ -3,6 +3,7 @@ import numpy as np
 from typing import Any
 from itertools import cycle
 from math import radians
+from Curve_Array_Magic_Curve.Errors.Errors import CancelError
 from ..General_Data_Classes import ItemTransform, QueueItem
 from...Property.Get_Property_Path import (
     get_queue_props,
@@ -10,6 +11,10 @@ from...Property.Get_Property_Path import (
     get_groups_props,
     get_wm_queue_repetitions,
 )
+
+
+class ZeroChance(Exception):
+    pass
 
 
 class BaseTransform:
@@ -60,7 +65,7 @@ def _get_sum_element_count(group: Any) -> int:
     return sum_count
 
 
-def _get_cahnce_list(group: Any) -> tuple[list, list] or None:
+def _get_cahnce_lists(group: Any) -> tuple[list, list]:
 
     index_list = []
     chance_list = []
@@ -68,7 +73,7 @@ def _get_cahnce_list(group: Any) -> tuple[list, list] or None:
     sum_count = _get_sum_element_count(group)
 
     if sum_count == 0:
-        return None
+        raise ZeroChance
 
     for i, coll in enumerate(group.collection):
 
@@ -78,15 +83,12 @@ def _get_cahnce_list(group: Any) -> tuple[list, list] or None:
     return index_list, chance_list
 
 
-def _get_random_coll(index: int, groups: Any, objects: Any) -> Any or None:
+def _get_random_coll(index: int, groups: Any, objects: Any) -> Any:
 
     group = groups[index]
-    index_list, chance_list = _get_cahnce_list(group)
+    chance_lists = _get_cahnce_lists(group)
 
-    if chance_list is None:
-        return None
-
-    rand_index = np.random.choice(a=index_list, size=1, p=chance_list)[0]
+    rand_index = np.random.choice(a=chance_lists[0], size=1, p=chance_lists[1])[0]
 
     coll = group.collection[rand_index]
 
@@ -96,7 +98,7 @@ def _get_random_coll(index: int, groups: Any, objects: Any) -> Any or None:
     return coll
 
 
-def _get_object_name(q: Any) -> str or None:
+def _get_object_name(q: Any) -> str:
 
     groups = get_groups_props()
     objects = get_objects_props()
@@ -105,8 +107,7 @@ def _get_object_name(q: Any) -> str or None:
         name: str = objects[q.index].name
     else:
         coll = _get_random_coll(q.index, groups, objects)
-        if coll is None:
-            return None
+
         name: str = objects[coll.index].name
 
     return name
@@ -143,6 +144,12 @@ def _get_queue_data(random_seed: int) -> list[QueueItem]:
                 continue
 
             for i in range(q.count):
+
+                try:
+                    obj_name = _get_object_name(q)
+                except ZeroChance:
+                    queue_len += q.count
+                    break
 
                 rotation_x = __calc_transform(
                     base_transform[queue_index].rotation_x,
@@ -190,8 +197,6 @@ def _get_queue_data(random_seed: int) -> list[QueueItem]:
                     (transofrm_data.scale_random_min_z, transofrm_data.scale_random_max_z)
                 )
 
-                obj_name = _get_object_name(q)
-
                 if np.random.uniform(0, 100) < q.ghost_percentage:
                     ghost = True
                 else:
@@ -215,4 +220,6 @@ def _get_queue_data(random_seed: int) -> list[QueueItem]:
 
                 queue_len += 1
 
+    if len(queue_list) == 0:
+        raise CancelError
     return queue_list
