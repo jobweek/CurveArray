@@ -19,6 +19,7 @@ class QueueItem(NamedTuple):
 
     object_name: str
     ghost: bool
+    pivot: float
     queue_transform: ItemTransform
 
 
@@ -58,6 +59,8 @@ class ArrayPrams(NamedTuple):
     step_offset: float
     size_offset: float
     max_count: int
+    max_count_origin: int
+    precision: float
     start_offset: float
     end_offset: float
     slide: float

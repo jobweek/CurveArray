@@ -330,13 +330,6 @@ class Queue(bpy.types.PropertyGroup):
         max=100,
         )
 
-    pivot: bpy.props.FloatProperty(
-        name="pivot",
-        description="Distance to pivot",
-        default=0,
-        min=0,
-        )
-
     transform_data: bpy.props.PointerProperty(
         type=TransformData,
         name="transform_data",
@@ -350,6 +343,13 @@ class Objects(bpy.types.PropertyGroup):
         name="name",
         description="Object to be used to create the array",
         default="",
+        )
+
+    pivot: bpy.props.FloatProperty(
+        name="pivot",
+        description="Distance to pivot",
+        default=0,
+        min=0,
         )
 
 
@@ -389,6 +389,13 @@ class Groups(bpy.types.PropertyGroup):
         type=Collection,
         name="collection",
         description="",
+        )
+
+    pivot: bpy.props.FloatProperty(
+        name="pivot",
+        description="Distance to pivot",
+        default=0,
+        min=0,
         )
 
 

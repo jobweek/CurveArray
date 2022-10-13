@@ -45,13 +45,13 @@ class CURVEARRAY_OT_open_object_editor(bpy.types.Operator):
 
             QueueSplitLayout.layout_split(layout)
 
-            name = _get_name(q.type, q.index, objects, groups)
+            item_prop = _get_item_prop(q.type, q.index, objects, groups)
 
             QueueSplitLayout.number_row.label(text=str(item_index + 1))
-            QueueSplitLayout.name_row.label(text=name)
+            QueueSplitLayout.name_row.label(text=item_prop.name)
             QueueSplitLayout.count_row.prop(q, 'count', text='')
             QueueSplitLayout.ghost_percent_row.prop(q, 'ghost_percentage', text='')
-            QueueSplitLayout.pivot_row.prop(q, 'pivot', text='')
+            QueueSplitLayout.pivot_row.prop(item_prop, 'pivot', text='')
 
             oper = QueueSplitLayout.transform_row.operator('curvearray.open_transform_editor', text='Open Editor')
             oper.index = item_index
@@ -96,23 +96,25 @@ class CURVEARRAY_OT_open_object_editor(bpy.types.Operator):
 
             for item_index, coll in enumerate(g.collection):
 
-                name = _get_name(coll.type, coll.index, objects, groups)
+                item_prop = _get_item_prop(coll.type, coll.index, objects, groups)
 
                 chance = _calc_chance(coll.count, sum_count)
 
                 GroupsSplitLayout.layout_split(box.row())
 
-                GroupsSplitLayout.number_row.label(text=str(group_index + 1))
-                GroupsSplitLayout.name_row.label(text=name)
+                GroupsSplitLayout.number_row.label(text=str(item_index + 1))
+                GroupsSplitLayout.name_row.label(text=item_prop.name)
                 GroupsSplitLayout.count_row.prop(coll, 'count', text='')
                 GroupsSplitLayout.chance_row.label(text=f"Chance: {chance}%")
+                GroupsSplitLayout.pivot_label_row.label(text='Personal Pivot: ')
+                GroupsSplitLayout.pivot_prop_row.prop(item_prop, 'pivot', text='')
 
-                oper = GroupsSplitLayout.butt_up_down.operator('curvearray.duplicate_item', text='', icon='DUPLICATE')
+                oper = GroupsSplitLayout.butt_row.operator('curvearray.duplicate_item', text='', icon='DUPLICATE')
                 oper.call_owner = False
                 oper.owner_id = group_index
                 oper.item_id = item_index
 
-                oper = GroupsSplitLayout.butt_up_down.operator('curvearray.remove_item', text='', icon='PANEL_CLOSE')
+                oper = GroupsSplitLayout.butt_row.operator('curvearray.remove_item', text='', icon='PANEL_CLOSE')
                 oper.call_owner = False
                 oper.owner_id = group_index
                 oper.item_id = item_index
@@ -153,7 +155,6 @@ def _get_sum_element_count(group: Any) -> int:
     sum_count = 0
 
     for coll in group.collection:
-
         sum_count += coll.count
 
     return sum_count
@@ -167,6 +168,16 @@ def _get_name(item_type: bool, item_index: int, objects: Any, groups: Any) -> st
         name: str = groups[item_index].name
 
     return name
+
+
+def _get_item_prop(item_type: bool, item_index: int, objects: Any, groups: Any) -> Any:
+
+    if item_type:
+        prop = objects[item_index]
+    else:
+        prop = groups[item_index]
+
+    return prop
 
 
 class LabelSplitLayout:
@@ -273,7 +284,9 @@ class GroupsSplitLayout:
     name_row: Any
     count_row: Any
     chance_row: Any
-    butt_up_down: Any
+    pivot_label_row: Any
+    pivot_prop_row: Any
+    butt_row: Any
     choose_group_row: Any
     set_group_row: Any
 
@@ -295,8 +308,16 @@ class GroupsSplitLayout:
         cls.count_row = split.row()
 
         split = split.split(factor=0.86)
+        chance_pivot_row = split.row()
+
+        cls.butt_row = split.row(align=True)
+
+        split = chance_pivot_row.split(factor=0.35)
         cls.chance_row = split.row()
-        cls.butt_up_down = split.row(align=True)
+
+        split = split.split(factor=0.5)
+        cls.pivot_label_row = split.row()
+        cls.pivot_prop_row = split.row()
 
         split = right_side.split(factor=0.006)
         split.row()

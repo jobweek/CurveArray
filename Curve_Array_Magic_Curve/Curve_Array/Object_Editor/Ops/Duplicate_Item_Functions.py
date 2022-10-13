@@ -112,6 +112,7 @@ def _duplicate_object(objects: Any, item: Any) -> int:
     new_object_index = len(objects)
     new_object = objects.add()
     new_object.name = objects[item.index].name
+    new_object.pivot = objects[item.index].pivot
 
     return new_object_index
 
@@ -121,6 +122,7 @@ def _duplicate_group(queue: Any, objects: Any, groups: Any, item: Any) -> Any:
     new_group_index = len(groups)
     new_group = groups.add()
     new_group.name = f'{groups[item.index].name}_Copy'
+    new_group.pivot = groups[item.index].pivot
 
     for coll in groups[item.index].collection:
 

@@ -98,19 +98,19 @@ def _get_random_coll(index: int, groups: Any, objects: Any) -> Any:
     return coll
 
 
-def _get_object_name(q: Any) -> str:
-
-    groups = get_groups_props()
-    objects = get_objects_props()
+def _get_name_pivot(q: Any,  groups: Any, objects: Any) -> tuple[str, float]:
 
     if q.type:
         name: str = objects[q.index].name
+        pivot: float = objects[q.index].pivot
     else:
         coll = _get_random_coll(q.index, groups, objects)
-
         name: str = objects[coll.index].name
+        pivot: float = objects[coll.index].pivot
+        if pivot == 0:
+            pivot: float = groups[q.index].pivot
 
-    return name
+    return name, pivot
 
 
 def __calc_transform(base_trform: list[float], progressive_trform: float, random_trform: tuple[float, float]) -> float:
@@ -125,6 +125,8 @@ def __calc_transform(base_trform: list[float], progressive_trform: float, random
 def _get_queue_data(random_seed: int) -> list[QueueItem]:
 
     queue = get_queue_props()
+    groups = get_groups_props()
+    objects = get_objects_props()
     queue_repit = get_wm_queue_repetitions()
     np.random.seed(random_seed)
 
@@ -146,7 +148,7 @@ def _get_queue_data(random_seed: int) -> list[QueueItem]:
             for i in range(q.count):
 
                 try:
-                    obj_name = _get_object_name(q)
+                    obj_name, pivot = _get_name_pivot(q, groups, objects)
                 except ZeroChance:
                     queue_len += q.count
                     break
@@ -205,6 +207,7 @@ def _get_queue_data(random_seed: int) -> list[QueueItem]:
                 queue_list.append(QueueItem(
                     obj_name,
                     ghost,
+                    pivot,
                     ItemTransform(
                         rotation_x=radians(rotation_x),
                         rotation_y=radians(rotation_y),
