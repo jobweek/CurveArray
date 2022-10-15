@@ -48,7 +48,7 @@ def fill_by_count_manager(params: ArrayPrams, path_data: PathData, queue_data: Q
 
     for i in range(params.count):
 
-        obj_name, ghost, queue_transform = queue_data.next()
+        obj_name, ghost, _, queue_transform = queue_data.next()
 
         obj = get_object_by_name(obj_name)
 

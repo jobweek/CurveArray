@@ -1,5 +1,6 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
+from math import pi, sin, asin
 from mathutils import Vector
 from decimal import Decimal, getcontext
 import numpy as np
@@ -12,20 +13,16 @@ from Curve_Array_Magic_Curve.General_Functions.Functions import (
 from....Errors.Errors import show_message_box, CancelError
 
 
-def _get_smooth_direction(direction_prev: Union[Vector, None], direction: Vector, direction_next: Union[Vector, None])\
-        -> tuple[Vector, Vector]:
+def _project_vec(direction: Vector, normal: Vector) -> Vector:
 
-    if direction_prev is None:
-        direction_smooth_start = direction
+    dot = normal.dot(direction)
+
+    if dot > 0.99998 or dot < -0.99998:
+        raise AssertionError
+    elif 0.00002 > dot > -0.00002:
+        return normal
     else:
-        direction_smooth_start = direction_prev.lerp(direction, 0.5).normalized()
-
-    if direction_next is None:
-        direction_smooth_end = direction
-    else:
-        direction_smooth_end = direction.lerp(direction_next, 0.5).normalized()
-
-    return direction_smooth_start, direction_smooth_end
+        return (normal - normal.project(direction)).normalized()
 
 
 class InterpolatedSegment:
@@ -49,8 +46,15 @@ class InterpolatedSegment:
 
         return string
 
+    def get_co_by_length(self, searched_length: float) -> Vector:
+
+        ratio = searched_length / self.length
+        co = self.start_co + self.direction * ratio
+
+        return co
+
     def get_data_by_length(self, searched_length: float) -> tuple[Vector, Vector, Vector]:
-        """Searched_length = distance between 'start distance' and searched point"""
+
         ratio = searched_length / self.length
 
         if searched_length < 0:
@@ -64,20 +68,8 @@ class InterpolatedSegment:
 
         return co, self.direction_normalized, normal
 
-    @staticmethod
-    def __project_vec(direction: Vector, normal: Vector) -> Vector:
-
-        dot = normal.dot(direction)
-
-        if dot > 0.99998 or dot < -0.99998:
-            raise AssertionError
-        elif 0.00002 > dot > -0.00002:
-            return normal
-        else:
-            return (normal - normal.project(direction)).normalized()
-
     def get_data_by_length_smooth(self, searched_length: float) -> tuple[Vector, Vector, Vector]:
-        """Searched_length = distance between 'start distance' and searched point"""
+
         ratio = searched_length / self.length
         middle_length = self.length/2
 
@@ -97,10 +89,125 @@ class InterpolatedSegment:
             else:
                 direction = self.direction_normalized
             normal = self.normal[0].lerp(self.normal[1], ratio)
-            normal = self.__project_vec(direction, normal)
+            normal = _project_vec(direction, normal)
         co = self.start_co + self.direction * ratio
 
         return co, direction, normal
+
+
+def _cyclic_correction(searched_distance: Decimal, path_length: Decimal) -> Decimal:
+
+    getcontext().prec = 60
+    prec = Decimal('1.000000000')
+
+    if searched_distance.quantize(prec) != path_length.quantize(prec):
+        searched_distance = searched_distance % path_length
+    if searched_distance < 0:
+        searched_distance += path_length
+
+    return searched_distance
+
+
+def _get_vec_by_index(self, index: int, element_count: int, cyclic: bool, start_co: Vector) -> Union[Vector, None]:
+
+    if index > element_count - 1:
+        if cyclic:
+            ratio = 0
+            index = element_count - index
+        else:
+            ratio = element_count - index
+            index = element_count - 1
+    else:
+        ratio = 0
+
+    element: InterpolatedSegment = self.interpolated_segment[index]
+    vec_co = element.start_co + element.direction * ratio
+
+    vec: Vector = calc_vec(start_co, vec_co, False)
+
+    return vec
+
+
+def _get_smooth_direction(
+    direction_prev: Union[Vector, None], direction: Vector, direction_next: Union[Vector, None]
+                          ) -> tuple[Vector, Vector]:
+
+    if direction_prev is None:
+        direction_smooth_start = direction
+    else:
+        direction_smooth_start = direction_prev.lerp(direction, 0.5).normalized()
+
+    if direction_next is None:
+        direction_smooth_end = direction
+    else:
+        direction_smooth_end = direction.lerp(direction_next, 0.5).normalized()
+
+    return direction_smooth_start, direction_smooth_end
+
+
+def _calc_length_by_pivot(a_side: Vector, b_side: Vector, pivot: float) -> float:
+
+    if a_side.dot(b_side) > 0.99998:
+        return pivot - a_side.length
+
+    g_side: Vector = a_side - b_side
+
+    betta_angle = pi - a_side.angle(g_side)
+
+    relation = pivot / sin(betta_angle)
+
+    alpha_angle = asin(a_side.length / relation)
+
+    gamma_angle = pi - (alpha_angle + betta_angle)
+
+    return relation * sin(gamma_angle)
+
+
+def _get_element_length(self, searched_distance: Decimal, cyclic: bool) -> tuple[InterpolatedSegment, float]:
+
+    if cyclic:
+        searched_distance = _cyclic_correction(
+            searched_distance, Decimal(self.interpolated_segment_distance[-1])
+        )
+    searched_distance = float(searched_distance)
+
+    if searched_distance < 0:
+
+        element: InterpolatedSegment = self.interpolated_segment[0]
+        searched_length: float = searched_distance
+
+    elif searched_distance > self.interpolated_segment_distance[-1]:
+
+        element: InterpolatedSegment = self.interpolated_segment[-1]
+        element_distance: float = self.interpolated_segment_distance[-1]
+        searched_length: float = searched_distance - element_distance + element.length
+
+    else:
+
+        index = np.searchsorted(self.interpolated_segment_distance, searched_distance, side='left')
+        element: InterpolatedSegment = self.interpolated_segment[index]
+        element_distance: float = self.interpolated_segment_distance[index]
+        searched_length: float = element.length - (element_distance - float(searched_distance))
+
+    return element, searched_length
+
+
+def _get_index(self, searched_distance: Decimal, cyclic: bool) -> int:
+
+    if cyclic:
+        searched_distance = _cyclic_correction(
+            searched_distance, Decimal(self.interpolated_segment_distance[-1])
+        )
+    searched_distance = float(searched_distance)
+
+    if searched_distance < 0:
+        index = 0
+    elif searched_distance > self.interpolated_segment_distance[-1]:
+        index = len(self.interpolated_segment_distance) - 1
+    else:
+        index = np.searchsorted(self.interpolated_segment_distance, searched_distance, side='left')
+    # print(f'SEARCHED_DISTANCE: {searched_distance}, INDEX: {index}')
+    return index
 
 
 class PathData:
@@ -120,42 +227,44 @@ class PathData:
 
         return string
 
-    def get_data_by_distance(self, searched_distance: Decimal, smooth_normal: bool, cyclic: bool
+    def get_data_by_distance(
+        self, searched_distance: Decimal, smooth_normal: bool, cyclic: bool
                              ) -> tuple[Vector, Vector, Vector]:
 
-        getcontext().prec = 60
-
-        if cyclic:
-            prec = Decimal('1.000000000')
-            if searched_distance.quantize(prec) != Decimal(self.interpolated_segment_distance[-1]).quantize(prec):
-                searched_distance = searched_distance % Decimal(self.interpolated_segment_distance[-1])
-            if searched_distance < 0:
-                searched_distance += Decimal(self.interpolated_segment_distance[-1])
-
-        searched_distance = float(searched_distance)
-
-        if searched_distance < 0:
-
-            element: InterpolatedSegment = self.interpolated_segment[0]
-            searched_length: float = searched_distance
-
-        elif searched_distance > self.interpolated_segment_distance[-1]:
-
-            element: InterpolatedSegment = self.interpolated_segment[-1]
-            element_distance: float = self.interpolated_segment_distance[-1]
-            searched_length: float = searched_distance - element_distance + element.length
-
-        else:
-
-            index = np.searchsorted(self.interpolated_segment_distance, searched_distance, side='left')
-            element: InterpolatedSegment = self.interpolated_segment[index]
-            element_distance: float = self.interpolated_segment_distance[index]
-            searched_length: float = element.length - (element_distance - float(searched_distance))
+        element, searched_length = _get_element_length(self, searched_distance, cyclic)
 
         if smooth_normal:
             return element.get_data_by_length_smooth(searched_length)
         else:
             return element.get_data_by_length(searched_length)
+
+    def get_data_by_origin(
+        self, searched_distance: Decimal, pivot: float, cyclic: bool
+                           ) -> tuple[Vector, Vector, Vector, Decimal]:
+
+        element, searched_length = _get_element_length(self, searched_distance, cyclic)
+        start_co, _, normal_vec = element.get_data_by_length(searched_length)
+
+        index = _get_index(self, searched_distance + Decimal(pivot), cyclic)
+
+        while True:
+
+            second_vec = _get_vec_by_index(self, index + 1, len(self.interpolated_segment), cyclic, start_co)
+
+            if pivot < second_vec.length:
+
+                try:
+                    first_vec = _get_vec_by_index(self, index, len(self.interpolated_segment), cyclic, start_co)
+                    searched_length = _calc_length_by_pivot(first_vec, second_vec, pivot)
+                except AssertionError:
+                    searched_length = pivot
+
+                direction_vec: Vector = self.interpolated_segment[index].get_co_by_length(searched_length)
+                path_distance = self.interpolated_segment_distance[index] + searched_length
+
+                return start_co, direction_vec, normal_vec, Decimal(path_distance)
+
+            index += 1
 
     def get_path_length(self) -> float:
         return self.interpolated_segment_distance[-1]

@@ -45,7 +45,7 @@ def fill_by_offset_manager(params: ArrayPrams, path_data: PathData, queue_data: 
         if i == max_count:
             break
 
-        obj_name, ghost, queue_transform = queue_data.next()
+        obj_name, ghost, _, queue_transform = queue_data.next()
 
         obj = get_object_by_name(obj_name)
 

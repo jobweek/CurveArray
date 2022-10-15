@@ -97,21 +97,12 @@ class CURVEARRAY_OT_create_array(bpy.types.Operator):
         soft_max=1000,
         )
 
-    max_count_origin: bpy.props.IntProperty(
-        name="max_count_origin",
+    max_count_pivot: bpy.props.IntProperty(
+        name="max_count_pivot",
         description="Max Count of objects on the path",
         default=10,
         min=1,
         soft_max=100,
-        )
-
-    precision: bpy.props.IntProperty(
-        name="precision",
-        description="Margin in the positioning of objects on the track",
-        default=0.01,
-        min=0.0001,
-        soft_min=0.01,
-        soft_max=0.1,
         )
 
     start_offset: bpy.props.FloatProperty(
@@ -280,8 +271,7 @@ class CURVEARRAY_OT_create_array(bpy.types.Operator):
                 step_offset=self.step_offset,
                 size_offset=self.size_offset,
                 max_count=self.max_count,
-                max_count_origin=self.max_count_origin,
-                precision=self.precision,
+                max_count_pivot=self.max_count_pivot,
                 start_offset=self.start_offset,
                 end_offset=self.end_offset,
                 slide=self.slide,

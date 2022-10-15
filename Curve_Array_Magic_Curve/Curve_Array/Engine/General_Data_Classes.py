@@ -59,8 +59,7 @@ class ArrayPrams(NamedTuple):
     step_offset: float
     size_offset: float
     max_count: int
-    max_count_origin: int
-    precision: float
+    max_count_pivot: int
     start_offset: float
     end_offset: float
     slide: float

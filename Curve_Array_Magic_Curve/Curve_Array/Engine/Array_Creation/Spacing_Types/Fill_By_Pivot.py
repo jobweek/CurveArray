@@ -10,24 +10,22 @@ from .General_Functions import (
 )
 
 
-def fill_by_origin_manager(params: ArrayPrams, path_data: PathData, queue_data: QueueData) -> Iterator[ItemData]:
+def fill_by_pivot_manager(params: ArrayPrams, path_data: PathData, queue_data: QueueData) -> Iterator[ItemData]:
 
     getcontext().prec = 60
 
     path_length = Decimal(path_data.get_path_length())
     start_offset = Decimal(params.start_offset)
     end_offset = Decimal(params.end_offset)
-    step = Decimal(params.step_offset)
-    max_count = params.max_count - 1
+    max_count = params.max_count_pivot - 1
 
     path_length -= (start_offset + end_offset)
-    if path_length < 0 or step == 0:
+    if path_length < 0:
         return
 
-    count = int(path_length // step) + 1
     searched_distance = start_offset
 
-    for i in range(count):
+    for i in range(max_count):
 
         if i == max_count:
             break
@@ -38,10 +36,10 @@ def fill_by_origin_manager(params: ArrayPrams, path_data: PathData, queue_data: 
 
         total_transform = calc_total_transform(obj, params.array_transform, queue_transform)
 
-        co, direction, normal = path_data.get_data_by_distance(
+        co, direction, normal, searched_distance = path_data.get_data_by_origin(
             searched_distance + Decimal(params.slide),
-            params.smooth_normal,
-            params.cyclic
+            pivot,
+            params.cyclic,
         )
 
         item_data = ItemData(
@@ -54,5 +52,3 @@ def fill_by_origin_manager(params: ArrayPrams, path_data: PathData, queue_data: 
         )
 
         yield item_data
-
-        searched_distance += step

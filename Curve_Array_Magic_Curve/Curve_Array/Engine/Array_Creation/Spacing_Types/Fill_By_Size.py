@@ -29,7 +29,7 @@ def fill_by_size_manager(params: ArrayPrams, path_data: PathData, queue_data: Qu
 
     for i in range(params.max_count):
 
-        obj_name, ghost, queue_transform = queue_data.next()
+        obj_name, ghost, _, queue_transform = queue_data.next()
 
         obj = get_object_by_name(obj_name)
 
