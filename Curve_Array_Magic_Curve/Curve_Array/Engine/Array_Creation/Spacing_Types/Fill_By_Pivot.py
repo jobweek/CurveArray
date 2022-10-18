@@ -14,20 +14,11 @@ def fill_by_pivot_manager(params: ArrayPrams, path_data: PathData, queue_data: Q
 
     getcontext().prec = 60
 
-    path_length = Decimal(path_data.get_path_length())
-    start_offset = Decimal(params.start_offset)
-    end_offset = Decimal(params.end_offset)
-    max_count = params.max_count_pivot - 1
+    searched_distance = Decimal(params.slide)
 
-    path_length -= (start_offset + end_offset)
-    if path_length < 0:
-        return
+    for i in range(params.max_count_pivot):
 
-    searched_distance = start_offset
-
-    for i in range(max_count):
-
-        if i == max_count:
+        if i == params.max_count_pivot:
             break
 
         obj_name, ghost, pivot, queue_transform = queue_data.next()
@@ -37,7 +28,7 @@ def fill_by_pivot_manager(params: ArrayPrams, path_data: PathData, queue_data: Q
         total_transform = calc_total_transform(obj, params.array_transform, queue_transform)
 
         co, direction, normal, searched_distance = path_data.get_data_by_origin(
-            searched_distance + Decimal(params.slide),
+            searched_distance,
             pivot,
             params.cyclic,
         )
