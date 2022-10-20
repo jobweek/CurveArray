@@ -27,7 +27,7 @@ def crete_array_manager(params: ArrayPrams):
     if params.calculate_path_data:
         calc_path_data_manager()
     path_data = get_instant_data_props().path_data.get()
-    print(path_data)
+
     if params.calculate_queue_data:
         calc_queue_data_manager(params.random_seed)
     queue_data = get_instant_data_props().queue_data.get()

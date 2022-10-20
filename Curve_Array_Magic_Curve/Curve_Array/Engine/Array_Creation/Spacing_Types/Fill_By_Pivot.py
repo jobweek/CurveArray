@@ -8,6 +8,7 @@ from .General_Functions import (
     get_object_by_name,
     calc_total_transform,
 )
+from .....Errors.Errors import LoopEnd
 
 
 def fill_by_pivot_manager(params: ArrayPrams, path_data: PathData, queue_data: QueueData) -> Iterator[ItemData]:
@@ -27,11 +28,20 @@ def fill_by_pivot_manager(params: ArrayPrams, path_data: PathData, queue_data: Q
 
         total_transform = calc_total_transform(obj, params.array_transform, queue_transform)
 
-        co, direction, normal, searched_distance = path_data.get_data_by_origin(
-            searched_distance,
-            pivot,
-            params.cyclic,
-        )
+        try:
+            if params.cyclic:
+                co, direction, normal, searched_distance = path_data.get_data_by_origin_cyclic(
+                    searched_distance,
+                    pivot,
+                )
+            else:
+                co, direction, normal, searched_distance = path_data.get_data_by_origin(
+                    searched_distance,
+                    pivot,
+                )
+        except LoopEnd:
+            print(f'LOOP_END')
+            return
 
         item_data = ItemData(
             obj,

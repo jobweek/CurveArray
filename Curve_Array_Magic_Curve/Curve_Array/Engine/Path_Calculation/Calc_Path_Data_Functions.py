@@ -10,7 +10,7 @@ from Curve_Array_Magic_Curve.General_Functions.Functions import (
     midle_point_calc,
     calc_vec,
 )
-from....Errors.Errors import show_message_box, CancelError
+from....Errors.Errors import show_message_box, CancelError, LoopEnd
 
 
 def _project_vec(direction: Vector, normal: Vector) -> Vector:
@@ -107,26 +107,20 @@ def _searched_distance_cyclic(searched_distance: Decimal, path_length: Decimal) 
 
 def _get_path_distance(self, index: int, ratio: float, searched_length: float) -> int:
 
-    path_distance = self.interpolated_segment_distance[index] + self.interpolated_segment[index].length * ratio
-    path_distance -= (self.interpolated_segment[index].length - searched_length)
+    path_distance = self.interpolated_segment_distance[index] + self.interpolated_segment[index].length * (ratio - 1)
+    path_distance += searched_length
+
     return path_distance
 
 
-def _get_index_and_ratio(index: int, element_count: int, cyclic: bool) -> tuple[int, float]:
+def _get_index_and_ratio(index: int, element_count: int) -> tuple[int, float]:
 
     if index >= element_count:
-        if cyclic:
-            ratio = 0
-            index = index % element_count
-        else:
-            ratio = index - (element_count - 1)
-            index = element_count - 1
+        ratio = index - (element_count - 1)
+        index = element_count - 1
     elif index < 0:
-        if cyclic:
-            ratio = 0
-        else:
-            ratio = -index
-            index = 0
+        ratio = -index
+        index = 0
     else:
         ratio = 0
 
@@ -198,7 +192,7 @@ def _get_element_and_length(self, searched_distance: Decimal, cyclic: bool) -> t
     return element, searched_length
 
 
-def _calc_start_co_vec(element: InterpolatedSegment, ratio: float, start_co: Vector) -> Vector:
+def _calc_range_vec(element: InterpolatedSegment, ratio: float, start_co: Vector) -> Vector:
 
     vec_co = element.start_co + element.direction * ratio
 
@@ -218,6 +212,22 @@ def _get_index(self, pivot_distance: Decimal) -> int:
     index = np.searchsorted(self.interpolated_segment_distance, searched_distance, side='left')
 
     return index
+
+
+def _calc_normal_vec(start_normal_vec: Vector, start_direct_vec: Vector, direction_vec: Vector) -> Vector:
+
+    dot = start_normal_vec.dot(direction_vec)
+
+    if dot > 0.99998:
+        normal_vec = -start_direct_vec
+    elif dot < -0.99998:
+        normal_vec = start_direct_vec
+    elif 0.00002 > dot > -0.00002:
+        normal_vec = start_normal_vec
+    else:
+        normal_vec = _project_vec(direction_vec, start_normal_vec)
+
+    return normal_vec
 
 
 class PathData:
@@ -247,46 +257,129 @@ class PathData:
         else:
             return element.get_data_by_length(searched_length)
 
+    def get_data_by_origin_cyclic(
+        self, searched_distance: Decimal, pivot: float
+    ) -> tuple[Vector, Vector, Vector, Decimal]:
+
+        element_count = len(self.interpolated_segment)
+        path_length = Decimal(self.interpolated_segment_distance[-1])
+
+        searched_distance = _searched_distance_cyclic(
+            searched_distance, Decimal(self.interpolated_segment_distance[-1])
+        )
+
+        element, searched_length = _get_element_and_length(self, searched_distance, False)
+        start_co, start_direct_vec, start_normal_vec = element.get_data_by_length(searched_length)
+
+        pivot_distance = _searched_distance_cyclic(searched_distance + Decimal(pivot), path_length)
+
+        if element_count == 1 and pivot_distance < searched_distance:
+            raise LoopEnd
+
+        start_index = _get_index(self, pivot_distance)
+        stop_index = 0
+
+        while True:
+
+            if start_index >= element_count:
+                index = start_index % element_count
+            elif start_index < 0:
+                index = element_count - (start_index % element_count)
+            else:
+                index = start_index
+
+            element: InterpolatedSegment = self.interpolated_segment[index]
+
+            try:
+                first_vec = _calc_range_vec(element, 0, start_co)
+            except AssertionError:
+                searched_length = pivot
+                direction_vec = _calc_direction_vec(element, 0, searched_length, start_co)
+                path_distance = _get_path_distance(self, index, 0, searched_length)
+                normal_vec = _calc_normal_vec(start_normal_vec, start_direct_vec, direction_vec)
+
+                return start_co, direction_vec, normal_vec, Decimal(path_distance)
+
+            try:
+                second_vec = _calc_range_vec(element, 1, start_co)
+            except AssertionError:
+                raise LoopEnd
+
+            if first_vec.length > pivot and (first_vec.normalized() @ second_vec.normalized() > -0.99998):
+                raise LoopEnd
+
+            if pivot < second_vec.length:
+                searched_length = _calc_length_by_pivot(first_vec, second_vec, pivot)
+                direction_vec = _calc_direction_vec(element, 0, searched_length, start_co)
+                path_distance = _get_path_distance(self, index, 0, searched_length)
+                normal_vec = _calc_normal_vec(start_normal_vec, start_direct_vec, direction_vec)
+
+                return start_co, direction_vec, normal_vec, Decimal(path_distance)
+
+            stop_index += 1
+            if stop_index >= element_count:
+                raise LoopEnd
+            start_index += 1
+
     def get_data_by_origin(
-        self, searched_distance: Decimal, pivot: float, cyclic: bool
+        self, searched_distance: Decimal, pivot: float
                            ) -> tuple[Vector, Vector, Vector, Decimal]:
 
-        element, searched_length = _get_element_and_length(self, searched_distance, cyclic)
-        start_co, _, normal_vec = element.get_data_by_length(searched_length)
+        element_count = len(self.interpolated_segment)
+        path_length = Decimal(self.interpolated_segment_distance[-1])
 
-        if cyclic:
-            pivot_distance = _searched_distance_cyclic(
-                searched_distance + Decimal(pivot), Decimal(self.interpolated_segment_distance[-1])
-            )
-        else:
-            pivot_distance = searched_distance + Decimal(pivot)
+        element, searched_length = _get_element_and_length(self, searched_distance, False)
+        start_co, start_direct_vec, start_normal_vec = element.get_data_by_length(searched_length)
 
-            if pivot_distance < 0 or pivot_distance > self.interpolated_segment_distance[-1]:
+        pivot_distance = searched_distance + Decimal(pivot)
 
-                element, searched_length = _get_element_and_length(self, pivot_distance, False)
-                direction_co = element.get_co_by_length(searched_length)
-                direction_vec = calc_vec(start_co, direction_co, True)
+        if pivot_distance < Decimal(0) or pivot_distance > path_length:
 
-                return start_co, direction_vec, normal_vec, Decimal(pivot_distance)
+            element, searched_length = _get_element_and_length(self, pivot_distance, False)
+            direction_vec = _calc_direction_vec(element, 0, searched_length, start_co)
+            normal_vec = _calc_normal_vec(start_normal_vec, start_direct_vec, direction_vec)
+
+            return start_co, direction_vec, normal_vec, Decimal(pivot_distance)
 
         start_index = _get_index(self, pivot_distance)
 
         while True:
 
-            index, ratio = _get_index_and_ratio(start_index, len(self.interpolated_segment), cyclic)
+            if start_index >= element_count:
+                ratio = start_index - (element_count - 1)
+                index = element_count - 1
+            elif start_index < 0:
+                ratio = -start_index
+                index = 0
+            else:
+                ratio = 0
+                index = start_index
+
             element: InterpolatedSegment = self.interpolated_segment[index]
-            second_vec = _calc_start_co_vec(element, ratio + 1, start_co)
 
-            if pivot < second_vec.length:
-
-                try:
-                    first_vec = _calc_start_co_vec(element, ratio, start_co)
-                    searched_length = _calc_length_by_pivot(first_vec, second_vec, pivot)
-                except AssertionError:
-                    searched_length = pivot
-
+            try:
+                first_vec = _calc_range_vec(element, ratio, start_co)
+            except AssertionError:
+                searched_length = pivot
                 direction_vec = _calc_direction_vec(element, ratio, searched_length, start_co)
                 path_distance = _get_path_distance(self, index, ratio, searched_length)
+                normal_vec = _calc_normal_vec(start_normal_vec, start_direct_vec, direction_vec)
+
+                return start_co, direction_vec, normal_vec, Decimal(path_distance)
+
+            try:
+                second_vec = _calc_range_vec(element, ratio + 1, start_co)
+            except AssertionError:
+                raise LoopEnd
+
+            if first_vec.length > pivot and (first_vec.normalized() @ second_vec.normalized() > -0.99998):
+                raise LoopEnd
+
+            if pivot < second_vec.length:
+                searched_length = _calc_length_by_pivot(first_vec, second_vec, pivot)
+                direction_vec = _calc_direction_vec(element, ratio, searched_length, start_co)
+                path_distance = _get_path_distance(self, index, ratio, searched_length)
+                normal_vec = _calc_normal_vec(start_normal_vec, start_direct_vec, direction_vec)
 
                 return start_co, direction_vec, normal_vec, Decimal(path_distance)
 
@@ -404,18 +497,6 @@ def _calc_vert_data(index: int, verts) -> tuple[Vector, Vector]:
     return mid_point_co, normal
 
 
-def __project_vec(direction: Vector, normal: Vector) -> Vector:
-
-    dot = normal.dot(direction)
-
-    if dot > 0.99998 or dot < -0.99998:
-        raise AssertionError
-    elif 0.00002 > dot > -0.00002:
-        return normal
-    else:
-        return (normal - normal.project(direction)).normalized()
-
-
 def _calc_segment_data(fisrt_point: tuple[Vector, Vector], second_point: tuple[Vector, Vector]
                        ) -> tuple[float, InterpolatedSegment]:
 
@@ -423,8 +504,8 @@ def _calc_segment_data(fisrt_point: tuple[Vector, Vector], second_point: tuple[V
 
     length = direction.length
 
-    first_normal = __project_vec(direction, fisrt_point[1]).normalized()
-    second_normal = __project_vec(direction, second_point[1]).normalized()
+    first_normal = _project_vec(direction.normalized(), fisrt_point[1]).normalized()
+    second_normal = _project_vec(direction.normalized(), second_point[1]).normalized()
 
     segment = InterpolatedSegment(fisrt_point[0], direction, length, (first_normal, second_normal))
 
@@ -443,6 +524,11 @@ def arr_size_calc(verts, curve) -> int:
 
 
 def _calc_smooth_direction(interpolated_segments_arr: np.ndarray, start_range: int, end_range: int,):
+
+    if start_range == end_range:
+        interpolated_segments_arr[start_range].direction_smooth = \
+            interpolated_segments_arr[start_range].direction_normalized
+        return
 
     interpolated_segments_arr[start_range].direction_smooth = (
         interpolated_segments_arr[start_range].direction_normalized,

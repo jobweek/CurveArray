@@ -2,7 +2,10 @@ import bpy  # type: ignore
 
 
 class CancelError(Exception):
+    pass
 
+
+class LoopEnd(Exception):
     pass
 
 
