@@ -27,9 +27,9 @@ def fill_by_size_manager(params: ArrayPrams, path_data: PathData, queue_data: Qu
     searched_distance = start_offset
     prev_pos_dim = Decimal(0)
 
-    for i in range(params.max_count):
+    for i in range(params.count):
 
-        obj_name, ghost, _, queue_transform = queue_data.next()
+        obj_name, ghost, _, queue_transform = queue_data.get_by_index(i)
 
         obj = get_object_by_name(obj_name)
 
@@ -59,7 +59,6 @@ def fill_by_size_manager(params: ArrayPrams, path_data: PathData, queue_data: Qu
         )
 
         item_data = ItemData(
-            obj,
             ghost,
             co,
             direction,

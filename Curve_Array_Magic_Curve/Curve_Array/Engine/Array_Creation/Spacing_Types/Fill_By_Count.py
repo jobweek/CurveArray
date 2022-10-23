@@ -48,8 +48,7 @@ def fill_by_count_manager(params: ArrayPrams, path_data: PathData, queue_data: Q
 
     for i in range(params.count):
 
-        obj_name, ghost, _, queue_transform = queue_data.next()
-
+        obj_name, ghost, _, queue_transform = queue_data.get_by_index(i)
         obj = get_object_by_name(obj_name)
 
         total_transform = calc_total_transform(obj, params.array_transform, queue_transform)
@@ -61,7 +60,6 @@ def fill_by_count_manager(params: ArrayPrams, path_data: PathData, queue_data: Q
         )
 
         item_data = ItemData(
-            obj,
             ghost,
             co,
             direction,

@@ -1,7 +1,7 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
 from math import pi, sin, asin
-from mathutils import Vector
+from mathutils import Vector  # type: ignore
 from decimal import Decimal, getcontext
 import numpy as np
 from typing import Iterator, Union

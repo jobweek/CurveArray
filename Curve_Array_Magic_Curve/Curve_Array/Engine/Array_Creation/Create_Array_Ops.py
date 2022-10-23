@@ -12,7 +12,7 @@ class CURVEARRAY_OT_create_array(bpy.types.Operator):
     bl_idname = 'curvearray.create_array'
     bl_options = {'REGISTER', 'UNDO'}
 
-    def update_func(self, _):
+    def update_func_random_seed(self, _):
         self.calculate_queue_data = True
 
     calculate_path_data: bpy.props.BoolProperty(
@@ -32,7 +32,7 @@ class CURVEARRAY_OT_create_array(bpy.types.Operator):
         description="Random Seed",
         default=0,
         min=0,
-        update=update_func,
+        update=update_func_random_seed,
         )
 
     spacing_type: bpy.props.EnumProperty(
@@ -71,8 +71,9 @@ class CURVEARRAY_OT_create_array(bpy.types.Operator):
     count: bpy.props.IntProperty(
         name="count",
         description="Count of objects on the path",
-        default=1,
+        default=10,
         min=1,
+        soft_max=100,
         )
 
     step_offset: bpy.props.FloatProperty(
@@ -87,22 +88,6 @@ class CURVEARRAY_OT_create_array(bpy.types.Operator):
         description="Size Offset",
         default=1,
         min=0,
-        )
-
-    max_count: bpy.props.IntProperty(
-        name="max_count",
-        description="Max Count of objects on the path",
-        default=100,
-        min=1,
-        soft_max=1000,
-        )
-
-    max_count_pivot: bpy.props.IntProperty(
-        name="max_count_pivot",
-        description="Max Count of objects on the path",
-        default=10,
-        min=1,
-        soft_max=100,
         )
 
     start_offset: bpy.props.FloatProperty(
@@ -270,8 +255,6 @@ class CURVEARRAY_OT_create_array(bpy.types.Operator):
                 count=self.count,
                 step_offset=self.step_offset,
                 size_offset=self.size_offset,
-                max_count=self.max_count,
-                max_count_pivot=self.max_count_pivot,
                 start_offset=self.start_offset,
                 end_offset=self.end_offset,
                 slide=self.slide,

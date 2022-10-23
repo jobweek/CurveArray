@@ -1,6 +1,6 @@
 import bpy  # type: ignore
 from typing import Any
-from mathutils import Vector, Matrix
+from mathutils import Vector, Matrix  # type: ignore
 from Curve_Array_Magic_Curve.Curve_Array.Property.Get_Property_Path import get_curve_props, get_queue_props
 from Curve_Array_Magic_Curve.Errors.Errors import show_message_box, CancelError
 
@@ -62,36 +62,6 @@ def align_obj(obj: Any, direction: Vector, normal: Vector, rail_axis: str, norma
 def move_obj(obj: Any, co: Vector):
 
     obj.location = co
-
-
-def clone_obj(obj: Any, cloning_type: str, collection) -> Any:
-
-    if cloning_type == '0':
-        duplicate = obj.copy()
-        duplicate.data = obj.data.copy()
-
-        if obj.animation_data:
-            duplicate.animation_data.action = obj.animation_data.action.copy()
-
-    elif cloning_type == '1':
-        duplicate = obj.copy()
-    else:
-        duplicate = bpy.data.objects.new(obj.name, obj.data)
-
-    collection.objects.link(duplicate)
-
-    return duplicate
-
-
-def create_collection(parent=None):
-    collection = bpy.data.collections.new("CurveArray")
-
-    if parent is None:
-        bpy.context.scene.collection.children.link(collection)
-    else:
-        parent.children.link(collection)
-
-    return collection
 
 
 def start_check():

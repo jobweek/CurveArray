@@ -1,7 +1,6 @@
 import bpy  # type: ignore
 import numpy as np
 from typing import Any
-from itertools import cycle
 from math import radians
 from Curve_Array_Magic_Curve.Errors.Errors import CancelError
 from ..General_Data_Classes import ItemTransform, QueueItem
@@ -37,12 +36,6 @@ class QueueData:
     def __init__(self, random_seed: int):
         self.queue_list = _get_queue_data(random_seed)
         self.queue_loop = None
-
-    def prepare_queue_loop(self):
-        self.queue_loop = cycle(self.queue_list)
-
-    def next(self) -> QueueItem:
-        return next(self.queue_loop)
 
     def get_by_index(self, index) -> QueueItem:
         try:
@@ -222,6 +215,9 @@ def _get_queue_data(random_seed: int) -> list[QueueItem]:
                 ))
 
                 queue_len += 1
+
+                if queue_len >= queue_repit:
+                    break
 
     if len(queue_list) == 0:
         raise CancelError

@@ -1,5 +1,5 @@
 from typing import Any, NamedTuple
-from mathutils import Vector, Matrix
+from mathutils import Vector, Matrix  # type: ignore
 
 
 class ItemTransform(NamedTuple):
@@ -25,7 +25,6 @@ class QueueItem(NamedTuple):
 
 class ItemData(NamedTuple):
 
-    obj: Any
     ghost: bool
     co: Vector
     direction: Vector
@@ -58,8 +57,6 @@ class ArrayPrams(NamedTuple):
     count: int
     step_offset: float
     size_offset: float
-    max_count: int
-    max_count_pivot: int
     start_offset: float
     end_offset: float
     slide: float

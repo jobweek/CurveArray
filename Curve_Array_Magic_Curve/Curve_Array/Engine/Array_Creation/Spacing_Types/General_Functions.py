@@ -2,7 +2,7 @@ import bpy  # type: ignore
 import bmesh  # type: ignore
 from typing import Any
 import numpy as np
-from mathutils import Matrix, Vector, Euler
+from mathutils import Matrix, Vector, Euler  # type: ignore
 from Curve_Array_Magic_Curve.Curve_Array.Engine.General_Data_Classes import ArrayTransform, ItemTransform
 from Curve_Array_Magic_Curve.Errors.Errors import show_message_box, CancelError
 

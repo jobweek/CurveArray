@@ -19,7 +19,7 @@ def fill_by_offset_manager(params: ArrayPrams, path_data: PathData, queue_data: 
     start_offset = Decimal(params.start_offset)
     end_offset = Decimal(params.end_offset)
     step = Decimal(params.step_offset)
-    max_count = params.max_count - 1
+    max_count = params.count - 1
 
     if params.consider_size:
 
@@ -45,7 +45,7 @@ def fill_by_offset_manager(params: ArrayPrams, path_data: PathData, queue_data: 
         if i == max_count:
             break
 
-        obj_name, ghost, _, queue_transform = queue_data.next()
+        obj_name, ghost, _, queue_transform = queue_data.get_by_index(i)
 
         obj = get_object_by_name(obj_name)
 
@@ -65,7 +65,6 @@ def fill_by_offset_manager(params: ArrayPrams, path_data: PathData, queue_data: 
         )
 
         item_data = ItemData(
-            obj,
             ghost,
             co,
             direction,

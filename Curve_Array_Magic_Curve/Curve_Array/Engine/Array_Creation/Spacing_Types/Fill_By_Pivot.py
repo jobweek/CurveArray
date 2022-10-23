@@ -17,12 +17,12 @@ def fill_by_pivot_manager(params: ArrayPrams, path_data: PathData, queue_data: Q
 
     searched_distance = Decimal(params.slide)
 
-    for i in range(params.max_count_pivot):
+    for i in range(params.count):
 
-        if i == params.max_count_pivot:
+        if i == params.count:
             break
 
-        obj_name, ghost, pivot, queue_transform = queue_data.next()
+        obj_name, ghost, pivot, queue_transform = queue_data.get_by_index(i)
 
         obj = get_object_by_name(obj_name)
 
@@ -44,7 +44,6 @@ def fill_by_pivot_manager(params: ArrayPrams, path_data: PathData, queue_data: Q
             return
 
         item_data = ItemData(
-            obj,
             ghost,
             co,
             direction,

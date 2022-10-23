@@ -1,5 +1,6 @@
 import bpy  # type: ignore
 from .Instant_Data_Props import (
+    InstantObjectList,
     InstantQueueData,
     InstantPathData,
     InstantData,
@@ -79,6 +80,7 @@ registaration_order = (
                 Queue,
                 WMProperty,
             ObjectEditorData,
+                InstantObjectList,
                 InstantQueueData,
                 InstantPathData,
             InstantData,
