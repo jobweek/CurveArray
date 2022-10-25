@@ -2,12 +2,12 @@ import bpy  # type: ignore
 from decimal import Decimal, getcontext
 from typing import Iterator
 from .General_Functions import get_object_by_name, calc_total_transform, get_bb_offset
-from ...General_Data_Classes import ItemData, ArrayPrams
+from ...General_Data_Classes import ItemData, UpdateArrayPrams
 from ...Path_Calculation.Calc_Path_Data_Functions import PathData
 from ...Queue_Calculation.Calc_Queue_Data_Functions import QueueData
 
 
-def fill_by_count_manager(params: ArrayPrams, path_data: PathData, queue_data: QueueData) -> Iterator[ItemData]:
+def fill_by_count_manager(params: UpdateArrayPrams, path_data: PathData, queue_data: QueueData) -> Iterator[ItemData]:
 
     getcontext().prec = 60
 

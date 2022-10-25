@@ -25,6 +25,7 @@ from .Curve_Array.Property.General_Props import (
     CurveArrayProps,
 )
 from .Curve_Array.Engine.Array_Creation.Create_Array_Ops import CURVEARRAY_OT_create_array
+from .Curve_Array.Engine.Array_Creation.Update_Array_Ops import CURVEARRAY_OT_update_array
 
 from .Curve_Array.Curve_Editor.Ops.Set_Curve_Ops import CURVEARRAY_OT_set_curve
 from .Curve_Array.Curve_Editor.Ops.Clear_Curve_Ops import CURVEARRAY_OT_clear_curve
@@ -59,6 +60,7 @@ from .Magic_Curve.Panels.Curve_Methods_Panel import MAGICCURVE_PT_curve_methods_
 
 classes = (
     CURVEARRAY_OT_create_array,
+    CURVEARRAY_OT_update_array,
 
     CURVEARRAY_OT_set_curve,
     CURVEARRAY_OT_clear_curve,

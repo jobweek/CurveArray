@@ -1,43 +1,16 @@
 import bpy  # type: ignore
+import traceback
 from math import radians
-from ..Engine.Array_Creation.Update_Array import update_array_manager
-from ..Engine.General_Data_Classes import UpdateArrayPrams, ArrayTransform
+from Curve_Array_Magic_Curve.Errors.Errors import CancelError, show_message_box
+from .Update_Array import update_array_manager
+from ..General_Data_Classes import ArrayTransform, UpdateArrayPrams
 
 
-class ArraySettings(bpy.types.PropertyGroup):
-
-    def update_array(self, _):
-
-        array_transform = ArrayTransform(
-            rotation_x=radians(self.rotation_x),
-            rotation_y=radians(self.rotation_y),
-            rotation_z=radians(self.rotation_z),
-            location_x=self.location_x,
-            location_y=self.location_y,
-            location_z=self.location_z,
-            scale_x=self.scale_x,
-            scale_y=self.scale_y,
-            scale_z=self.scale_z,
-        )
-
-        array_params = UpdateArrayPrams(
-            spacing_type=self.spacing_type,
-            cyclic=self.cyclic,
-            smooth_normal=self.smooth_normal,
-            count=self.count,
-            step_offset=self.step_offset,
-            size_offset=self.size_offset,
-            start_offset=self.start_offset,
-            end_offset=self.end_offset,
-            slide=self.slide,
-            consider_size=self.consider_size,
-            align_rotation=self.align_rotation,
-            rail_axis=self.rail_axis,
-            normal_axis=self.normal_axis,
-            array_transform=array_transform,
-        )
-
-        update_array_manager(array_params)
+class CURVEARRAY_OT_update_array(bpy.types.Operator):
+    """Create curve along path"""
+    bl_label = "Update Array"
+    bl_idname = 'curvearray.update_array'
+    bl_options = {'REGISTER', 'UNDO'}
 
     spacing_type: bpy.props.EnumProperty(
         name="spacing_type",
@@ -222,3 +195,50 @@ class ArraySettings(bpy.types.PropertyGroup):
         soft_min=-0.9,
         soft_max=1,
     )
+
+    def execute(self, _):
+        try:
+
+            array_transform = ArrayTransform(
+                rotation_x=radians(self.rotation_x),
+                rotation_y=radians(self.rotation_y),
+                rotation_z=radians(self.rotation_z),
+                location_x=self.location_x,
+                location_y=self.location_y,
+                location_z=self.location_z,
+                scale_x=self.scale_x,
+                scale_y=self.scale_y,
+                scale_z=self.scale_z,
+            )
+
+            array_params = UpdateArrayPrams(
+                spacing_type=self.spacing_type,
+                cyclic=self.cyclic,
+                smooth_normal=self.smooth_normal,
+                count=self.count,
+                step_offset=self.step_offset,
+                size_offset=self.size_offset,
+                start_offset=self.start_offset,
+                end_offset=self.end_offset,
+                slide=self.slide,
+                consider_size=self.consider_size,
+                align_rotation=self.align_rotation,
+                rail_axis=self.rail_axis,
+                normal_axis=self.normal_axis,
+                array_transform=array_transform,
+            )
+
+            update_array_manager(array_params)
+
+            return {'FINISHED'}
+
+        except CancelError:
+
+            return {'CANCELLED'}
+
+        except (Exception,):
+
+            print(traceback.format_exc())
+            show_message_box('Unknown Error', 'Please, open console and send me report', 'ERROR')
+
+            return {'CANCELLED'}

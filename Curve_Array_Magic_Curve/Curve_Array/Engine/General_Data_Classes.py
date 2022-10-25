@@ -1,4 +1,4 @@
-from typing import Any, NamedTuple
+from typing import NamedTuple
 from mathutils import Vector, Matrix  # type: ignore
 
 
@@ -45,13 +45,18 @@ class ArrayTransform(NamedTuple):
     scale_z: float
 
 
-class ArrayPrams(NamedTuple):
+class CreateArrayPrams(NamedTuple):
 
     calculate_path_data: bool
     calculate_queue_data: bool
+    create_object_list: bool
     random_seed: int
-    spacing_type: str
     cloning_type: str
+
+
+class UpdateArrayPrams(NamedTuple):
+
+    spacing_type: str
     cyclic: bool
     smooth_normal: bool
     count: int

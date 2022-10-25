@@ -1,64 +1,56 @@
 import bpy  # type: ignore
-from .Create_Array_Functions import (
-    trasnform_obj,
-    align_obj,
-    move_obj,
-    start_check
-)
-from ..General_Data_Classes import (
-    ItemData,
-    ArrayPrams
-)
-from ...Property.Get_Property_Path import get_instant_data_props
+from math import radians
+from .Create_Array_Functions import start_check
+from ..General_Data_Classes import CreateArrayPrams, ArrayTransform, UpdateArrayPrams
+from ...Property.Get_Property_Path import get_array_settings_props
 from ..Path_Calculation.Calc_Path_Data import calc_path_data_manager
 from ..Queue_Calculation.Calc_Queue_Data import calc_queue_data_manager
 from ..Object_Creation.Create_Objects import create_objects_manager
-from .Spacing_Types.Fill_By_Count import fill_by_count_manager
-from .Spacing_Types.Fill_By_Offset import fill_by_offset_manager
-from .Spacing_Types.Fill_By_Size import fill_by_size_manager
-from .Spacing_Types.Fill_By_Pivot import fill_by_pivot_manager
-from ..Object_Creation.Create_Objects_Functions import ObjectsList
+from .Update_Array import update_array_manager
 
 
-def crete_array_manager(params: ArrayPrams):
-
+def crete_array_manager(params: CreateArrayPrams):
+    print(f'CREATE ARRAY')
+    settings = get_array_settings_props()
     start_check()
 
     if params.calculate_path_data:
         calc_path_data_manager()
-    path_data = get_instant_data_props().path_data.get()
 
     if params.calculate_queue_data:
         calc_queue_data_manager(params.random_seed)
-        create_objects_manager(params.count, params.cloning_type)
+        create_objects_manager(settings.count, params.cloning_type)
 
-    queue_data = get_instant_data_props().queue_data.get()
-    object_list: ObjectsList = get_instant_data_props().object_list.get()
-    object_list.check_count(params.count)
+    if params.create_object_list:
+        create_objects_manager(settings.count, params.cloning_type)
 
-    if params.spacing_type == '0':
-        gen = fill_by_count_manager(params, path_data, queue_data)
-    elif params.spacing_type == '1':
-        gen = fill_by_offset_manager(params, path_data, queue_data)
-    elif params.spacing_type == '2':
-        gen = fill_by_size_manager(params, path_data, queue_data)
-    else:
-        gen = fill_by_pivot_manager(params, path_data, queue_data)
+    array_transform = ArrayTransform(
+        rotation_x=radians(settings.rotation_x),
+        rotation_y=radians(settings.rotation_y),
+        rotation_z=radians(settings.rotation_z),
+        location_x=settings.location_x,
+        location_y=settings.location_y,
+        location_z=settings.location_z,
+        scale_x=settings.scale_x,
+        scale_y=settings.scale_y,
+        scale_z=settings.scale_z,
+    )
 
-    i = 0
-    while True:
-        try:
-            item_data: ItemData = next(gen)
+    array_params = UpdateArrayPrams(
+        spacing_type=settings.spacing_type,
+        cyclic=settings.cyclic,
+        smooth_normal=settings.smooth_normal,
+        count=settings.count,
+        step_offset=settings.step_offset,
+        size_offset=settings.size_offset,
+        start_offset=settings.start_offset,
+        end_offset=settings.end_offset,
+        slide=settings.slide,
+        consider_size=settings.consider_size,
+        align_rotation=settings.align_rotation,
+        rail_axis=settings.rail_axis,
+        normal_axis=settings.normal_axis,
+        array_transform=array_transform,
+    )
 
-            obj: bpy.types.Object = object_list.get_obj_by_index(i)
-
-            move_obj(obj, item_data.co)
-            trasnform_obj(obj,  item_data.total_transform)
-
-            if params.align_rotation:
-                align_obj(obj, item_data.direction, item_data.normal, params.rail_axis, params.normal_axis)
-
-            i += 1
-
-        except StopIteration:
-            break
+    update_array_manager(array_params)

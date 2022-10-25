@@ -27,10 +27,9 @@ class CURVEARRAY_PT_array_settings_panel(bpy.types.Panel):
         row.label(text="Count:", icon='MOD_ARRAY')
         row.prop(array_set_props, "count", text="")
 
-        oper = layout.row().operator('curvearray.create_array')
+        row = layout.row()
+        oper = row.operator('curvearray.create_array')
         oper.calculate_path_data = True
         oper.calculate_queue_data = True
-        oper.spacing_type = array_set_props.spacing_type
-        oper.count = array_set_props.count
 
-
+        row.operator('curvearray.update_array')

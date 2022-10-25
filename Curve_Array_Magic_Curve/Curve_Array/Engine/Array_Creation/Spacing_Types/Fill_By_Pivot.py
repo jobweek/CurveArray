@@ -1,7 +1,7 @@
 import bpy  # type: ignore
 from typing import Iterator
 from decimal import Decimal, getcontext
-from ...General_Data_Classes import ItemData, ArrayPrams
+from ...General_Data_Classes import ItemData, UpdateArrayPrams
 from ...Path_Calculation.Calc_Path_Data_Functions import PathData
 from ...Queue_Calculation.Calc_Queue_Data_Functions import QueueData
 from .General_Functions import (
@@ -11,7 +11,7 @@ from .General_Functions import (
 from .....Errors.Errors import LoopEnd
 
 
-def fill_by_pivot_manager(params: ArrayPrams, path_data: PathData, queue_data: QueueData) -> Iterator[ItemData]:
+def fill_by_pivot_manager(params: UpdateArrayPrams, path_data: PathData, queue_data: QueueData) -> Iterator[ItemData]:
 
     getcontext().prec = 60
 

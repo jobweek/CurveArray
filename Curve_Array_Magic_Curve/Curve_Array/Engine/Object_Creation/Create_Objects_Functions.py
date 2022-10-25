@@ -5,18 +5,19 @@ from ..General_Data_Classes import QueueItem
 from ..Array_Creation.Spacing_Types.General_Functions import get_object_by_name
 
 
-def create_collection(parent=None):
-    collection = bpy.data.collections.new("CurveArray")
+def create_collection(parent=None) -> str:
 
     if parent is None:
+        collection = bpy.data.collections.new("CurveArray")
         bpy.context.scene.collection.children.link(collection)
     else:
+        collection = bpy.data.collections.new("GhostObjects")
         parent.children.link(collection)
 
-    return collection
+    return collection.name
 
 
-def clone_obj(obj: bpy.types.Object, cloning_type: str, collection) -> bpy.types.Object:
+def clone_obj(obj: bpy.types.Object, cloning_type: str, collection: str) -> bpy.types.Object:
 
     if cloning_type == '0':
         duplicate = obj.copy()
@@ -29,8 +30,8 @@ def clone_obj(obj: bpy.types.Object, cloning_type: str, collection) -> bpy.types
         duplicate = obj.copy()
     else:
         duplicate = bpy.data.objects.new(obj.name, obj.data)
-
-    collection.objects.link(duplicate)
+    print(bpy.data.collections.items())
+    bpy.data.collections[collection].objects.link(duplicate)
 
     return duplicate
 
@@ -40,8 +41,8 @@ class ObjectsList:
     def __init__(self, count: int, cloning_type: str):
         self.queue_data: QueueData = get_instant_data_props().queue_data.get()
         self.object_list = []
-        self.main_collection = create_collection()
-        self.ghost_collection = None
+        self.main_collection: str = create_collection()
+        self.ghost_collection: None or str = None
         self.count = count
         self.cloning_type = cloning_type
 
