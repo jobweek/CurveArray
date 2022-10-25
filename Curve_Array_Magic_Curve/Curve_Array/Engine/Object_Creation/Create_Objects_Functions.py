@@ -30,7 +30,7 @@ def clone_obj(obj: bpy.types.Object, cloning_type: str, collection: str) -> bpy.
         duplicate = obj.copy()
     else:
         duplicate = bpy.data.objects.new(obj.name, obj.data)
-    print(bpy.data.collections.items())
+
     bpy.data.collections[collection].objects.link(duplicate)
 
     return duplicate

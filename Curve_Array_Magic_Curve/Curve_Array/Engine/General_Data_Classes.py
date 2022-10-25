@@ -50,8 +50,6 @@ class CreateArrayPrams(NamedTuple):
     calculate_path_data: bool
     calculate_queue_data: bool
     create_object_list: bool
-    random_seed: int
-    cloning_type: str
 
 
 class UpdateArrayPrams(NamedTuple):

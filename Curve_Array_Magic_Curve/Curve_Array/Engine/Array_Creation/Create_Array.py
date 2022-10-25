@@ -18,11 +18,10 @@ def crete_array_manager(params: CreateArrayPrams):
         calc_path_data_manager()
 
     if params.calculate_queue_data:
-        calc_queue_data_manager(params.random_seed)
-        create_objects_manager(settings.count, params.cloning_type)
+        calc_queue_data_manager(settings.random_seed)
 
     if params.create_object_list:
-        create_objects_manager(settings.count, params.cloning_type)
+        create_objects_manager(settings.count, settings.cloning_type)
 
     array_transform = ArrayTransform(
         rotation_x=radians(settings.rotation_x),

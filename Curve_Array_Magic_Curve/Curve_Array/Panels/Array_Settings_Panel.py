@@ -28,8 +28,6 @@ class CURVEARRAY_PT_array_settings_panel(bpy.types.Panel):
         row.prop(array_set_props, "count", text="")
 
         row = layout.row()
-        oper = row.operator('curvearray.create_array')
-        oper.calculate_path_data = True
-        oper.calculate_queue_data = True
+        row.operator('curvearray.create_array')
 
         row.operator('curvearray.update_array')

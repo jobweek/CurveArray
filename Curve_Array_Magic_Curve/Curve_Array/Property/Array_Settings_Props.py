@@ -1,10 +1,31 @@
 import bpy  # type: ignore
 from math import radians
 from ..Engine.Array_Creation.Update_Array import update_array_manager
-from ..Engine.General_Data_Classes import UpdateArrayPrams, ArrayTransform
+from ..Engine.Array_Creation.Create_Array import crete_array_manager
+from ..Engine.General_Data_Classes import CreateArrayPrams, UpdateArrayPrams, ArrayTransform
 
 
 class ArraySettings(bpy.types.PropertyGroup):
+
+    def create_array(self, _):
+
+        array_params = CreateArrayPrams(
+                calculate_path_data=False,
+                calculate_queue_data=True,
+                create_object_list=True,
+            )
+
+        crete_array_manager(array_params)
+
+    def create_array_object_update(self, _):
+
+        array_params = CreateArrayPrams(
+                calculate_path_data=False,
+                calculate_queue_data=False,
+                create_object_list=True,
+            )
+
+        crete_array_manager(array_params)
 
     def update_array(self, _):
 
@@ -39,6 +60,34 @@ class ArraySettings(bpy.types.PropertyGroup):
 
         update_array_manager(array_params)
 
+    random_seed: bpy.props.IntProperty(
+        name="random_seed",
+        description="Random Seed",
+        default=0,
+        min=0,
+        update=create_array,
+        )
+
+    cloning_type: bpy.props.EnumProperty(
+        name="cloning_type",
+        description="Select type of cloning",
+        items=[
+            ('0', "Copy", "Every object is unique"),
+            ('1', "Semi Instance", "All objects use main object data, but have a custom modifiers"),
+            ('2', "Full Instance", "All objects use main object data"),
+        ],
+        update=create_array_object_update,
+        )
+
+    count: bpy.props.IntProperty(
+        name="count",
+        description="Count of objects on the path",
+        default=10,
+        min=1,
+        soft_max=100,
+        update=update_array,
+        )
+
     spacing_type: bpy.props.EnumProperty(
         name="spacing_type",
         description="Type of arrangment of objects along path",
@@ -60,14 +109,6 @@ class ArraySettings(bpy.types.PropertyGroup):
         name="smooth_normal",
         description="Smooth the direction of objects on the curve?",
         default=False
-        )
-
-    count: bpy.props.IntProperty(
-        name="count",
-        description="Count of objects on the path",
-        default=10,
-        min=1,
-        soft_max=100,
         )
 
     step_offset: bpy.props.FloatProperty(
@@ -100,6 +141,7 @@ class ArraySettings(bpy.types.PropertyGroup):
         name="slide",
         description="Slide objects along path",
         default=0,
+        update=update_array,
         )
 
     consider_size: bpy.props.BoolProperty(

@@ -3,6 +3,7 @@ import traceback
 from Curve_Array_Magic_Curve.Errors.Errors import CancelError, show_message_box
 from .Create_Array import crete_array_manager
 from ..General_Data_Classes import CreateArrayPrams
+from ...Property.Get_Property_Path import get_array_settings_props
 
 
 class CURVEARRAY_OT_create_array(bpy.types.Operator):
@@ -11,83 +12,49 @@ class CURVEARRAY_OT_create_array(bpy.types.Operator):
     bl_idname = 'curvearray.create_array'
     bl_options = {'REGISTER', 'UNDO'}
 
-    def update_func_random_seed(self, _):
-        self.calculate_queue_data = True
-
-    def update_func_cloning_type(self, _):
-        self.create_object_list = True
-
-    calculate_path_data: bpy.props.BoolProperty(
-        name="calculate_path_data",
-        description="",
-        default=False
-        )
-
-    calculate_queue_data: bpy.props.BoolProperty(
-        name="calculate_queue_data",
-        description="",
-        default=False
-        )
-
-    create_object_list: bpy.props.BoolProperty(
-        name="create_object_list",
-        description="",
-        default=False
-        )
-
-    random_seed: bpy.props.IntProperty(
-        name="random_seed",
-        description="Random Seed",
-        default=0,
-        min=0,
-        update=update_func_random_seed,
-        )
-
-    cloning_type: bpy.props.EnumProperty(
-        name="cloning_type",
-        description="Select type of cloning",
-        items=[
-            ('0', "Copy", "Every object is unique"),
-            ('1', "Semi Instance", "All objects use main object data, but have a custom modifiers"),
-            ('2', "Full Instance", "All objects use main object data"),
-        ],
-        update=update_func_cloning_type,
-        )
-
     def draw(self, _):
 
         layout = self.layout
+        sett = get_array_settings_props()
 
-        row = layout.row()
-        row.prop(self, 'random_seed', text='')
-        row = layout.row()
-        row.prop(self, 'cloning_type', text='')
+        split = layout.box().split(factor=0.5)
+        left_side = split.column()
+        right_side = split.column()
+
+        left_side.row().label(text='Random Seed:')
+        right_side.row().prop(sett, 'random_seed', text='')
+
+        left_side.row().label(text='Cloning Type:')
+        right_side.row().prop(sett, 'cloning_type', text='')
+
+        left_side.row().label(text='Count:')
+        right_side.row().prop(sett, 'count', text='')
+
+        left_side.row().label(text='Slide:')
+        right_side.row().prop(sett, 'slide', text='')
 
     def execute(self, _):
+        return {'FINISHED'}
+
+    def invoke(self, context, _):
+
         try:
 
             array_params = CreateArrayPrams(
-                calculate_path_data=self.calculate_path_data,
-                calculate_queue_data=self.calculate_queue_data,
-                create_object_list=self.create_object_list,
-                random_seed=self.random_seed,
-                cloning_type=self.cloning_type,
+                calculate_path_data=True,
+                calculate_queue_data=True,
+                create_object_list=True,
             )
 
             crete_array_manager(array_params)
 
-            self.calculate_path_data = False
-            self.calculate_queue_data = False
-
-            return {'FINISHED'}
-
         except CancelError:
-
-            return {'CANCELLED'}
+            pass
 
         except (Exception,):
 
             print(traceback.format_exc())
             show_message_box('Unknown Error', 'Please, open console and send me report', 'ERROR')
 
-            return {'CANCELLED'}
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self, width=216)
