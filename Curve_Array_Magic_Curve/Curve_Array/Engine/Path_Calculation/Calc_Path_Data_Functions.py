@@ -65,7 +65,7 @@ class InterpolatedSegment:
 
         return co, self.direction_normalized, normal
 
-    def get_data_by_length_smooth(self, searched_length: float) -> tuple[Vector, Vector, Vector]:
+    def get_data_by_length_smooth(self, searched_length: float, cyclic: bool) -> tuple[Vector, Vector, Vector]:
 
         ratio = searched_length / self.length
         middle_length = self.length/2
@@ -77,10 +77,10 @@ class InterpolatedSegment:
             direction = self.direction_smooth[1]
             normal = self.normal[1]
         else:
-            if searched_length < middle_length:
+            if searched_length < middle_length and (cyclic or not hasattr(self, "first")):
                 middle_ratio = 0.5 + ((searched_length / middle_length) / 2)
                 direction = self.direction_smooth[0].lerp(self.direction_normalized, middle_ratio)
-            elif searched_length > middle_length:
+            elif searched_length > middle_length and (cyclic or not hasattr(self, "last")):
                 middle_ratio = ((searched_length - middle_length) / middle_length) / 2
                 direction = self.direction_normalized.lerp(self.direction_smooth[1], middle_ratio)
             else:
@@ -253,7 +253,7 @@ class PathData:
         element, searched_length = _get_element_and_length(self, searched_distance, cyclic)
 
         if smooth_normal:
-            return element.get_data_by_length_smooth(searched_length)
+            return element.get_data_by_length_smooth(searched_length, cyclic)
         else:
             return element.get_data_by_length(searched_length)
 
@@ -586,6 +586,18 @@ def path_data_calc(verts_sequence_generator: Iterator[Union[int, None]], verts, 
             break
 
     assert i == arr_size, 'PathData, массив не заполнен'
+
+    interpolated_segments_arr[0].first = True
+    interpolated_segments_arr[0].direction_smooth = (
+        interpolated_segments_arr[-1].direction_normalized,
+        interpolated_segments_arr[1].direction_normalized
+    )
+
+    interpolated_segments_arr[-1].last = True
+    interpolated_segments_arr[-1].direction_smooth = (
+        interpolated_segments_arr[-2].direction_normalized,
+        interpolated_segments_arr[0].direction_normalized
+    )
 
     path_data = PathData(curve_name, (interpolated_segments_distance_arr, interpolated_segments_arr))
 

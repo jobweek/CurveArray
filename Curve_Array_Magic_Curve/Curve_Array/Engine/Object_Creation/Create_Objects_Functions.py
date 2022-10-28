@@ -2,7 +2,7 @@ import bpy  # type: ignore
 from ...Property.Get_Property_Path import get_instant_data_props
 from ..Queue_Calculation.Calc_Queue_Data_Functions import QueueData
 from ..General_Data_Classes import QueueItem
-from ..Array_Creation.Spacing_Types.General_Functions import get_object_by_name
+from ..Array_Creation.Spacing_Types.General_Functions import get_object_by_name, get_collection_by_name
 
 
 def create_collection(parent=None) -> str:
@@ -31,7 +31,7 @@ def clone_obj(obj: bpy.types.Object, cloning_type: str, collection: str) -> bpy.
     else:
         duplicate = bpy.data.objects.new(obj.name, obj.data)
 
-    bpy.data.collections[collection].objects.link(duplicate)
+    get_collection_by_name(collection).objects.link(duplicate)
 
     return duplicate
 
@@ -97,12 +97,19 @@ class ObjectsList:
         for i in range(-correction):
 
             obj_name: str = self.object_list.pop()
-            obj: bpy.types.Object = bpy.data.objects[obj_name]
+            obj = get_object_by_name(obj_name)
             bpy.data.objects.remove(obj, do_unlink=True)
+
+    def update_object_list(self, cloning_type, count):
+        self.queue_data: QueueData = get_instant_data_props().queue_data.get()
+        self._remove_objects(-self.count)
+        self.cloning_type = cloning_type
+        self._add_objects(count)
+        self.count = count
 
     def get_obj_by_index(self, index: int) -> bpy.types.Object:
 
         obj_name: str = self.object_list[index]
-        obj: bpy.types.Object = bpy.context.scene.objects[obj_name]
+        obj = get_object_by_name(obj_name)
 
         return obj

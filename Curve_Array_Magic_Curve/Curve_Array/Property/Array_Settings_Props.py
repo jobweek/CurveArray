@@ -1,71 +1,25 @@
 import bpy  # type: ignore
-from math import radians
-from ..Engine.Array_Creation.Update_Array import update_array_manager
-from ..Engine.Array_Creation.Create_Array import crete_array_manager
-from ..Engine.General_Data_Classes import CreateArrayPrams, UpdateArrayPrams, ArrayTransform
 
 
 class ArraySettings(bpy.types.PropertyGroup):
 
-    def create_array(self, _):
-
-        array_params = CreateArrayPrams(
-                calculate_path_data=False,
-                calculate_queue_data=True,
-                create_object_list=True,
-            )
-
-        crete_array_manager(array_params)
-
-    def create_array_object_update(self, _):
-
-        array_params = CreateArrayPrams(
-                calculate_path_data=False,
-                calculate_queue_data=False,
-                create_object_list=True,
-            )
-
-        crete_array_manager(array_params)
-
     def update_array(self, _):
+        if self.auto_update:
+            bpy.ops.curvearray.update_array()
 
-        array_transform = ArrayTransform(
-            rotation_x=radians(self.rotation_x),
-            rotation_y=radians(self.rotation_y),
-            rotation_z=radians(self.rotation_z),
-            location_x=self.location_x,
-            location_y=self.location_y,
-            location_z=self.location_z,
-            scale_x=self.scale_x,
-            scale_y=self.scale_y,
-            scale_z=self.scale_z,
+    auto_update: bpy.props.BoolProperty(
+        name="auto_update",
+        description="Automatically update an array after changing properties",
+        default=False,
+        update=update_array,
         )
-
-        array_params = UpdateArrayPrams(
-            spacing_type=self.spacing_type,
-            cyclic=self.cyclic,
-            smooth_normal=self.smooth_normal,
-            count=self.count,
-            step_offset=self.step_offset,
-            size_offset=self.size_offset,
-            start_offset=self.start_offset,
-            end_offset=self.end_offset,
-            slide=self.slide,
-            consider_size=self.consider_size,
-            align_rotation=self.align_rotation,
-            rail_axis=self.rail_axis,
-            normal_axis=self.normal_axis,
-            array_transform=array_transform,
-        )
-
-        update_array_manager(array_params)
 
     random_seed: bpy.props.IntProperty(
         name="random_seed",
         description="Random Seed",
         default=0,
         min=0,
-        update=create_array,
+        update=update_array,
         )
 
     cloning_type: bpy.props.EnumProperty(
@@ -76,7 +30,7 @@ class ArraySettings(bpy.types.PropertyGroup):
             ('1', "Semi Instance", "All objects use main object data, but have a custom modifiers"),
             ('2', "Full Instance", "All objects use main object data"),
         ],
-        update=create_array_object_update,
+        update=update_array,
         )
 
     count: bpy.props.IntProperty(
@@ -96,19 +50,22 @@ class ArraySettings(bpy.types.PropertyGroup):
             ('1', "Fill by Offset", ""),
             ('2', "Fill by Size", ""),
             ('3', "Fill by Origin", ""),
-        ]
+        ],
+        update=update_array,
     )
 
     cyclic: bpy.props.BoolProperty(
         name="cyclic",
         description="Is the array cyclic?",
-        default=False
+        default=False,
+        update=update_array,
         )
 
     smooth_normal: bpy.props.BoolProperty(
         name="smooth_normal",
         description="Smooth the direction of objects on the curve?",
-        default=False
+        default=False,
+        update=update_array,
         )
 
     step_offset: bpy.props.FloatProperty(
@@ -116,6 +73,7 @@ class ArraySettings(bpy.types.PropertyGroup):
         description="Distance between objects in the array",
         default=1,
         min=0,
+        update=update_array,
         )
 
     size_offset: bpy.props.FloatProperty(
@@ -123,18 +81,21 @@ class ArraySettings(bpy.types.PropertyGroup):
         description="Size Offset",
         default=1,
         min=0,
+        update=update_array,
         )
 
     start_offset: bpy.props.FloatProperty(
         name="start_offset",
         description="Start Offset",
         default=0,
+        update=update_array,
         )
 
     end_offset: bpy.props.FloatProperty(
         name="end_offset",
         description="End Offset",
         default=0,
+        update=update_array,
         )
 
     slide: bpy.props.FloatProperty(
@@ -147,13 +108,15 @@ class ArraySettings(bpy.types.PropertyGroup):
     consider_size: bpy.props.BoolProperty(
         name="consider_size",
         description="Take into account the size of the object",
-        default=False
+        default=False,
+        update=update_array,
         )
 
     align_rotation: bpy.props.BoolProperty(
         name="align_rotation",
         description="Align objects rotation",
-        default=True
+        default=True,
+        update=update_array,
         )
 
     rail_axis: bpy.props.EnumProperty(
@@ -166,7 +129,8 @@ class ArraySettings(bpy.types.PropertyGroup):
             ('-x', "-x", ""),
             ('-y', "-y", ""),
             ('-z', "-z", ""),
-        ]
+        ],
+        update=update_array,
         )
 
     def _normal_axis_items(self, _):
@@ -196,7 +160,8 @@ class ArraySettings(bpy.types.PropertyGroup):
     normal_axis: bpy.props.EnumProperty(
         name="normal_axis",
         description="Select normal axis",
-        items=_normal_axis_items
+        items=_normal_axis_items,
+        update=update_array,
     )
 
     rotation_x: bpy.props.FloatProperty(

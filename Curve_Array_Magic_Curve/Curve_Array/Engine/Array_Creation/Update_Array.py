@@ -15,16 +15,29 @@ from .Spacing_Types.Fill_By_Count import fill_by_count_manager
 from .Spacing_Types.Fill_By_Offset import fill_by_offset_manager
 from .Spacing_Types.Fill_By_Size import fill_by_size_manager
 from .Spacing_Types.Fill_By_Pivot import fill_by_pivot_manager
+from ..Path_Calculation.Calc_Path_Data import calc_path_data_manager
+from ..Queue_Calculation.Calc_Queue_Data import calc_queue_data_manager
 from ..Object_Creation.Create_Objects_Functions import ObjectsList
 
 
 def update_array_manager(params: UpdateArrayPrams):
-    print(f'UPDATE ARRAY')
+    print(f'UPDATE ARRAY, SLIDE: {params.slide}')
+    if params.update_path_data:
+        calc_path_data_manager()
+
     path_data: PathData = get_instant_data_props().path_data.get()
     queue_data: QueueData = get_instant_data_props().queue_data.get()
     object_list: ObjectsList = get_instant_data_props().object_list.get()
 
-    object_list.check_count(params.count)
+    if params.random_seed != queue_data.random_seed:
+        calc_queue_data_manager(params.random_seed)
+        queue_data: QueueData = get_instant_data_props().queue_data.get()
+        object_list.update_object_list(params.cloning_type, params.count)
+
+    if params.cloning_type != object_list.cloning_type:
+        object_list.update_object_list(params.cloning_type, params.count)
+    else:
+        object_list.check_count(params.count)
 
     if params.spacing_type == '0':
         gen = fill_by_count_manager(params, path_data, queue_data)

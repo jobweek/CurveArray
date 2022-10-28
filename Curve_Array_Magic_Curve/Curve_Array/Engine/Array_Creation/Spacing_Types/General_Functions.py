@@ -7,7 +7,7 @@ from Curve_Array_Magic_Curve.Curve_Array.Engine.General_Data_Classes import Arra
 from Curve_Array_Magic_Curve.Errors.Errors import show_message_box, CancelError
 
 
-def get_object_by_name(name: str) -> Any:
+def get_object_by_name(name: str) -> bpy.types.Object:
 
     try:
         obj = bpy.context.scene.objects[name]
@@ -17,6 +17,18 @@ def get_object_by_name(name: str) -> Any:
         raise CancelError
 
     return obj
+
+
+def get_collection_by_name(name: str) -> bpy.types.Collection:
+
+    try:
+        coll = bpy.data.collections[name]
+    except KeyError:
+        show_message_box("Error", f"Collection '{name}' could not be found, "
+                                  f"it has been removed from the scene or renamed.", 'ERROR')
+        raise CancelError
+
+    return coll
 
 
 def calc_total_transform(obj: Any, array_transform: ArrayTransform, item_transform: ItemTransform) -> Matrix:

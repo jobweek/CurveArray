@@ -41,7 +41,10 @@ def fill_by_count_manager(params: UpdateArrayPrams, path_data: PathData, queue_d
         step = Decimal(0)
         searched_distance = start_offset + path_length/2
     else:
-        step = path_length/Decimal(params.count - 1)
+        if params.cyclic:
+            step = path_length/Decimal(params.count)
+        else:
+            step = path_length/Decimal(params.count - 1)
         searched_distance = start_offset
 
     searched_distance += Decimal(params.slide)

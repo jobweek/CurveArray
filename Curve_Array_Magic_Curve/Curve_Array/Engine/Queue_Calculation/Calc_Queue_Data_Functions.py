@@ -35,7 +35,7 @@ class QueueData:
 
     def __init__(self, random_seed: int):
         self.queue_list = _get_queue_data(random_seed)
-        self.queue_loop = None
+        self.random_seed = random_seed
 
     def get_by_index(self, index) -> QueueItem:
         try:

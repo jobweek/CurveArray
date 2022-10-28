@@ -36,6 +36,11 @@ def crete_array_manager(params: CreateArrayPrams):
     )
 
     array_params = UpdateArrayPrams(
+        update_path_data=False,
+        update_queue_data=False,
+        update_object_data=False,
+        random_seed=settings.random_seed,
+        cloning_type=settings.cloning_type,
         spacing_type=settings.spacing_type,
         cyclic=settings.cyclic,
         smooth_normal=settings.smooth_normal,

@@ -54,6 +54,11 @@ class CreateArrayPrams(NamedTuple):
 
 class UpdateArrayPrams(NamedTuple):
 
+    update_path_data: bool
+    update_queue_data: bool
+    update_object_data: bool
+    random_seed: int
+    cloning_type: str
     spacing_type: str
     cyclic: bool
     smooth_normal: bool
