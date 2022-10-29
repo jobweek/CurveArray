@@ -13,14 +13,14 @@ def trasnform_obj(obj: Any, total_transform: Matrix):
     obj.scale = scale
 
 
-def align_obj(obj: Any, direction: Vector, normal: Vector, rail_axis: str, normal_axis: str):
+def align_obj(direction: Vector, normal: Vector, rail_axis: str, normal_axis: str) -> Matrix:
 
     if rail_axis[0] == '-':
         direction = direction * -1
     if normal_axis[0] == '-':
         normal = normal * -1
 
-    def _align(obj: Any, x_vec=None, y_vec=None, z_vec=None):
+    def _align(x_vec=None, y_vec=None, z_vec=None) -> Matrix:
 
         if x_vec is None:
             x_vec = y_vec.cross(z_vec)
@@ -35,28 +35,29 @@ def align_obj(obj: Any, direction: Vector, normal: Vector, rail_axis: str, norma
         rot_mat[1] = y_vec
         rot_mat[2] = z_vec
 
-        rot_mat_inverted = rot_mat.inverted()
-        rot_euler = rot_mat_inverted.to_euler('XYZ')  # type: ignore
+        align_matrix = Matrix.LocRotScale(
+            Vector((0, 0, 0)),
+            rot_mat.inverted(),
+            Vector((1, 1, 1)),
+        )
 
-        obj.rotation_euler.rotate(rot_euler)
+        return align_matrix
 
     if rail_axis[1] == 'x':
         if normal_axis[1] == 'y':
-            _align(obj, x_vec=direction, y_vec=normal)
+            return _align(x_vec=direction, y_vec=normal)
         else:
-            _align(obj, x_vec=direction, z_vec=normal)
+            return _align(x_vec=direction, z_vec=normal)
     elif rail_axis[1] == 'y':
         if normal_axis[1] == 'x':
-            _align(obj, x_vec=normal, y_vec=direction)
+            return _align(x_vec=normal, y_vec=direction)
         else:
-            _align(obj, y_vec=direction, z_vec=normal)
-    elif rail_axis[1] == 'z':
-        if normal_axis[1] == 'x':
-            _align(obj, x_vec=normal, z_vec=direction)
-        else:
-            _align(obj, y_vec=normal, z_vec=direction)
+            return _align(y_vec=direction, z_vec=normal)
     else:
-        raise AssertionError
+        if normal_axis[1] == 'x':
+            return _align(x_vec=normal, z_vec=direction)
+        else:
+            return _align(y_vec=normal, z_vec=direction)
 
 
 def move_obj(obj: Any, co: Vector):

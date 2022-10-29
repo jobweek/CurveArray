@@ -37,8 +37,10 @@ class CURVEARRAY_PT_array_settings_panel(bpy.types.Panel):
         left_side.row().label(text='Cyclic:')
         right_side.row().prop(sett, 'cyclic', text='')
 
-        left_side.row().label(text='Smooth Normals:')
-        right_side.row().prop(sett, 'smooth_normal', text='')
+        if sett.spacing_type != '3':
+
+            left_side.row().label(text='Smooth Normals:')
+            right_side.row().prop(sett, 'smooth_normal', text='')
 
         if sett.spacing_type == '1':
             left_side.row().label(text='Step Offset:')
@@ -70,6 +72,39 @@ class CURVEARRAY_PT_array_settings_panel(bpy.types.Panel):
         left_side.row().label(text='Normal Axis:')
         right_side.row().prop(sett, 'normal_axis', text='')
 
+        left_coll = left_side.row().column(align=True)
+        right_coll = right_side.row().column(align=True)
+
+        left_coll.row().label(text='Rotation X')
+        left_coll.row().label(text='Rotation Y')
+        left_coll.row().label(text='Rotation Z')
+
+        right_coll.row().prop(sett, 'rotation_x', text='')
+        right_coll.row().prop(sett, 'rotation_y', text='')
+        right_coll.row().prop(sett, 'rotation_z', text='')
+
+        left_coll = left_side.row().column(align=True)
+        right_coll = right_side.row().column(align=True)
+
+        left_coll.row().label(text='Location X')
+        left_coll.row().label(text='Location Y')
+        left_coll.row().label(text='Location Z')
+
+        right_coll.row().prop(sett, 'location_x', text='')
+        right_coll.row().prop(sett, 'location_y', text='')
+        right_coll.row().prop(sett, 'location_z', text='')
+
+        left_coll = left_side.row().column(align=True)
+        right_coll = right_side.row().column(align=True)
+
+        left_coll.row().label(text='Scale X')
+        left_coll.row().label(text='Scale Y')
+        left_coll.row().label(text='Scale Z')
+
+        right_coll.row().prop(sett, 'scale_x', text='')
+        right_coll.row().prop(sett, 'scale_y', text='')
+        right_coll.row().prop(sett, 'scale_z', text='')
+
         row = layout.row()
         row.label(text='Auto Update:')
         row.prop(sett, 'auto_update', text='')
@@ -77,5 +112,6 @@ class CURVEARRAY_PT_array_settings_panel(bpy.types.Panel):
         row = layout.row()
         row.operator('curvearray.create_array')
 
-        oper = row.operator('curvearray.update_array', text='Update Path')
+        oper = row.operator('curvearray.update_array', text='Update Array')
         oper.update_path_data = True
+        oper.update_queue_data = True

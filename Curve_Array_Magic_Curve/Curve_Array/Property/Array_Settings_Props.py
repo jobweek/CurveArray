@@ -49,7 +49,7 @@ class ArraySettings(bpy.types.PropertyGroup):
             ('0', "Fill by Count", ""),
             ('1', "Fill by Offset", ""),
             ('2', "Fill by Size", ""),
-            ('3', "Fill by Origin", ""),
+            ('3', "Fill by Pivot", ""),
         ],
         update=update_array,
     )
@@ -170,6 +170,7 @@ class ArraySettings(bpy.types.PropertyGroup):
         default=0,
         soft_min=-360,
         soft_max=360,
+        update=update_array,
     )
 
     rotation_y: bpy.props.FloatProperty(
@@ -178,6 +179,7 @@ class ArraySettings(bpy.types.PropertyGroup):
         default=0,
         soft_min=-360,
         soft_max=360,
+        update=update_array,
     )
 
     rotation_z: bpy.props.FloatProperty(
@@ -186,24 +188,28 @@ class ArraySettings(bpy.types.PropertyGroup):
         default=0,
         soft_min=-360,
         soft_max=360,
+        update=update_array,
     )
 
     location_x: bpy.props.FloatProperty(
         name="location_x",
         description="Location X Axis",
         default=0,
+        update=update_array,
     )
 
     location_y: bpy.props.FloatProperty(
         name="location_y",
         description="Location Y Axis",
         default=0,
+        update=update_array,
     )
 
     location_z: bpy.props.FloatProperty(
         name="location_z",
         description="Location Z Axis",
         default=0,
+        update=update_array,
     )
 
     scale_x: bpy.props.FloatProperty(
@@ -212,6 +218,7 @@ class ArraySettings(bpy.types.PropertyGroup):
         default=0,
         soft_min=-0.9,
         soft_max=1,
+        update=update_array,
     )
 
     scale_y: bpy.props.FloatProperty(
@@ -220,6 +227,7 @@ class ArraySettings(bpy.types.PropertyGroup):
         default=0,
         soft_min=-0.9,
         soft_max=1,
+        update=update_array,
     )
 
     scale_z: bpy.props.FloatProperty(
@@ -228,4 +236,5 @@ class ArraySettings(bpy.types.PropertyGroup):
         default=0,
         soft_min=-0.9,
         soft_max=1,
+        update=update_array,
     )

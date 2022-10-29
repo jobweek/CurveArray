@@ -24,12 +24,6 @@ class CURVEARRAY_OT_update_array(bpy.types.Operator):
         default=False
         )
 
-    update_object_data: bpy.props.BoolProperty(
-        name="update_object_data",
-        description="",
-        default=False
-        )
-
     def execute(self, _):
         try:
 
@@ -50,7 +44,6 @@ class CURVEARRAY_OT_update_array(bpy.types.Operator):
             array_params = UpdateArrayPrams(
                 update_path_data=self.update_path_data,
                 update_queue_data=self.update_queue_data,
-                update_object_data=self.update_object_data,
                 random_seed=sett.random_seed,
                 cloning_type=sett.cloning_type,
                 spacing_type=sett.spacing_type,

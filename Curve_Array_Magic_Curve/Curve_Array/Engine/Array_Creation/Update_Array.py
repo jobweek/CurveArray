@@ -18,18 +18,24 @@ from .Spacing_Types.Fill_By_Pivot import fill_by_pivot_manager
 from ..Path_Calculation.Calc_Path_Data import calc_path_data_manager
 from ..Queue_Calculation.Calc_Queue_Data import calc_queue_data_manager
 from ..Object_Creation.Create_Objects_Functions import ObjectsList
+from ....Errors.Errors import CancelError
 
 
 def update_array_manager(params: UpdateArrayPrams):
     print(f'UPDATE ARRAY, SLIDE: {params.slide}')
-    if params.update_path_data:
-        calc_path_data_manager()
 
     path_data: PathData = get_instant_data_props().path_data.get()
     queue_data: QueueData = get_instant_data_props().queue_data.get()
     object_list: ObjectsList = get_instant_data_props().object_list.get()
 
-    if params.random_seed != queue_data.random_seed:
+    if path_data is None:
+        raise CancelError
+
+    if params.update_path_data:
+        calc_path_data_manager()
+        path_data: PathData = get_instant_data_props().path_data.get()
+
+    if params.random_seed != queue_data.random_seed or params.update_queue_data:
         calc_queue_data_manager(params.random_seed)
         queue_data: QueueData = get_instant_data_props().queue_data.get()
         object_list.update_object_list(params.cloning_type, params.count)
@@ -40,27 +46,28 @@ def update_array_manager(params: UpdateArrayPrams):
         object_list.check_count(params.count)
 
     if params.spacing_type == '0':
-        gen = fill_by_count_manager(params, path_data, queue_data)
+        gen = fill_by_count_manager(params, path_data, queue_data, object_list)
     elif params.spacing_type == '1':
-        gen = fill_by_offset_manager(params, path_data, queue_data)
+        gen = fill_by_offset_manager(params, path_data, queue_data, object_list)
     elif params.spacing_type == '2':
-        gen = fill_by_size_manager(params, path_data, queue_data)
+        gen = fill_by_size_manager(params, path_data, queue_data, object_list)
     else:
-        gen = fill_by_pivot_manager(params, path_data, queue_data)
+        gen = fill_by_pivot_manager(params, path_data, queue_data, object_list)
 
     i = 0
     while True:
         try:
             item_data: ItemData = next(gen)
-
             obj: bpy.types.Object = object_list.get_obj_by_index(i)
-
             move_obj(obj, item_data.co)
-            trasnform_obj(obj,  item_data.total_transform)
+
+            total_transform_matrix = item_data.total_transform
 
             if params.align_rotation:
-                align_obj(obj, item_data.direction, item_data.normal, params.rail_axis, params.normal_axis)
+                align_matrix = align_obj(item_data.direction, item_data.normal, params.rail_axis, params.normal_axis)
+                total_transform_matrix = align_matrix @ total_transform_matrix
 
+            trasnform_obj(obj,  total_transform_matrix)
             i += 1
 
         except StopIteration:

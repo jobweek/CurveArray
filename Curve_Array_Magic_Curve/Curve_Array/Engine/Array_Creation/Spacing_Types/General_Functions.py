@@ -33,7 +33,7 @@ def get_collection_by_name(name: str) -> bpy.types.Collection:
 
 def calc_total_transform(obj: Any, array_transform: ArrayTransform, item_transform: ItemTransform) -> Matrix:
 
-    array_transform_matrix = Matrix.LocRotScale(  # type: ignore
+    array_transform_matrix = Matrix.LocRotScale(
         Vector((
             array_transform.location_x,
             array_transform.location_y,
@@ -51,7 +51,7 @@ def calc_total_transform(obj: Any, array_transform: ArrayTransform, item_transfo
         )),
     )
 
-    item_rotation = Matrix.LocRotScale(  # type: ignore
+    item_rotation = Matrix.LocRotScale(
         Vector((0, 0, 0)),
         Euler((
             item_transform.rotation_x,
@@ -61,7 +61,7 @@ def calc_total_transform(obj: Any, array_transform: ArrayTransform, item_transfo
         Vector((1, 1, 1)),
     )
 
-    item_loc_scale = Matrix.LocRotScale(  # type: ignore
+    item_loc_scale = Matrix.LocRotScale(
         Vector((
             item_transform.location_x,
             item_transform.location_y,
@@ -76,17 +76,15 @@ def calc_total_transform(obj: Any, array_transform: ArrayTransform, item_transfo
     )
 
     item_transform_matrix: Matrix = item_rotation @ item_loc_scale
-    total_transform: Matrix = array_transform_matrix @ item_transform_matrix
 
     obj_loc, obj_rot, obj_scale = obj.matrix_world.decompose()
 
-    obj_transform = Matrix.LocRotScale(  # type: ignore
+    obj_transform = Matrix.LocRotScale(
         Vector((0, 0, 0)),
         obj_rot,
         obj_scale,
     )
-
-    total_transform = total_transform @ obj_transform
+    total_transform: Matrix = obj_transform @ array_transform_matrix @ item_transform_matrix
 
     return total_transform
 

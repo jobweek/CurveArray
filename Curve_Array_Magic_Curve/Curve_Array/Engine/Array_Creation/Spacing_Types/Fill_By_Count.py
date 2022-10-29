@@ -1,13 +1,20 @@
 import bpy  # type: ignore
 from decimal import Decimal, getcontext
 from typing import Iterator
-from .General_Functions import get_object_by_name, calc_total_transform, get_bb_offset
+from .General_Functions import (
+    get_object_by_name,
+    calc_total_transform,
+    get_bb_offset,
+)
 from ...General_Data_Classes import ItemData, UpdateArrayPrams
 from ...Path_Calculation.Calc_Path_Data_Functions import PathData
 from ...Queue_Calculation.Calc_Queue_Data_Functions import QueueData
+from ...Object_Creation.Create_Objects_Functions import ObjectsList
 
 
-def fill_by_count_manager(params: UpdateArrayPrams, path_data: PathData, queue_data: QueueData) -> Iterator[ItemData]:
+def fill_by_count_manager(
+    params: UpdateArrayPrams, path_data: PathData, queue_data: QueueData, object_list: ObjectsList
+        ) -> Iterator[ItemData]:
 
     getcontext().prec = 60
 
@@ -34,7 +41,10 @@ def fill_by_count_manager(params: UpdateArrayPrams, path_data: PathData, queue_d
         end_offset += Decimal(end_size_offset)
 
     path_length -= (start_offset + end_offset)
+
     if path_length < 0:
+        for i in range(params.count):
+            object_list.move_obj_to_coll(i, True)
         return
 
     if params.count == 1:
@@ -50,6 +60,8 @@ def fill_by_count_manager(params: UpdateArrayPrams, path_data: PathData, queue_d
     searched_distance += Decimal(params.slide)
 
     for i in range(params.count):
+
+        object_list.move_obj_to_coll(i, False)
 
         obj_name, ghost, _, queue_transform = queue_data.get_by_index(i)
         obj = get_object_by_name(obj_name)
