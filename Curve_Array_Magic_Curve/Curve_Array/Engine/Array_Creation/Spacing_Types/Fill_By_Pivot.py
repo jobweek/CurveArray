@@ -22,7 +22,7 @@ def pivot_correction(pivot: float, params: UpdateArrayPrams, queue_transform: It
         pivot += pivot * params.array_transform.scale_y
         pivot += pivot * queue_transform.scale_y
     else:
-        pivot += pivot * params.array_transform.scale_z + queue_transform.scale_z
+        pivot += pivot * params.array_transform.scale_z
         pivot += pivot * queue_transform.scale_z
 
     return pivot
