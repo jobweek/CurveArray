@@ -192,6 +192,11 @@ def _get_queue_data(random_seed: int) -> list[QueueItem]:
                     (transofrm_data.scale_random_min_z, transofrm_data.scale_random_max_z)
                 )
 
+                scale_all_axis = + np.random.uniform(
+                    transofrm_data.scale_random_min_all_axis,
+                    transofrm_data.scale_random_max_all_axis
+                )
+
                 if np.random.uniform(0, 100) < q.ghost_percentage:
                     ghost = True
                 else:
@@ -208,9 +213,9 @@ def _get_queue_data(random_seed: int) -> list[QueueItem]:
                         location_x=location_x,
                         location_y=location_y,
                         location_z=location_z,
-                        scale_x=scale_x,
-                        scale_y=scale_y,
-                        scale_z=scale_z,
+                        scale_x=scale_x + scale_all_axis,
+                        scale_y=scale_y + scale_all_axis,
+                        scale_z=scale_z + scale_all_axis,
                     )
                 ))
 

@@ -32,7 +32,6 @@ class CURVEARRAY_OT_open_transform_editor(bpy.types.Operator):
         split.row().label(text=f'Queue № {self.index+1}: {_get_name(queue_item)}')
         split.row().operator('curvearray.reset_transform', text='Reset Transform')
 
-
         split = layout.row().split(factor=0.04)
 
         axis_coll = split.column()
@@ -51,7 +50,11 @@ class CURVEARRAY_OT_open_transform_editor(bpy.types.Operator):
 
         rotation_side.row().box().label(text='Rotation')
         location_side.row().box().label(text='Location')
-        scale_side.row().box().label(text='Scale')
+        split = scale_side.row().box().split(factor=0.333)
+        split.row().label(text='Scale')
+        all_axis_scale = split.row(align=True)
+        all_axis_scale.prop(transform, 'scale_random_min_all_axis', text='')
+        all_axis_scale.prop(transform, 'scale_random_max_all_axis', text='')
 
         rotation_box = rotation_side.row().box()
         location_box = location_side.row().box()

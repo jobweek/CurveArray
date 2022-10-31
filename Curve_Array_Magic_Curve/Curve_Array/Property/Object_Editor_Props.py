@@ -76,6 +76,14 @@ class TransformData(bpy.types.PropertyGroup):
         if self.scale_random_max_z < self.scale_random_min_z:
             self.scale_random_max_z = self.scale_random_min_z
 
+    def _scale_rand_min_all_axis_update(self, _):
+        if self.scale_random_min_all_axis > self.scale_random_max_all_axis:
+            self.scale_random_min_all_axis = self.scale_random_max_all_axis
+
+    def _scale_rand_max_all_axis_update(self, _):
+        if self.scale_random_max_all_axis < self.scale_random_min_all_axis:
+            self.scale_random_max_all_axis = self.scale_random_min_all_axis
+
     rotation_progressive_x: bpy.props.FloatProperty(
         name="rotation_progressive_x",
         description="Progressive Rotation X Axis",
@@ -290,6 +298,24 @@ class TransformData(bpy.types.PropertyGroup):
         soft_min=-1,
         soft_max=1,
         update=_scale_rand_max_z_update,
+        )
+
+    scale_random_min_all_axis: bpy.props.FloatProperty(
+        name="scale_random_min_all_axis",
+        description="Minimum Random Scale All Axis",
+        default=0,
+        soft_min=-1,
+        soft_max=1,
+        update=_scale_rand_min_all_axis_update,
+        )
+
+    scale_random_max_all_axis: bpy.props.FloatProperty(
+        name="scale_random_max_all_axis",
+        description="Maximum Random Scale All Axis",
+        default=0,
+        soft_min=-1,
+        soft_max=1,
+        update=_scale_rand_max_all_axis_update,
         )
 
 
