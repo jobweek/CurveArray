@@ -6,7 +6,7 @@ from .Toggle_Cyclic_Functions import (
     toggle_curve_cyclic,
     angle_arr_calc_cyclic,
 )
-from ...General_Functions.Functions import (
+from Curve_Array_Magic_Curve.Magic_Curve.General_Functions.Functions import (
     duplicate,
     convert_to_mesh,
     curve_methods_start_checker,

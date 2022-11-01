@@ -5,7 +5,7 @@ import mathutils  # type: ignore
 import math
 import numpy as np
 from typing import Final
-from ..Errors.Errors import (
+from ...Errors.Errors import (
     show_message_box,
     CancelError,
 )
@@ -253,7 +253,7 @@ def ext_vec_curve_creation(extruded_mesh, array_size: int, step: int):
         first_point = extruded_mesh.data.vertices[i]
         second_point = extruded_mesh.data.vertices[i + 1]
 
-        vector = calc_vec_Re(first_point.co, second_point.co, True)
+        vector = calc_vec(first_point.co, second_point.co, True)
 
         return vector
 
@@ -438,10 +438,15 @@ class MethodsCurveData:
 
             self.spline_type_arr[spline_iter] = spline_type
 
-    def __repr__(self):
-        return f'{self.__class__.__name__}: {self.spline_point_count_arr!r}, {self.spline_verts_index_arr!r},' \
-               f'{self.spline_min_max_verts_arr!r}, {self.spline_cyclic_arr!r}, {self.spline_type_arr!r},' \
-               f'{self.spline_start_end_handle_arr!r}'
+    def get_all(self):
+        return (
+            self.spline_point_count_arr,
+            self.spline_verts_index_arr,
+            self.spline_min_max_verts_arr,
+            self.spline_cyclic_arr,
+            self.spline_type_arr,
+            self.spline_start_end_handle_arr,
+        )
 
     def get_spline_point_count_arr(self):
 
@@ -515,7 +520,7 @@ def point_direction_vec(mesh, curve_data):
             first_point = verts[first_point_index]
             second_point = verts[first_point_index + 1]
 
-            ext_vec = calc_vec_Re(first_point.co, second_point.co, True)
+            ext_vec = calc_vec(first_point.co, second_point.co, True)
 
             return ext_vec
 
@@ -701,26 +706,13 @@ def _spline_verts_index(points, spline_type, cyclic, resolution, last_index):
     return arr, last_index
 
 
-def calc_vec_Re(first_co, second_co, normalize: bool):
+def calc_vec(first_co, second_co, normalize: bool):
 
     vec = second_co - first_co
 
     if vec.length < 0.00002:
 
         return None
-
-    if normalize:
-
-        vec = vec.normalized()
-
-    return vec
-
-
-def calc_vec(p_0_co: mathutils.Vector, p_1_co: mathutils.Vector, normalize: bool) -> mathutils.Vector:
-
-    vec: mathutils.Vector = p_1_co - p_0_co
-
-    assert vec.length > 0.00002
 
     if normalize:
 
@@ -815,40 +807,30 @@ def angle_calc(ext_vec, y_vec, cross_vec):
     return angle
 
 
-def midle_point_calc_Re(p_0_ind, verts):
+def midle_point_calc(p_0_ind, verts):
 
-    vec = calc_vec_Re(verts[p_0_ind].co, verts[p_0_ind + 1].co, False)
+    vec = calc_vec(verts[p_0_ind].co, verts[p_0_ind + 1].co, False)
 
     midle_point_co = verts[p_0_ind].co + vec/2
 
     return midle_point_co
 
 
-def midle_point_calc(p_0_co: mathutils.Vector, p_1_co: mathutils.Vector) -> mathutils.Vector:
-
-    vec = calc_vec_Re(p_0_co, p_1_co, False)
-
-    midle_point_co = p_0_co + vec/2
-
-    return midle_point_co
-
-
 def calc_z_vec(p_0_ind, prev_p_0_ind, next_p_0_ind, verts):
 
-    mdidle_point_co = midle_point_calc_Re(p_0_ind, verts)
-    prev_mdidle_point_co = midle_point_calc_Re(prev_p_0_ind, verts)
-    next_mdidle_point_co = midle_point_calc_Re(next_p_0_ind, verts)
+    mdidle_point_co = midle_point_calc(p_0_ind, verts)
+    prev_mdidle_point_co = midle_point_calc(prev_p_0_ind, verts)
+    next_mdidle_point_co = midle_point_calc(next_p_0_ind, verts)
 
-    vec_h_1 = calc_vec_Re(mdidle_point_co, prev_mdidle_point_co, True)
-    vec_h_2 = calc_vec_Re(mdidle_point_co, next_mdidle_point_co, True)
+    vec_h_1 = calc_vec(mdidle_point_co, prev_mdidle_point_co, True)
+    vec_h_2 = calc_vec(mdidle_point_co, next_mdidle_point_co, True)
 
-    z_vec = calc_vec_Re(vec_h_1, vec_h_2, True)
+    z_vec = calc_vec(vec_h_1, vec_h_2, True)
 
     return z_vec
 
 
 def z_vec(mesh, curve_data):
-
     spline_point_count_arr = curve_data.get_spline_point_count_arr()
     spline_verts_index_arr = curve_data.get_spline_verts_index_arr()
     spline_min_max_verts_arr = curve_data.get_spline_min_max_verts_arr()
@@ -869,11 +851,11 @@ def z_vec(mesh, curve_data):
         if not spline_cyclic_arr[spline_iter]:
 
             point_index = spline_verts_index_arr[spline_iter][point_iter]
-            mid_point = midle_point_calc_Re(point_index, verts)
+            mid_point = midle_point_calc(point_index, verts)
 
             if not spline_type_arr[spline_iter]:
 
-                z_arr[point_iter] = calc_vec_Re(
+                z_arr[point_iter] = calc_vec(
                     mid_point,
                     spline_start_end_handle_arr[spline_iter][0],
                     True
@@ -881,9 +863,9 @@ def z_vec(mesh, curve_data):
 
             else:
 
-                next_mid_point = midle_point_calc_Re(point_index + 2, verts)
+                next_mid_point = midle_point_calc(point_index+2, verts)
 
-                z_arr[point_iter] = calc_vec_Re(
+                z_arr[point_iter] = calc_vec(
                     mid_point,
                     next_mid_point,
                     True
@@ -891,7 +873,7 @@ def z_vec(mesh, curve_data):
 
             point_iter = 1
 
-        for point_iter in range(point_iter, len(z_arr)-1):
+        while point_iter < len(z_arr) - 1:
 
             point_index = spline_verts_index_arr[spline_iter][point_iter]
 
@@ -905,14 +887,16 @@ def z_vec(mesh, curve_data):
 
             z_arr[point_iter] = calc_z_vec(point_index, prev_point_index, next_point_index, verts)
 
+            point_iter += 1
+
         if not spline_cyclic_arr[spline_iter]:
 
             point_index = spline_verts_index_arr[spline_iter][point_iter]
-            mid_point = midle_point_calc_Re(point_index, verts)
+            mid_point = midle_point_calc(point_index, verts)
 
             if not spline_type_arr[spline_iter]:
 
-                z_arr[point_iter] = calc_vec_Re(
+                z_arr[point_iter] = calc_vec(
                     spline_start_end_handle_arr[spline_iter][1],
                     mid_point,
                     True
@@ -920,9 +904,9 @@ def z_vec(mesh, curve_data):
 
             else:
 
-                prev_mid_point = midle_point_calc_Re(point_index - 2, verts)
+                prev_mid_point = midle_point_calc(point_index-2, verts)
 
-                z_arr[point_iter] = calc_vec_Re(
+                z_arr[point_iter] = calc_vec(
                     prev_mid_point,
                     mid_point,
                     True
@@ -950,10 +934,3 @@ def main_object_select(obj):
     bpy.ops.object.select_all(action='DESELECT')
     obj.select_set(True)
     bpy.context.view_layer.objects.active = obj
-
-
-def delete_objects(*objects):
-
-    for obj in objects:
-
-        bpy.data.objects.remove(obj, do_unlink=True)

@@ -5,7 +5,7 @@ from .Switch_Direction_Functions import (
     switch_curve_direction,
     arr_flip_direction,
 )
-from ...General_Functions.Functions import (
+from Curve_Array_Magic_Curve.Magic_Curve.General_Functions.Functions import (
     duplicate,
     convert_to_mesh,
     curve_methods_start_checker,

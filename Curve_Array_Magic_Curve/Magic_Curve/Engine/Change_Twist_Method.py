@@ -4,7 +4,7 @@ from ...Errors.Errors import CancelError, show_message_box
 from .Change_Twist_Method_Functions import (
     switch_curve_twist,
 )
-from ...General_Functions.Functions import (
+from Curve_Array_Magic_Curve.Magic_Curve.General_Functions.Functions import (
     duplicate,
     convert_to_mesh,
     curve_methods_start_checker,

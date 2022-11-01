@@ -2,7 +2,7 @@ import bpy  # type: ignore
 import bmesh  # type: ignore
 
 from ...Property.Get_Property_Path import get_instant_data_props
-from ....General_Functions.Functions import (
+from ...General_Functions.Functions import (
     duplicate,
     convert_to_mesh,
     delete_objects,

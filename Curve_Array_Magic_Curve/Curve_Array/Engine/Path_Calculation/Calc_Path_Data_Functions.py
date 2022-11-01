@@ -6,7 +6,7 @@ from decimal import Decimal, getcontext
 import numpy as np
 from typing import Iterator, Union
 from ...Property.Get_Property_Path import get_curve_props
-from Curve_Array_Magic_Curve.General_Functions.Functions import (
+from ...General_Functions.Functions import (
     midle_point_calc,
     calc_vec,
 )

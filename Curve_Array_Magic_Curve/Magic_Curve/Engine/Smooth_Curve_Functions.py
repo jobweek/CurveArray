@@ -3,10 +3,10 @@ import bmesh  # type: ignore
 import mathutils  # type: ignore
 import numpy as np
 import math
-from ...General_Functions.Functions import (
+from Curve_Array_Magic_Curve.Magic_Curve.General_Functions.Functions import (
     vec_projection,
     angle_calc,
-    calc_vec_Re,
+    calc_vec,
     RAD_CIRCLE_CONST,
 )
 
@@ -53,10 +53,10 @@ def z_vec_smooth(curve, array_size):
         h_1 = points[i].handle_left
         h_2 = points[i].handle_right
 
-        vec_h_1 = calc_vec_Re(points[i].co.to_3d(), h_1, True)
-        vec_h_2 = calc_vec_Re(points[i].co.to_3d(), h_2, True)
+        vec_h_1 = calc_vec(points[i].co.to_3d(), h_1, True)
+        vec_h_2 = calc_vec(points[i].co.to_3d(), h_2, True)
 
-        z_vec = calc_vec_Re(vec_h_1, vec_h_2, True)
+        z_vec = calc_vec(vec_h_1, vec_h_2, True)
         assert z_vec is not None, 'z_vec is None'
 
         return z_vec

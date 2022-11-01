@@ -9,7 +9,7 @@ from .Smooth_Curve_Functions import (
     tilt_correction_smooth,
     twist_correction_smooth,
 )
-from ...General_Functions.Functions import (
+from Curve_Array_Magic_Curve.Magic_Curve.General_Functions.Functions import (
     curve_creation_start_check,
     active_vertex,
     verts_sequence,

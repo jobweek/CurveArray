@@ -7,7 +7,7 @@ from .Split_Curve_Functions import (
     angle_arr_calc_split,
     tilt_correction_split,
 )
-from ...General_Functions.Functions import (
+from Curve_Array_Magic_Curve.Magic_Curve.General_Functions.Functions import (
     curve_creation_start_check,
     active_vertex,
     verts_sequence,
