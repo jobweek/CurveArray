@@ -35,6 +35,7 @@ def fill_by_pivot_manager(
     getcontext().prec = 60
 
     searched_distance = Decimal(params.slide)
+    step = Decimal(params.step)
 
     for i in range(params.count):
 
@@ -54,12 +55,12 @@ def fill_by_pivot_manager(
         try:
             if params.cyclic:
                 co, direction, normal, searched_distance = path_data.get_data_by_origin_cyclic(
-                    searched_distance,
+                    searched_distance + step,
                     pivot,
                 )
             else:
                 co, direction, normal, searched_distance = path_data.get_data_by_origin(
-                    searched_distance,
+                    searched_distance + step,
                     pivot,
                 )
         except LoopEnd:

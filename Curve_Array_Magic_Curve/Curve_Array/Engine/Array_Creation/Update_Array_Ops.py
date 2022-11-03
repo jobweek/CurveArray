@@ -55,6 +55,7 @@ class CURVEARRAY_OT_update_array(bpy.types.Operator):
                 start_offset=sett.start_offset,
                 end_offset=sett.end_offset,
                 slide=sett.slide,
+                step=sett.step,
                 consider_size=sett.consider_size,
                 align_rotation=sett.align_rotation,
                 rail_axis=sett.rail_axis,

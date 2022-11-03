@@ -105,6 +105,13 @@ class ArraySettings(bpy.types.PropertyGroup):
         update=update_array,
         )
 
+    step: bpy.props.FloatProperty(
+        name="step",
+        description="Step between objects",
+        default=0,
+        update=update_array,
+        )
+
     consider_size: bpy.props.BoolProperty(
         name="consider_size",
         description="Take into account the size of the object",

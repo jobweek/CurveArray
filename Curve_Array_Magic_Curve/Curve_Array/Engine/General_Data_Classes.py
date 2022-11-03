@@ -67,6 +67,7 @@ class UpdateArrayPrams(NamedTuple):
     start_offset: float
     end_offset: float
     slide: float
+    step: float
     consider_size: bool
     align_rotation: bool
     rail_axis: str

@@ -49,6 +49,7 @@ def crete_array_manager(params: CreateArrayPrams):
         start_offset=settings.start_offset,
         end_offset=settings.end_offset,
         slide=settings.slide,
+        step=settings.step,
         consider_size=settings.consider_size,
         align_rotation=settings.align_rotation,
         rail_axis=settings.rail_axis,

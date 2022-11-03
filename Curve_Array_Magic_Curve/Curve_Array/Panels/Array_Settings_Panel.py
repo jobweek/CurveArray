@@ -48,6 +48,9 @@ class CURVEARRAY_PT_array_settings_panel(bpy.types.Panel):
         elif sett.spacing_type == '2':
             left_side.row().label(text='Size Offset:')
             right_side.row().prop(sett, 'size_offset', text='')
+        elif sett.spacing_type == '3':
+            left_side.row().label(text='Step:')
+            right_side.row().prop(sett, 'step', text='')
 
         if sett.spacing_type != '3':
 
