@@ -37,6 +37,7 @@ from .Curve_Array.Object_Editor.Ops.Create_Empty_Group_Ops import CURVEARRAY_OT_
 from .Curve_Array.Object_Editor.Ops.Create_Set_Group_Ops import CURVEARRAY_OT_create_set_group
 from .Curve_Array.Object_Editor.Ops.Remove_Item_Ops import CURVEARRAY_OT_remove_item
 from .Curve_Array.Object_Editor.Ops.Duplicate_Item_Ops import CURVEARRAY_OT_duplicate_item
+from .Curve_Array.Object_Editor.Ops.Catch_Pivot_Ops import CURVEARRAY_OT_catch_pivot
 from .Curve_Array.Object_Editor.Object_Editor_WM import CURVEARRAY_OT_open_object_editor
 
 from .Curve_Array.Transform_Editor.Ops.Reset_Transform_Ops import CURVEARRAY_OT_reset_transform
@@ -73,6 +74,7 @@ classes = (
     CURVEARRAY_OT_create_set_group,
     CURVEARRAY_OT_remove_item,
     CURVEARRAY_OT_duplicate_item,
+    CURVEARRAY_OT_catch_pivot,
     CURVEARRAY_OT_open_object_editor,
 
     CURVEARRAY_OT_reset_transform,
