@@ -7,7 +7,7 @@ from ...Property.Get_Property_Path import (
     get_queue_props,
     get_objects_props,
 )
-from typing import Any
+from .Catch_Pivot_Functions import get_pivot_distance
 
 
 def get_objects():
@@ -29,7 +29,7 @@ def get_objects():
     return objects
 
 
-def add_object(obj: Any):
+def add_object(obj: bpy.types.Object):
 
     objects = get_objects_props()
     queue = get_queue_props()
@@ -37,6 +37,7 @@ def add_object(obj: Any):
     index = len(objects)
     item = objects.add()
     item.name = obj.name
+    item.pivot = get_pivot_distance(obj)
 
     item = queue.add()
     item.index = index

@@ -103,10 +103,12 @@ class CURVEARRAY_PT_array_settings_panel(bpy.types.Panel):
         left_coll.row().label(text='Scale X')
         left_coll.row().label(text='Scale Y')
         left_coll.row().label(text='Scale Z')
+        left_coll.row().label(text='Scale XYZ')
 
         right_coll.row().prop(sett, 'scale_x', text='')
         right_coll.row().prop(sett, 'scale_y', text='')
         right_coll.row().prop(sett, 'scale_z', text='')
+        right_coll.row().prop(sett, 'scale_xyz', text='')
 
         row = layout.row()
         row.label(text='Auto Update:')

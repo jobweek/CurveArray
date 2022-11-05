@@ -45,9 +45,9 @@ def calc_total_transform(obj: Any, array_transform: ArrayTransform, item_transfo
             array_transform.rotation_z,
         ), 'XYZ'),
         Vector((
-            array_transform.scale_x+1,
-            array_transform.scale_y+1,
-            array_transform.scale_z+1,
+            array_transform.scale_x + array_transform.scale_xyz + 1,
+            array_transform.scale_y + array_transform.scale_xyz + 1,
+            array_transform.scale_z + array_transform.scale_xyz + 1,
         )),
     )
 

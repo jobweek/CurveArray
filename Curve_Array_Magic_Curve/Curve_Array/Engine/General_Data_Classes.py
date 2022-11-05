@@ -43,6 +43,7 @@ class ArrayTransform(NamedTuple):
     scale_x: float
     scale_y: float
     scale_z: float
+    scale_xyz: float
 
 
 class CreateArrayPrams(NamedTuple):

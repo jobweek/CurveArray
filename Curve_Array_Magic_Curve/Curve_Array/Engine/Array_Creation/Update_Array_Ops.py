@@ -39,6 +39,7 @@ class CURVEARRAY_OT_update_array(bpy.types.Operator):
                 scale_x=sett.scale_x,
                 scale_y=sett.scale_y,
                 scale_z=sett.scale_z,
+                scale_xyz=sett.scale_xyz,
             )
 
             array_params = UpdateArrayPrams(

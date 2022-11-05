@@ -245,3 +245,12 @@ class ArraySettings(bpy.types.PropertyGroup):
         soft_max=1,
         update=update_array,
     )
+
+    scale_xyz: bpy.props.FloatProperty(
+        name="scale_xyz",
+        description="Scale XYZ Axis",
+        default=0,
+        soft_min=-0.9,
+        soft_max=1,
+        update=update_array,
+    )

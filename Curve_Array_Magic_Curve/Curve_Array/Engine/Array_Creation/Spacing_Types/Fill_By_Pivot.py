@@ -16,13 +16,13 @@ from .....Errors.Errors import LoopEnd
 def pivot_correction(pivot: float, params: UpdateArrayPrams, queue_transform: ItemTransform) -> float:
 
     if params.rail_axis[1] == 'x':
-        pivot += pivot * params.array_transform.scale_x
+        pivot += pivot * (params.array_transform.scale_x + params.array_transform.scale_xyz)
         pivot += pivot * queue_transform.scale_x
     elif params.rail_axis[1] == 'y':
-        pivot += pivot * params.array_transform.scale_y
+        pivot += pivot * (params.array_transform.scale_y + params.array_transform.scale_xyz)
         pivot += pivot * queue_transform.scale_y
     else:
-        pivot += pivot * params.array_transform.scale_z
+        pivot += pivot * (params.array_transform.scale_z + params.array_transform.scale_xyz)
         pivot += pivot * queue_transform.scale_z
 
     return pivot

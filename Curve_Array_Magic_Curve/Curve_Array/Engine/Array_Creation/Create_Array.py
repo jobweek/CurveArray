@@ -33,6 +33,7 @@ def crete_array_manager(params: CreateArrayPrams):
         scale_x=settings.scale_x,
         scale_y=settings.scale_y,
         scale_z=settings.scale_z,
+        scale_xyz=settings.scale_xyz,
     )
 
     array_params = UpdateArrayPrams(
