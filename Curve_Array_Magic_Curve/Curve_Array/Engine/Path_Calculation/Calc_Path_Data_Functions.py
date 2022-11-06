@@ -68,15 +68,22 @@ class InterpolatedSegment:
     def get_data_by_length_smooth(self, searched_length: float, cyclic: bool) -> tuple[Vector, Vector, Vector]:
 
         ratio = searched_length / self.length
-        middle_length = self.length/2
 
         if searched_length < 0:
-            direction = self.direction_smooth[0]
+            if cyclic or not hasattr(self, "first"):
+                direction = self.direction_smooth[0]
+            else:
+                direction = self.direction_normalized
             normal = self.normal[0]
         elif searched_length > self.length:
-            direction = self.direction_smooth[1]
+            if cyclic or not hasattr(self, "last"):
+                direction = self.direction_smooth[1]
+            else:
+                direction = self.direction_normalized
             normal = self.normal[1]
         else:
+            middle_length = self.length / 2
+
             if searched_length < middle_length and (cyclic or not hasattr(self, "first")):
                 middle_ratio = 0.5 + ((searched_length / middle_length) / 2)
                 direction = self.direction_smooth[0].lerp(self.direction_normalized, middle_ratio)
@@ -85,8 +92,10 @@ class InterpolatedSegment:
                 direction = self.direction_normalized.lerp(self.direction_smooth[1], middle_ratio)
             else:
                 direction = self.direction_normalized
+
             normal = self.normal[0].lerp(self.normal[1], ratio)
             normal = _project_vec(direction, normal)
+
         co = self.start_co + self.direction * ratio
 
         return co, direction, normal

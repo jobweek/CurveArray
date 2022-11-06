@@ -22,7 +22,6 @@ from ....Errors.Errors import CancelError
 
 
 def update_array_manager(params: UpdateArrayPrams):
-    print(f'UPDATE ARRAY, SLIDE: {params.slide}')
 
     path_data: PathData = get_instant_data_props().path_data.get()
     queue_data: QueueData = get_instant_data_props().queue_data.get()

@@ -10,7 +10,7 @@ from .Update_Array import update_array_manager
 
 
 def crete_array_manager(params: CreateArrayPrams):
-    print(f'CREATE ARRAY')
+
     settings = get_array_settings_props()
     start_check()
 
