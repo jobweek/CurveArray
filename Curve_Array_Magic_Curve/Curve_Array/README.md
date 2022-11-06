@@ -11,5 +11,6 @@ Previously based on the Array modifier blender, Curve Array now has its own curv
 
 1. Curve Array works with all curve splines.
 
+![Plane](/documentation_resources/50.mp4)
 
 2. 
