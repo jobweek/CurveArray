@@ -37,3 +37,5 @@ def reset_transform(index: int):
     transform_data.scale_random_max_x = 0
     transform_data.scale_random_max_y = 0
     transform_data.scale_random_max_z = 0
+    transform_data.scale_random_min_xyz = 0
+    transform_data.scale_random_max_xyz = 0

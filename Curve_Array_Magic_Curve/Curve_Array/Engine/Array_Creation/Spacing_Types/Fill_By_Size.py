@@ -29,7 +29,7 @@ def fill_by_size_manager(
             object_list.move_obj_to_coll(i, True)
         return
 
-    searched_distance = slide
+    searched_distance = slide + start_offset
     prev_pos_dim = Decimal(0)
 
     for i in range(params.count):
@@ -45,12 +45,16 @@ def fill_by_size_manager(
 
         if i == 0:
             if params.consider_size:
+                start_offset += dimension
                 searched_distance += dimension
         else:
             searched_distance += dimension
 
-        if searched_distance < start_offset or searched_distance > (path_length - end_offset):
-            object_list.move_obj_to_coll(i, True)
+        if not params.cyclic:
+            if searched_distance < slide + start_offset or searched_distance > slide + (path_length - end_offset):
+                object_list.move_obj_to_coll(i, True)
+            else:
+                object_list.move_obj_to_coll(i, False)
         else:
             object_list.move_obj_to_coll(i, False)
 

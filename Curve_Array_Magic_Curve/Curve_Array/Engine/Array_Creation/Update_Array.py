@@ -57,6 +57,8 @@ def update_array_manager(params: UpdateArrayPrams):
     while True:
         try:
             item_data: ItemData = next(gen)
+            if item_data.ghost:
+                object_list.move_obj_to_coll(i, item_data.ghost)
             obj: bpy.types.Object = object_list.get_obj_by_index(i)
             move_obj(obj, item_data.co)
 

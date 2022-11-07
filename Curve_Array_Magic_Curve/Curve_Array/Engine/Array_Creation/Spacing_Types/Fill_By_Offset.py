@@ -29,8 +29,6 @@ def fill_by_offset_manager(
             object_list.move_obj_to_coll(i, True)
         return
 
-    searched_distance = slide
-
     if params.consider_size:
 
         first_item = queue_data.get_by_index(0)
@@ -41,12 +39,17 @@ def fill_by_offset_manager(
             first_obj, params.array_transform, first_item.queue_transform, params.rail_axis, False
         )
 
-        searched_distance += Decimal(start_size_offset)
+        start_offset += Decimal(start_size_offset)
+
+    searched_distance = slide + start_offset
 
     for i in range(params.count):
 
-        if searched_distance < start_offset or searched_distance > (path_length - end_offset):
-            object_list.move_obj_to_coll(i, True)
+        if not params.cyclic:
+            if searched_distance < slide + start_offset or searched_distance > slide + (path_length - end_offset):
+                object_list.move_obj_to_coll(i, True)
+            else:
+                object_list.move_obj_to_coll(i, False)
         else:
             object_list.move_obj_to_coll(i, False)
 

@@ -53,8 +53,8 @@ class CURVEARRAY_OT_open_transform_editor(bpy.types.Operator):
         split = scale_side.row().box().split(factor=0.333)
         split.row().label(text='Scale')
         all_axis_scale = split.row(align=True)
-        all_axis_scale.prop(transform, 'scale_random_min_all_axis', text='')
-        all_axis_scale.prop(transform, 'scale_random_max_all_axis', text='')
+        all_axis_scale.prop(transform, 'scale_random_min_xyz', text='')
+        all_axis_scale.prop(transform, 'scale_random_max_xyz', text='')
 
         rotation_box = rotation_side.row().box()
         location_box = location_side.row().box()

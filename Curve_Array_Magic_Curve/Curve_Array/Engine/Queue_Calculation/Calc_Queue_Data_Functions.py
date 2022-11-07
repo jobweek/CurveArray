@@ -118,6 +118,10 @@ def __calc_transform(base_trform: list[float], progressive_trform: float, random
 def _get_queue_data(random_seed: int) -> list[QueueItem]:
 
     queue = get_queue_props()
+
+    if len(queue) == 0:
+        raise CancelError
+
     groups = get_groups_props()
     objects = get_objects_props()
     queue_repit = get_wm_queue_repetitions()
@@ -128,7 +132,6 @@ def _get_queue_data(random_seed: int) -> list[QueueItem]:
     base_transform = [BaseTransform() for _ in range(len(queue))]
 
     queue_len = 0
-
     while queue_len < queue_repit:
 
         for queue_index, q in enumerate(queue):
@@ -193,8 +196,8 @@ def _get_queue_data(random_seed: int) -> list[QueueItem]:
                 )
 
                 scale_all_axis = + np.random.uniform(
-                    transofrm_data.scale_random_min_all_axis,
-                    transofrm_data.scale_random_max_all_axis
+                    transofrm_data.scale_random_min_xyz,
+                    transofrm_data.scale_random_max_xyz
                 )
 
                 if np.random.uniform(0, 100) < q.ghost_percentage:
