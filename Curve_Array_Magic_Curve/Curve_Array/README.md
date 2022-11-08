@@ -25,7 +25,7 @@ Geometry Nodes, conversely treats all curve splines as independent curves, creat
 https://user-images.githubusercontent.com/57871127/200581290-b996b3ce-0fde-4b9a-a802-1ed848d4c634.mp4
 
 Also, Curve Array allows you to control the smoothness of curve normals, curve cyclicity, and many other small improvements, for example, if you create a circle, Blender will not consider the first point as the start, but the last one. 
-And if you switch the cycle, Blender will suddenly start taking the first point as the beginning, as it should be. 
+And if you toggle cyclic, Blender will suddenly start taking the first point as the beginning, as it should be. 
 The curve array is free of these oddities. All this is made possible by the new Path Data Core created in version 4.0. 
  
 
