@@ -14,15 +14,15 @@ Previously based on a bundle of two Blender modifiers (Array + Curve), Curve Arr
 
 Curve Array works with all curve splines.
 
-50
+https://user-images.githubusercontent.com/57871127/200580879-504fdefc-52e3-4a66-b393-5008f40a279c.mp4
 
 Blender Array + Curve modifiers ignore other curve splines after the first one.
 
-51
+https://user-images.githubusercontent.com/57871127/200580932-18f68b2e-11b5-48f1-a37d-7fd226ba6ba0.mp4
 
 Geometry Nodes, conversely treats all curve splines as independent curves, creating an array with specified parameters for each spline, rather than the entire curve as a whole.
 
-53
+https://user-images.githubusercontent.com/57871127/200581290-b996b3ce-0fde-4b9a-a802-1ed848d4c634.mp4
 
 Also, Curve Array allows you to control the smoothness of curve normals, curve cyclicity, and many other small improvements, for example, if you create a circle, Blender will not consider the first point as the start, but the last one. 
 And if you switch the cycle, Blender will suddenly start taking the first point as the beginning, as it should be. 
@@ -39,7 +39,7 @@ Also, unlike Blender modifiers or Geometry Nodes, you don't need to align the cu
 
 Unlike Geometry Nodex and Blender Array+Curve modifiers, Curve Array keeps each object individual. 
 
-79
+https://user-images.githubusercontent.com/57871127/200581345-abdb83d6-a3c3-4769-ae01-7cb1ec67787b.mp4
 
 ### Results:
 
@@ -51,7 +51,7 @@ On the contrary, it takes its place as a tool for spacing objects, while Geometr
 The Curve Editor exists to capture the current path. 
 You can add only one object, and it must be a curve, otherwise you will get an error.
 
-58
+https://user-images.githubusercontent.com/57871127/200581396-e60d17cd-600a-42f1-a939-3d7b307ea596.mp4
 
 ## Object Editor
 
@@ -60,11 +60,11 @@ You can add only one object, and it must be a curve, otherwise you will get an e
 You can add any number of objects to the Object Editor. They can be of any type: Mesh, Curve, empty, etc. 
 Each added object will take its place in the Queue. 
 
-59
+https://user-images.githubusercontent.com/57871127/200581440-945cc886-cd45-4691-982f-5210b519279c.mp4
 
 By opening the Object Editor, we can edit the Queue. All objects in the Queue can be deleted, duplicated or moved.
 
-60
+https://user-images.githubusercontent.com/57871127/200581482-47807858-ec85-4b63-9a9f-29fa8725532e.mp4
 
 Also, all objects in the queue have their own settings:
 
@@ -73,7 +73,7 @@ Also, all objects in the queue have their own settings:
 Count - the number of times the object is repeated in the queue. 
 In case the object has random parameters (Ghost, or Transformation), they will be unique for each repetition.
 
-61
+https://user-images.githubusercontent.com/57871127/200581531-807d05e1-491b-445a-b5ff-79e136b39eb9.mp4
 
 ### Ghost
 
@@ -82,7 +82,7 @@ This collection is hidden, and so are its objects, but you can easily retrieve t
 (Only if this is the final result, deleting and renaming objects from Curve Array collections will cause an error when you try to update the array). 
 This allows you to select any number of objects from a particular place in the queue.
 
-62
+https://user-images.githubusercontent.com/57871127/200581571-6db80b57-06a1-4632-ab5c-a7e3f45dbdff.mp4
 
 ### Pivot
 
@@ -93,7 +93,7 @@ It is used in the Fill by Pivot algorithm. See Fill by Pivot for details.
 
 The Transform Editor allows you to set the parameters of random or progressive rotation, location, and scale for each Item of the Queue.
 
-63
+
 
 ### Len
 
