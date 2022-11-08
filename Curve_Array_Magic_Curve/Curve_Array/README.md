@@ -1,15 +1,18 @@
 # Curve Array
 
-Curve Array is designed as a versatile tool for creating arrays along a curve.
+Curve Array is designed as a flexible tool for creating arrays along a curve.
+Curve Array does not merge array objects, because it is not a modifier, and it does not distort the object mesh.
 
 ## What's the difference to existing methods in bender?
 
-In version 4.0, Curve Array has received a complete overhaul of its basic operating algorithms. 
-Previously based on the Array modifier blender, Curve Array now has its own curve representation core, allowing it to add unique options.
+In version 4.0, Curve Array received a complete overhaul of its basic working algorithms. 
+Previously based on a bundle of two Blender modifiers (Array + Curve), Curve Array now has its own core curve representation, allowing it to add unique features.
 
-**Curve Array VS Geometry Nodes and Array+Curve modifiers:**
+### Curve Array VS Geometry Nodes and Array+Curve modifiers:
 
-1. Curve Array works with all curve splines.
+**Perception of the path**
+
+Curve Array works with all curve splines.
 
 50
 
@@ -21,26 +24,27 @@ Geometry Nodes, conversely treats all curve splines as independent curves, creat
 
 53
 
-2. Curve Array allows you to define the cyclicity of the curve yourself.
+Also, Curve Array allows you to control the smoothness of curve normals, curve cyclicity, and many other small improvements, for example, if you create a circle, Blender will not consider the first point as the start, but the last one. 
+And if you switch the cycle, Blender will suddenly start taking the first point as the beginning, as it should be. 
+The curve array is free of these oddities. All this is made possible by the new Path Data Core created in version 4.0. 
+ 
 
-54
+**Usability**
 
-Neither Geometry Nodes nor Array+Curve Modifiers allow you to control the cyclic curve.
+As a fact, to create a simple array, you need to make three mouse clicks. 
+Also, unlike Blender modifiers or Geometry Nodes, you don't need to align the curve and reference object before creating the array, Curve Array will take them correctly wherever they are!
 
-55
 
-3. Curve Array allows you to control the smoothness of curve normals.
+**Preservation of objects**
 
-56
+Unlike Geometry Nodex and Blender Array+Curve modifiers, Curve Array keeps each object individual. 
 
-Neither Geometry Nodes nor Array+Curve Modifiers allow you to control the smoothness of curve normals.
+79
 
-57
+### Results:
 
-These are the main differences in terms of path perception by the different algorithms. 
-There are other minor improvements, for example, if you create a circle, the blender will not consider the first point to be the beginning, but the last. 
-And if toggle cyclic, Blender will suddenly start perceive the first point as the beginning, as it should be. 
-Curve Array is free of such oddities. All this is made possible by the new Path Data Core, created in version 4.0. 
+Curve Array is not trying to compete with Geometry Nodes or Array + Curve modifiers. 
+On the contrary, it takes its place as a tool for spacing objects, while Geometry Nodes has no equal in creating scenarios where objects behave like particles, and Curve + Array modifiers are perfect when you need to create a deformed array.
 
 ## Curve Editor
 
@@ -233,3 +237,13 @@ Update Array - this function is not as simple as it sounds.
 It is not just a manual update array, instead of Auto Update, Update Array has more power, updating as well the Path and Queue data. 
 
 78
+
+## Errors and Rules.
+
+Curve Array reuses objects created by it. 
+So when you change the parameters of an array, it doesn't recreate them, it searches for them by name in the scene, in a particular collection, so don't rename, move, or delete objects or collections while you want to edit the created array.
+
+All errors with the title 'Error' have an explanation of the cause, and the user can fix it himself. 
+
+If you see the 'Unkown Error' header, or the wrong behavior of the add-on, please save the scene where the error occurred (so that I can reproduce it) and open an Issue on my GitHub, attaching the scene there. 
+This will help not only you, but all the other users who might have encountered the same error as you!

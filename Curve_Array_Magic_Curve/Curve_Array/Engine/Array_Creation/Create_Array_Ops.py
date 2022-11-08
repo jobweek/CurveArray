@@ -3,7 +3,6 @@ import traceback
 from Curve_Array_Magic_Curve.Errors.Errors import CancelError, show_message_box
 from .Create_Array import crete_array_manager
 from ..General_Data_Classes import CreateArrayPrams
-from ...Property.Get_Property_Path import get_array_settings_props
 
 
 class CURVEARRAY_OT_create_array(bpy.types.Operator):
