@@ -58,7 +58,7 @@ class ArraySettings(bpy.types.PropertyGroup):
 
     cyclic: bpy.props.BoolProperty(
         name="cyclic",
-        description="Is the array cyclic?",
+        description="Is the path cyclic?",
         default=False,
         update=update_array,
         )

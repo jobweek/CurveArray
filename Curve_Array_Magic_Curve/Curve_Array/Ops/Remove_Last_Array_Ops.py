@@ -5,6 +5,7 @@ from .Remove_Last_Array_Functions import remove_last_array_manager
 
 
 class CURVEARRAY_OT_remove_last_array(bpy.types.Operator):
+    """Remove current array"""
     bl_label = "Remove Last Array"
     bl_idname = 'curvearray.remove_last_array'
     bl_options = {'REGISTER', 'UNDO'}

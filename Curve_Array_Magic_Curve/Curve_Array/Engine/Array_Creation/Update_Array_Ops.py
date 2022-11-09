@@ -8,6 +8,7 @@ from ...Property.Get_Property_Path import get_array_settings_props
 
 
 class CURVEARRAY_OT_update_array(bpy.types.Operator):
+    """Update current array"""
     bl_label = "Update Array"
     bl_idname = 'curvearray.update_array'
     bl_options = {'REGISTER', 'UNDO'}

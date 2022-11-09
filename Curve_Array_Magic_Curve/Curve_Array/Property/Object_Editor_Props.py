@@ -109,8 +109,8 @@ class TransformData(bpy.types.PropertyGroup):
         )
 
     rotation_random_min_x: bpy.props.FloatProperty(
-        name="rotation_random_soft_min_x",
-        description="soft_minimum Random Rotation X Axis",
+        name="rotation_random_min_x",
+        description="Minimum Random Rotation X Axis",
         default=0,
         soft_min=-360,
         soft_max=360,
@@ -118,8 +118,8 @@ class TransformData(bpy.types.PropertyGroup):
         )
 
     rotation_random_min_y: bpy.props.FloatProperty(
-        name="rotation_random_soft_min_y",
-        description="soft_minimum Random Rotation Y Axis",
+        name="rotation_random_min_y",
+        description="Minimum Random Rotation Y Axis",
         default=0,
         soft_min=-360,
         soft_max=360,
@@ -128,7 +128,7 @@ class TransformData(bpy.types.PropertyGroup):
 
     rotation_random_min_z: bpy.props.FloatProperty(
         name="rotation_random_soft_min_z",
-        description="soft_minimum Random Rotation Z Axis",
+        description="Minimum Random Rotation Z Axis",
         default=0,
         soft_min=-360,
         soft_max=360,
@@ -137,7 +137,7 @@ class TransformData(bpy.types.PropertyGroup):
 
     rotation_random_max_x: bpy.props.FloatProperty(
         name="rotation_random_soft_max_x",
-        description="soft_maximum Random Rotation X Axis",
+        description="Maximum Random Rotation X Axis",
         default=0,
         soft_min=-360,
         soft_max=360,
@@ -146,7 +146,7 @@ class TransformData(bpy.types.PropertyGroup):
 
     rotation_random_max_y: bpy.props.FloatProperty(
         name="rotation_random_soft_max_y",
-        description="soft_maximum Random Rotation Y Axis",
+        description="Maximum Random Rotation Y Axis",
         default=0,
         soft_min=-360,
         soft_max=360,
@@ -155,7 +155,7 @@ class TransformData(bpy.types.PropertyGroup):
 
     rotation_random_max_z: bpy.props.FloatProperty(
         name="rotation_random_soft_max_z",
-        description="soft_maximum Random Rotation Z Axis",
+        description="Maximum Random Rotation Z Axis",
         default=0,
         soft_min=-360,
         soft_max=360,
@@ -335,7 +335,7 @@ class Queue(bpy.types.PropertyGroup):
         )
 
     count: bpy.props.IntProperty(
-        name="count",
+        name="Сount",
         description="Number of repetitions",
         default=1,
         min=0,
@@ -343,13 +343,13 @@ class Queue(bpy.types.PropertyGroup):
         )
 
     ghost: bpy.props.BoolProperty(
-        name="ghost",
+        name="Ghost",
         description="Is the object ghost",
         default=False,
         )
 
     ghost_percentage: bpy.props.IntProperty(
-        name="ghost_percentage",
+        name="Ghost",
         description="The likelihood of the object being a ghost",
         default=0,
         min=0,
@@ -372,7 +372,7 @@ class Objects(bpy.types.PropertyGroup):
         )
 
     pivot: bpy.props.FloatProperty(
-        name="pivot",
+        name="Pivot",
         description="Distance to pivot",
         default=0,
         min=0,
@@ -450,7 +450,7 @@ class WMProperty(bpy.types.PropertyGroup):
 
     queue_repetitions: bpy.props.IntProperty(
         name="queue_repetitions",
-        description="",
+        description="Number of unique iterations in the queue",
         default=1000,
         min=1,
         max=9999,

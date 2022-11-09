@@ -8,7 +8,7 @@ from ..Property.Get_Property_Path import (
 
 
 class CURVEARRAY_OT_open_transform_editor(bpy.types.Operator):
-    """Editing Objects which will be used for array creation"""
+    """Open the transformation editor"""
     bl_label = "Transform Editor"
     bl_idname = 'curvearray.open_transform_editor'
     bl_options = {'UNDO'}

@@ -5,7 +5,7 @@ import traceback
 
 
 class CURVEARRAY_OT_duplicate_item(bpy.types.Operator):
-    """Set or Create and Set"""
+    """Duplicate item and with its setting"""
     bl_label = "Duplicate Item"
     bl_idname = 'curvearray.duplicate_item'
 

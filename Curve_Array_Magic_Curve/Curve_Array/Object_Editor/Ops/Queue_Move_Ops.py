@@ -7,7 +7,7 @@ import traceback
 
 
 class CURVEARRAY_OT_queue_move(bpy.types.Operator):
-    """Move Queue"""
+    """Change item place in the queue"""
     bl_label = "Move queue"
     bl_idname = 'curvearray.queue_move'
 

@@ -5,6 +5,7 @@ from .Reset_Array_Settings_Functions import reset_array_settings_manager
 
 
 class CURVEARRAY_OT_reset_array_settings(bpy.types.Operator):
+    """Return the array settings to defaults"""
     bl_label = "Reset Array Settings"
     bl_idname = 'curvearray.reset_array_settings'
     bl_options = {'REGISTER', 'UNDO'}

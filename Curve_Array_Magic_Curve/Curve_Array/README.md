@@ -229,7 +229,7 @@ Be careful, if you manually delete/rename an object/collection that Curve Array 
 
 ### Create Array
 
-Doesn't need a comment unless you're a zucchini, ahah))
+Doesn't need a comment unless you're a potato, ahah))
 
 ### Update Array
 
@@ -237,6 +237,14 @@ Update Array - this function is not as simple as it sounds.
 It is not just a manual update array, instead of Auto Update, Update Array has more power, updating as well the Path and Queue data. 
 
 [![Video](/documentation_resources/78.png)](https://youtu.be/5vJufEZKEuo)
+
+### Remove Last Array
+
+Remove Last Array - removes the current array, as well as clearing internal data, which will allow you to edit settings for a new array without unchecking the Auto Update.  
+
+### Reset Array Settings
+
+Resets current array settings to defaults.
 
 ## Errors and Rules.
 
