@@ -120,3 +120,7 @@ class CURVEARRAY_PT_array_settings_panel(bpy.types.Panel):
         oper = row.operator('curvearray.update_array', text='Update Array')
         oper.update_path_data = True
         oper.update_queue_data = True
+
+        row = layout.row()
+        row.operator('curvearray.remove_last_array')
+        row.operator('curvearray.reset_array_settings')

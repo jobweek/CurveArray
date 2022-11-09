@@ -30,6 +30,7 @@ class ArraySettings(bpy.types.PropertyGroup):
             ('1', "Semi Instance", "All objects use main object data, but have a custom modifiers"),
             ('2', "Full Instance", "All objects use main object data"),
         ],
+        default='0',
         update=update_array,
         )
 
@@ -51,6 +52,7 @@ class ArraySettings(bpy.types.PropertyGroup):
             ('2', "Fill by Size", ""),
             ('3', "Fill by Pivot", ""),
         ],
+        default='0',
         update=update_array,
     )
 
@@ -137,6 +139,7 @@ class ArraySettings(bpy.types.PropertyGroup):
             ('-y', "-y", ""),
             ('-z', "-z", ""),
         ],
+        default='+x',
         update=update_array,
         )
 
@@ -168,6 +171,7 @@ class ArraySettings(bpy.types.PropertyGroup):
         name="normal_axis",
         description="Select normal axis",
         items=_normal_axis_items,
+        default=0,
         update=update_array,
     )
 
