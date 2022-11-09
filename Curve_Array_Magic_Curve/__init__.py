@@ -43,6 +43,9 @@ from .Curve_Array.Object_Editor.Object_Editor_WM import CURVEARRAY_OT_open_objec
 from .Curve_Array.Transform_Editor.Ops.Reset_Transform_Ops import CURVEARRAY_OT_reset_transform
 from .Curve_Array.Transform_Editor.Transform_Editor_WM import CURVEARRAY_OT_open_transform_editor
 
+from .Curve_Array.Ops.Remove_Last_Array_Ops import CURVEARRAY_OT_remove_last_array
+from .Curve_Array.Ops.Reset_Array_Settings_Ops import CURVEARRAY_OT_reset_array_settings
+
 from .Curve_Array.Panels.General_Panel import CURVEARRAY_PT_general_panel
 from .Curve_Array.Curve_Editor.Curve_Panel import CURVEARRAY_PT_curve_panel
 from .Curve_Array.Object_Editor.Object_Panel import CURVEARRAY_PT_object_panel
@@ -79,6 +82,9 @@ classes = (
 
     CURVEARRAY_OT_reset_transform,
     CURVEARRAY_OT_open_transform_editor,
+
+    CURVEARRAY_OT_remove_last_array,
+    CURVEARRAY_OT_reset_array_settings,
 
     CURVEARRAY_PT_general_panel,
     CURVEARRAY_PT_curve_panel,
