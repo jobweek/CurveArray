@@ -14,7 +14,7 @@ Previously based on a bundle of two Blender modifiers (Array + Curve), Curve Arr
 
 Curve Array works with all curve splines.
 
-50
+[![Plane](/documentation_resources/50.png)](https://youtu.be/FofvjdWdlms)
 
 Blender Array + Curve modifiers ignore other curve splines after the first one.
 
