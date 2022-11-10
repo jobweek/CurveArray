@@ -23,7 +23,10 @@ def clone_obj(obj: bpy.types.Object, cloning_type: str, collection: str) -> bpy.
 
     if cloning_type == '0':
         duplicate = obj.copy()
-        duplicate.data = obj.data.copy()
+        try:
+            duplicate.data = obj.data.copy()
+        except AttributeError:
+            pass
 
         if obj.animation_data:
             duplicate.animation_data.action = obj.animation_data.action.copy()

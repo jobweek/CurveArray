@@ -1,6 +1,6 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
-
+from ....Errors.Errors import CancelError, show_message_box
 from ...Property.Get_Property_Path import get_instant_data_props
 from ...General_Functions.Functions import (
     duplicate,
@@ -17,6 +17,12 @@ from .Calc_Path_Data_Functions import (
 
 
 def calc_path_data_manager():
+
+    mode = bpy.context.active_object.mode
+    if mode != 'OBJECT':
+        show_message_box("Error", "Switch to Object Mode!", 'ERROR')
+
+        raise CancelError
 
     # Получаем кривую
     curve = get_curve()

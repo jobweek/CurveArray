@@ -1,6 +1,5 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
-from typing import Any
 import numpy as np
 from mathutils import Matrix, Vector, Euler  # type: ignore
 from Curve_Array_Magic_Curve.Curve_Array.Engine.General_Data_Classes import ArrayTransform, ItemTransform
@@ -31,7 +30,9 @@ def get_collection_by_name(name: str) -> bpy.types.Collection:
     return coll
 
 
-def calc_total_transform(obj: Any, array_transform: ArrayTransform, item_transform: ItemTransform) -> Matrix:
+def calc_total_transform(
+    obj: bpy.types.Object, array_transform: ArrayTransform, item_transform: ItemTransform
+        ) -> Matrix:
 
     array_transform_matrix = Matrix.LocRotScale(
         Vector((
@@ -89,7 +90,7 @@ def calc_total_transform(obj: Any, array_transform: ArrayTransform, item_transfo
     return total_transform
 
 
-def _calc_bm_transform(obj: Any, total_transform: Matrix):
+def _calc_bm_transform(obj: bpy.types.Object, total_transform: Matrix):
 
     bm = bmesh.new()
     bm.from_mesh(obj.data)
@@ -105,12 +106,15 @@ def _calc_bm_transform(obj: Any, total_transform: Matrix):
 
 
 def get_bb_offset(
-    obj: Any, array_transform: ArrayTransform, item_transform: ItemTransform,  axis: str, direction: bool
+    obj: bpy.types.Object, array_transform: ArrayTransform, item_transform: ItemTransform,  axis: str, direction: bool
                   ) -> float:
 
     total_transform = calc_total_transform(obj, array_transform, item_transform)
 
-    bm = _calc_bm_transform(obj, total_transform)
+    try:
+        bm = _calc_bm_transform(obj, total_transform)
+    except TypeError:
+        return 0
 
     def __collect_points(axis: int) -> np.ndarray:
         def __func(v):
@@ -186,9 +190,12 @@ def get_bb_offset(
             return _positive_z()
 
 
-def get_dimension_offset(obj: Any, total_transform: Matrix,  axis: str) -> tuple[float, float]:
+def get_dimension_offset(obj: bpy.types.Object, total_transform: Matrix,  axis: str) -> tuple[float, float]:
 
-    bm = _calc_bm_transform(obj, total_transform)
+    try:
+        bm = _calc_bm_transform(obj, total_transform)
+    except TypeError:
+        return 0, 0
 
     def __collect_points(axis: int) -> np.ndarray:
         def __func(v):
