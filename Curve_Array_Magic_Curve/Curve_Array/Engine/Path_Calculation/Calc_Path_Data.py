@@ -18,10 +18,8 @@ from .Calc_Path_Data_Functions import (
 
 def calc_path_data_manager():
 
-    mode = bpy.context.active_object.mode
-    if mode != 'OBJECT':
+    if bpy.context.mode != 'OBJECT':
         show_message_box("Error", "Switch to Object Mode!", 'ERROR')
-
         raise CancelError
 
     # Получаем кривую
