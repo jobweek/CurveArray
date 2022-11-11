@@ -1,12 +1,14 @@
-A little preface.
+**A little preface.**
 
 I spent over 7 months of daily work on the 4.0 update, essentially redesigning Curve Array and Magic Curve modules from scratch. 
 And I decided that as a thanks for all the support from the community, I want to make this add-on available to anyone and make it free. 
-However, if you'd like to say thank you, you can either buy it at Gumroad(), for price you think is fair, or donate to my crypto wallet(). 
+However, if you'd like to say thank you, you can either buy it at Gumroad(https://jobweek.gumroad.com/l/curve-array-pro), for price you think is fair, or donate to my crypto wallet ETH(0x4d6E06EEb748A806f87734bcCbb26c0DF4c0f793). 
 Thanks for all, and have a great time using it!
 
 
 # Curve Array
+
+![Image](/documentation_resources/preview.png)
 
 Curve Array is designed as a flexible tool for creating arrays along a curve.
 Curve Array does not merge array objects, because it is not a modifier, and it does not distort the object mesh.
