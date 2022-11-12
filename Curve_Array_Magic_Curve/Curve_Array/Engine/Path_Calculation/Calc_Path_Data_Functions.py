@@ -13,6 +13,38 @@ from ...General_Functions.Functions import (
 from....Errors.Errors import show_message_box, CancelError, LoopEnd
 
 
+def _points_equal(p_0: Vector, p_1: Vector) -> bool:
+
+    diff: Vector = p_1 - p_0
+
+    if diff.length <= 0.00002:
+        return True
+    else:
+        return False
+
+
+def check_curve(curve: bpy.types.Curve):
+
+    for s in curve.data.splines:
+
+        if s.type == 'POLY':
+            points = s.points
+        else:
+            points = s.bezier_points
+
+        if len(points) == 1:
+            show_message_box("Error", "Separate (unconnected) point is found on the path", 'ERROR')
+            raise CancelError
+
+        i = 0
+        end_range = len(points) - 1
+        while i < end_range:
+            if _points_equal(points[i].co, points[i+1].co):
+                show_message_box("Error", "Two points on the path are found in the same coordinates", 'ERROR')
+                raise CancelError
+            i += 1
+
+
 def _project_vec(direction: Vector, normal: Vector) -> Vector:
 
     dot = normal.dot(direction)
@@ -535,8 +567,10 @@ def arr_size_calc(verts, curve) -> int:
 def _calc_smooth_direction(interpolated_segments_arr: np.ndarray, start_range: int, end_range: int,):
 
     if start_range == end_range:
-        interpolated_segments_arr[start_range].direction_smooth = \
+        interpolated_segments_arr[start_range].direction_smooth = (
+            interpolated_segments_arr[start_range].direction_normalized,
             interpolated_segments_arr[start_range].direction_normalized
+        )
         return
 
     interpolated_segments_arr[start_range].direction_smooth = (

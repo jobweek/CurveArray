@@ -8,6 +8,7 @@ from ...General_Functions.Functions import (
     delete_objects,
 )
 from .Calc_Path_Data_Functions import (
+    check_curve,
     verts_sequence_calc,
     get_bm_verts,
     path_data_calc,
@@ -24,6 +25,9 @@ def calc_path_data_manager():
 
     # Получаем кривую
     curve = get_curve()
+
+    # Проверяем кривую
+    check_curve(curve)
 
     # Генератор последовательности вершин кривой
     verts_sequence_generator = verts_sequence_calc(curve)

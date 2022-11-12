@@ -69,9 +69,11 @@ def active_vertex(bm):
     act_vert = bm.select_history.active
 
     if act_vert is None:
-
         show_message_box("Error", "The active vertex must be selected.", 'ERROR')
+        raise CancelError
 
+    if type(act_vert) is bmesh.types.BMEdge:
+        show_message_box("Error", "Toggle to vertex selection mode.", 'ERROR')
         raise CancelError
 
     return act_vert
