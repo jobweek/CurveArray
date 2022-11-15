@@ -1,8 +1,13 @@
-**A little preface.**
+**A little preface**
 
 I spent over 7 months of daily work on the 4.0 update, essentially redesigning Curve Array and Magic Curve modules from scratch. 
-And I decided that as a thanks for all the support from the community, I want to make this add-on available to anyone and make it free. 
-However, if you'd like to say thank you, you can either buy it at Gumroad(https://jobweek.gumroad.com/l/curve-array-pro), for price you think is fair, or donate to my crypto wallet ETH(0x4d6E06EEb748A806f87734bcCbb26c0DF4c0f793). 
+I have decided that I will make the Curve Array free, for all the support of the community.
+However, if you'd like to say thank you, you can either buy it for price you think is fair at:
+
+Gumroad(https://jobweek.gumroad.com/l/curve-array-pro)
+Blender Market(https://blendermarket.com/products/curvearraypro--magiccurve)
+Or donate to my crypto wallet: ETH(0x4d6E06EEb748A806f87734bcCbb26c0DF4c0f793). 
+
 Thanks for all, and have a great time using it!
 
 
