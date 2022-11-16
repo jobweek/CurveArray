@@ -25,6 +25,10 @@ def _points_equal(p_0: Vector, p_1: Vector) -> bool:
 
 def check_curve(curve: bpy.types.Curve):
 
+    if len(curve.data.splines) < 1:
+        show_message_box("Error", "Сurve does not have any splines", 'ERROR')
+        raise CancelError
+
     for s in curve.data.splines:
 
         if s.type == 'POLY':
@@ -43,6 +47,13 @@ def check_curve(curve: bpy.types.Curve):
                 show_message_box("Error", "Two points on the path are found in the same coordinates", 'ERROR')
                 raise CancelError
             i += 1
+
+
+def _lerp_vec(vec_1: Vector, vec_2: Vector, ratio: float) -> Vector:
+
+    assert 1 >= ratio >= 0
+    vec = vec_1.lerp(vec_2, ratio)
+    return vec.normalized()
 
 
 def _project_vec(direction: Vector, normal: Vector) -> Vector:
@@ -71,7 +82,8 @@ class InterpolatedSegment:
     def __str__(self):
 
         string = f'\nSubClass {self.__class__.__name__}:\nStart_Co: {self.start_co}' \
-                 f'\nDirection_Vec: {self.direction}\nLength: {self.length}\nNormal: {self.normal}\n'
+                 f'\nDirection: {self.direction}\nDirection_Normalized: {self.direction_normalized}' \
+                 f'\nDirection_Smooth: {self.direction_smooth}\nLength: {self.length}\nNormal: {self.normal}\n'
 
         return string
 
@@ -91,7 +103,7 @@ class InterpolatedSegment:
         elif searched_length > self.length:
             normal = self.normal[1]
         else:
-            normal = self.normal[0].lerp(self.normal[1], ratio)
+            normal = _lerp_vec(self.normal[0], self.normal[1], ratio)
 
         co = self.start_co + self.direction * ratio
 
@@ -118,14 +130,13 @@ class InterpolatedSegment:
 
             if searched_length < middle_length and (cyclic or not hasattr(self, "first")):
                 middle_ratio = 0.5 + ((searched_length / middle_length) / 2)
-                direction = self.direction_smooth[0].lerp(self.direction_normalized, middle_ratio)
+                direction = _lerp_vec(self.direction_smooth[0], self.direction_normalized, middle_ratio)
             elif searched_length > middle_length and (cyclic or not hasattr(self, "last")):
                 middle_ratio = ((searched_length - middle_length) / middle_length) / 2
-                direction = self.direction_normalized.lerp(self.direction_smooth[1], middle_ratio)
+                direction = _lerp_vec(self.direction_normalized, self.direction_smooth[1], middle_ratio)
             else:
                 direction = self.direction_normalized
-
-            normal = self.normal[0].lerp(self.normal[1], ratio)
+            normal = _lerp_vec(self.normal[0], self.normal[1], ratio)
             normal = _project_vec(direction, normal)
 
         co = self.start_co + self.direction * ratio
@@ -175,12 +186,12 @@ def _get_smooth_direction(
     if direction_prev is None:
         direction_smooth_start = direction
     else:
-        direction_smooth_start = direction_prev.lerp(direction, 0.5).normalized()
+        direction_smooth_start = _lerp_vec(direction_prev, direction, 0.5)
 
     if direction_next is None:
         direction_smooth_end = direction
     else:
-        direction_smooth_end = direction.lerp(direction_next, 0.5).normalized()
+        direction_smooth_end = _lerp_vec(direction, direction_next, 0.5)
 
     return direction_smooth_start, direction_smooth_end
 
@@ -630,17 +641,19 @@ def path_data_calc(verts_sequence_generator: Iterator[Union[int, None]], verts, 
 
     assert i == arr_size, 'PathData, массив не заполнен'
 
-    interpolated_segments_arr[0].first = True
-    interpolated_segments_arr[0].direction_smooth = (
-        interpolated_segments_arr[-1].direction_normalized,
-        interpolated_segments_arr[1].direction_normalized
-    )
+    if len(interpolated_segments_arr) > 1:
 
-    interpolated_segments_arr[-1].last = True
-    interpolated_segments_arr[-1].direction_smooth = (
-        interpolated_segments_arr[-2].direction_normalized,
-        interpolated_segments_arr[0].direction_normalized
-    )
+        interpolated_segments_arr[0].first = True
+        interpolated_segments_arr[0].direction_smooth = (
+            interpolated_segments_arr[-1].direction_normalized,
+            interpolated_segments_arr[0].direction_smooth[1]
+        )
+
+        interpolated_segments_arr[-1].last = True
+        interpolated_segments_arr[-1].direction_smooth = (
+            interpolated_segments_arr[-1].direction_smooth[0],
+            interpolated_segments_arr[0].direction_normalized
+        )
 
     path_data = PathData(curve_name, (interpolated_segments_distance_arr, interpolated_segments_arr))
 
