@@ -25,6 +25,10 @@ def _points_equal(p_0: Vector, p_1: Vector) -> bool:
 
 def check_curve(curve: bpy.types.Curve):
 
+    if len(curve.data.splines) < 1:
+        show_message_box("Error", "Сurve does not have any splines", 'ERROR')
+        raise CancelError
+
     for s in curve.data.splines:
 
         if s.type == 'POLY':
@@ -630,17 +634,19 @@ def path_data_calc(verts_sequence_generator: Iterator[Union[int, None]], verts, 
 
     assert i == arr_size, 'PathData, массив не заполнен'
 
-    interpolated_segments_arr[0].first = True
-    interpolated_segments_arr[0].direction_smooth = (
-        interpolated_segments_arr[-1].direction_normalized,
-        interpolated_segments_arr[1].direction_normalized
-    )
+    if len(interpolated_segments_arr) > 1:
 
-    interpolated_segments_arr[-1].last = True
-    interpolated_segments_arr[-1].direction_smooth = (
-        interpolated_segments_arr[-2].direction_normalized,
-        interpolated_segments_arr[0].direction_normalized
-    )
+        interpolated_segments_arr[0].first = True
+        interpolated_segments_arr[0].direction_smooth = (
+            interpolated_segments_arr[-1].direction_normalized,
+            interpolated_segments_arr[1].direction_normalized
+        )
+
+        interpolated_segments_arr[-1].last = True
+        interpolated_segments_arr[-1].direction_smooth = (
+            interpolated_segments_arr[-2].direction_normalized,
+            interpolated_segments_arr[0].direction_normalized
+        )
 
     path_data = PathData(curve_name, (interpolated_segments_distance_arr, interpolated_segments_arr))
 
