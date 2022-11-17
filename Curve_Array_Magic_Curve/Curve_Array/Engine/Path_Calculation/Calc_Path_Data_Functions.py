@@ -643,17 +643,22 @@ def path_data_calc(verts_sequence_generator: Iterator[Union[int, None]], verts, 
 
     if len(interpolated_segments_arr) > 1:
 
-        interpolated_segments_arr[0].first = True
-        interpolated_segments_arr[0].direction_smooth = (
-            interpolated_segments_arr[-1].direction_normalized,
-            interpolated_segments_arr[0].direction_smooth[1]
-        )
+        start_point = interpolated_segments_arr[0].start_co
+        end_point = interpolated_segments_arr[-1].start_co + interpolated_segments_arr[-1].direction
 
-        interpolated_segments_arr[-1].last = True
-        interpolated_segments_arr[-1].direction_smooth = (
-            interpolated_segments_arr[-1].direction_smooth[0],
-            interpolated_segments_arr[0].direction_normalized
-        )
+        if _points_equal(start_point, end_point):
+
+            interpolated_segments_arr[0].first = True
+            interpolated_segments_arr[0].direction_smooth = (
+                interpolated_segments_arr[-1].direction_normalized,
+                interpolated_segments_arr[0].direction_smooth[1]
+            )
+
+            interpolated_segments_arr[-1].last = True
+            interpolated_segments_arr[-1].direction_smooth = (
+                interpolated_segments_arr[-1].direction_smooth[0],
+                interpolated_segments_arr[0].direction_normalized
+            )
 
     path_data = PathData(curve_name, (interpolated_segments_distance_arr, interpolated_segments_arr))
 
