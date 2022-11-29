@@ -14,13 +14,13 @@ class CURVEARRAY_OT_update_array(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     update_path_data: bpy.props.BoolProperty(
-        name="update_path_data",
+        name="Update Path?",
         description="",
         default=False
         )
 
     update_queue_data: bpy.props.BoolProperty(
-        name="update_queue_data",
+        name="Update Queue and Objects?",
         description="",
         default=False
         )
