@@ -266,6 +266,8 @@ Resets current array settings to defaults.
 Curve Array reuses objects created by it. 
 So when you change the parameters of an array, it doesn't recreate them, it searches for them by name in the scene, in a particular collection, so don't rename, move, or delete objects or collections while you want to edit the created array.
 
+Curve Array must have a clean curve with no geometry for the core to work. If there is one, the curve settings will be reset to default automatically.
+
 All errors with the title 'Error' have an explanation of the cause, and the user can fix it himself. 
 
 If you see the 'Unkown Error' header, or the wrong behavior of the add-on, please save the scene where the error occurred (so that I can reproduce it) and open an Issue on my GitHub, attaching the scene there. 

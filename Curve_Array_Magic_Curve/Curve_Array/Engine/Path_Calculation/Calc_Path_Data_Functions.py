@@ -40,13 +40,21 @@ def check_curve(curve: bpy.types.Curve):
             show_message_box("Error", "Separate (unconnected) point is found on the path", 'ERROR')
             raise CancelError
 
-        i = 0
         end_range = len(points) - 1
-        while i < end_range:
+        for i in range(end_range):
             if _points_equal(points[i].co, points[i+1].co):
                 show_message_box("Error", "Two points on the path are found in the same coordinates", 'ERROR')
                 raise CancelError
-            i += 1
+
+
+def curve_geometry_correction(curve: bpy.types.Curve):
+
+    curve = curve.data
+    curve.offset = 0
+    curve.extrude = 0
+    curve.taper_object = None
+    curve.bevel_mode = 'ROUND'
+    curve.bevel_depth = 0
 
 
 def _lerp_vec(vec_1: Vector, vec_2: Vector, ratio: float) -> Vector:

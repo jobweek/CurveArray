@@ -106,8 +106,8 @@ classes = (
 bl_info = {
     "name": "CurveArray + MagicCurve",
     "author": "JobWeek",
-    "version": (4, 0, 0),
-    "blender": (3, 2, 0),
+    "version": (4, 0, 3),
+    "blender": (3, 3, 1),
     "location": "View3d > Tool",
     "warning": "",
     "wiki_url": "https://github.com/jobweek/CurveArray/tree/Curve_Array_4.0",
