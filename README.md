@@ -6,7 +6,6 @@ However, if you'd like to say thank you, you can either buy it for price you thi
 
 Gumroad(https://jobweek.gumroad.com/l/curve-array-pro)  
 Blender Market(https://blendermarket.com/products/curvearraypro--magiccurve)  
-Or donate to my crypto wallet: ETH(0x4d6E06EEb748A806f87734bcCbb26c0DF4c0f793)
 
 Thanks for all, and have a great time using it!
 
